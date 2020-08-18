@@ -37,9 +37,11 @@ add_library(GridGraphPathFinderSrc "")
 target_sources(GridGraphPathFinderSrc
   PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/include/GridGraph.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/ProgramOptions.hpp
 
   PRIVATE
   src/GridGraph.cpp
+  src/ProgramOptions.cpp
   )
 
 # add the dependencies of the target to enforce
