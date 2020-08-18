@@ -3,5 +3,5 @@
 auto main(int argc, char* argv[])
     -> int
 {
-  fmt::print("Hello World\n");
+    fmt::print("Hello World\n");
 }
