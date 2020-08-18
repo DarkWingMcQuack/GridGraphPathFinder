@@ -1,5 +1,6 @@
 #include <GridGraph.hpp>
 #include <algorithm>
+#include <fmt/core.h>
 #include <fstream>
 #include <vector>
 
@@ -7,6 +8,8 @@ using graph::GridGraph;
 using graph::Node;
 
 GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
+    : height(grid.size()),
+      width(grid[0].size())
 {
     auto total_size = grid.size() * grid[0].size();
     grid_.reserve(total_size);
@@ -49,6 +52,12 @@ auto graph::parseFileToGridGraph(std::string_view path)
 
         std::string line;
         while(std::getline(graph_file, line)) {
+
+            if(line.size() != width && !line.empty()) {
+                fmt::print("line has uncommon width of {}\n", line.size());
+                return std::nullopt;
+            }
+
             std::vector<bool> grid_line(width);
 
             std::transform(std::cbegin(line),

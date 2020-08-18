@@ -32,6 +32,8 @@ public:
         -> bool;
 
 private:
+    const std::size_t height;
+    const std::size_t width;
     std::vector<bool> grid_;
 };
 
