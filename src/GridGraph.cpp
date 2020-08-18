@@ -11,15 +11,12 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
     auto total_size = grid.size() * grid[0].size();
     grid_.reserve(total_size);
 
-    for(auto&& sub_grid : std::move(grid)) {
+    for(const auto& sub_grid : grid) {
         grid_.insert(std::end(grid_),
                      std::begin(sub_grid),
                      std::end(sub_grid));
     }
 }
-
-GridGraph::GridGraph(std::vector<bool> grid)
-    : grid_(std::move(grid)) {}
 
 auto GridGraph::isBarrier(const Node& n) const
     -> bool

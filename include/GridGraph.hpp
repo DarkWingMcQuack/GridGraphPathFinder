@@ -16,7 +16,6 @@ class GridGraph
 {
 public:
     GridGraph(std::vector<std::vector<bool>> grid);
-    GridGraph(std::vector<bool> grid);
 
     //the big 5
     GridGraph() = delete;
