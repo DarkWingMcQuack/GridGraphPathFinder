@@ -31,9 +31,10 @@ public:
     auto isWalkableNode(const Node& n) const
         -> bool;
 
-private:
     const std::size_t height;
     const std::size_t width;
+
+private:
     std::vector<bool> grid_;
 };
 

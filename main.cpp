@@ -9,6 +9,7 @@ auto main(int argc, char* argv[])
     auto graph_opt = graph::parseFileToGridGraph("../data/BaldursGateIIScaled/AR0011SR.map");
 
     auto graph = std::move(graph_opt.value());
-
-	fmt::print("{}\n", graph.isBarrier({1, 20}));
+	fmt::print("width: {} height: {}\n",
+			   graph.width,
+			   graph.height);
 }

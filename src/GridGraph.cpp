@@ -24,13 +24,13 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
 auto GridGraph::isBarrier(const Node& n) const
     -> bool
 {
-    return !grid_[n.row * n.column];
+    return !grid_[n.row * width + n.column];
 }
 
 auto GridGraph::isWalkableNode(const Node& n) const
     -> bool
 {
-    return grid_[n.row * n.column];
+    return grid_[n.row * width + n.column];
 }
 
 auto graph::parseFileToGridGraph(std::string_view path)
@@ -48,7 +48,8 @@ auto graph::parseFileToGridGraph(std::string_view path)
         graph_file >> dummy >> width;
         graph_file >> dummy;
 
-        std::vector<std::vector<bool>> grid(height);
+        std::vector<std::vector<bool>> grid;
+        grid.reserve(height);
 
         std::string line;
         while(std::getline(graph_file, line)) {
@@ -58,7 +59,8 @@ auto graph::parseFileToGridGraph(std::string_view path)
                 return std::nullopt;
             }
 
-            std::vector<bool> grid_line(width);
+            std::vector<bool> grid_line;
+            grid_line.reserve(width);
 
             std::transform(std::cbegin(line),
                            std::cend(line),
@@ -67,7 +69,9 @@ auto graph::parseFileToGridGraph(std::string_view path)
                                return c == '.';
                            });
 
-            grid.emplace_back(std::move(grid_line));
+            if(grid_line.size() == width) {
+                grid.emplace_back(std::move(grid_line));
+            }
         }
 
         return GridGraph{std::move(grid)};
