@@ -21,7 +21,7 @@ public:
     GridGraph() = delete;
     GridGraph(GridGraph&&) = default;
     GridGraph(const GridGraph&) = delete;
-    auto operator=(GridGraph &&) -> GridGraph& = default;
+    auto operator=(GridGraph &&) -> GridGraph& = delete;
     auto operator=(const GridGraph&) -> GridGraph& = delete;
 
     //https://godbolt.org/z/zx8M6K
