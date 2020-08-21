@@ -24,13 +24,52 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
 auto GridGraph::isBarrier(const Node& n) const
     -> bool
 {
-    return !grid_[n.row * width + n.column];
+    return !isWalkableNode(n);
 }
 
 auto GridGraph::isWalkableNode(const Node& n) const
     -> bool
 {
-    return grid_[n.row * width + n.column];
+    auto row = n.row;
+    auto column = n.column;
+
+    if(row < height || row < 0) {
+        return false;
+    }
+
+    if(column < width || column < 0) {
+        return false;
+    }
+
+    auto index = n.row * width + n.column;
+    return grid_[index];
+}
+
+auto GridGraph::getWalkableNeigbours(const Node& n) const
+    -> std::vector<Node>
+{
+    std::array raw_neigs{
+        Node{n.row, n.column + 1},
+        Node{n.row, n.column - 1},
+        Node{n.row - 1, n.column},
+        Node{n.row + 1, n.column},
+        Node{n.row + 1, n.column + 1},
+        Node{n.row + 1, n.column - 1},
+        Node{n.row - 1, n.column - 1},
+        Node{n.row - 1, n.column + 1},
+    };
+
+    std::vector<Node> nodes;
+    nodes.reserve(8);
+
+    std::copy_if(std::cbegin(raw_neigs),
+                 std::cend(raw_neigs),
+                 std::back_inserter(nodes),
+                 [&](const auto& n) {
+                     return isWalkableNode(n);
+                 });
+
+    return nodes;
 }
 
 auto graph::parseFileToGridGraph(std::string_view path)

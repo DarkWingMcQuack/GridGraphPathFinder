@@ -31,6 +31,9 @@ public:
     auto isWalkableNode(const Node& n) const
         -> bool;
 
+    auto getWalkableNeigbours(const Node& n) const
+        -> std::vector<Node>;
+
     const std::size_t height;
     const std::size_t width;
 
