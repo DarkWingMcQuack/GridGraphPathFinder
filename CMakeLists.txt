@@ -99,3 +99,8 @@ target_link_libraries(GridGraphPathFinder LINK_PUBLIC
 # add the dependencies of the target to enforce
 # the right order of compiling
 add_dependencies(GridGraphPathFinder GridGraphPathFinderSrc)
+
+if (BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test)
+endif (BUILD_TESTS)
