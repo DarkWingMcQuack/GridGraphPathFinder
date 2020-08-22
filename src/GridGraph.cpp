@@ -44,11 +44,11 @@ auto GridGraph::isWalkableNode(const Node& n) const
     auto row = n.row;
     auto column = n.column;
 
-    if(row < height || row < 0) {
+    if(row > height || row < 0) {
         return false;
     }
 
-    if(column < width || column < 0) {
+    if(column > width || column < 0) {
         return false;
     }
 
