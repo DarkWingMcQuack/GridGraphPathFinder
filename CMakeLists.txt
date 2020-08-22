@@ -38,10 +38,14 @@ target_sources(GridGraphPathFinderSrc
   PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/include/GridGraph.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/ProgramOptions.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/Path.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/SimpleDijkstra.hpp
 
   PRIVATE
   src/GridGraph.cpp
   src/ProgramOptions.cpp
+  src/Path.cpp
+  src/SimpleDijkstra.cpp
   )
 
 # add the dependencies of the target to enforce

@@ -8,8 +8,10 @@ namespace graph {
 
 struct Node
 {
-    const std::size_t row;
-    const std::size_t column;
+    std::size_t row;
+    std::size_t column;
+    auto operator==(const Node& other) const -> bool;
+    auto operator!=(const Node& other) const -> bool;
 };
 
 class GridGraph

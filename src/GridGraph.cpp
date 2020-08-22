@@ -7,6 +7,17 @@
 using graph::GridGraph;
 using graph::Node;
 
+auto Node::operator==(const Node& other) const
+    -> bool
+{
+    return row == other.row && column == other.column;
+}
+auto Node::operator!=(const Node& other) const
+    -> bool
+{
+    return !(*this == other);
+}
+
 GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
     : height(grid.size()),
       width(grid[0].size())
