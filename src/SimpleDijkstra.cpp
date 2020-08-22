@@ -25,8 +25,8 @@ auto SimpleDijkstra::findRoutes(const graph::Node& source, const graph::Node& ta
     return path;
 }
 
-auto SimpleDijkstra::getDistanceTo(const graph::Node& n) const
-    -> std::optional<std::int64_t>
+auto SimpleDijkstra::getIndex(const graph::Node& n) const
+    -> std::optional<std::size_t>
 {
     auto row = n.row;
     auto column = n.column;
@@ -39,28 +39,30 @@ auto SimpleDijkstra::getDistanceTo(const graph::Node& n) const
         return std::nullopt;
     }
 
-    auto index = n.row * graph_.get().width + n.column;
-
-    return distances_[index];
+    return n.row * graph_.get().width + n.column;
 }
+
+auto SimpleDijkstra::getDistanceTo(const graph::Node& n) const
+    -> std::optional<std::int64_t>
+{
+    auto index_opt = getIndex(n);
+
+    if(index_opt) {
+        return distances_[index_opt.value()];
+    }
+
+    return std::nullopt;
+}
+
 
 auto SimpleDijkstra::setDistanceTo(const graph::Node& n, std::int64_t distance)
     -> void
 {
-    auto row = n.row;
-    auto column = n.column;
+    auto index_opt = getIndex(n);
 
-    if(row < graph_.get().height || row < 0) {
-        return;
+    if(index_opt) {
+        distances_[index_opt.value()] = distance;
     }
-
-    if(column < graph_.get().width || column < 0) {
-        return;
-    }
-
-    auto index = row * graph_.get().width + column;
-
-    distances_[index] = distance;
 }
 
 auto SimpleDijkstra::resetDistances(const std::vector<graph::Node>& touched)
@@ -116,6 +118,13 @@ auto SimpleDijkstra::extractShortestPaths(const graph::Node& source, const graph
     }
 
     return complete_paths;
+}
+
+
+auto SimpleDijkstra::getWalkableNeigboursOf(const graph::Node& n) const
+    -> std::vector<graph::Node>
+{
+    return graph_.get().getWalkableNeigbours(n);
 }
 
 

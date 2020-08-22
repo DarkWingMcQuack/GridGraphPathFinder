@@ -22,7 +22,7 @@ public:
     auto findRoutes(const graph::Node& source, const graph::Node& target)
         -> std::vector<Path>;
 
-private:
+protected:
     auto getDistanceTo(const graph::Node& n) const
         -> std::optional<std::int64_t>;
 
@@ -40,6 +40,12 @@ private:
 
     auto findSmallestDistance(const std::vector<graph::Node>& nodes) const
         -> std::optional<std::int64_t>;
+
+    auto getWalkableNeigboursOf(const graph::Node& n) const
+        -> std::vector<graph::Node>;
+
+    auto getIndex(const graph::Node& n) const
+        -> std::optional<std::size_t>;
 
 private:
     const std::reference_wrapper<const graph::GridGraph> graph_;
