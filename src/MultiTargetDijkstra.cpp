@@ -11,7 +11,8 @@ using graph::GridGraph;
 using pathfinding::MultiTargetDijkstra;
 
 MultiTargetDijkstra::MultiTargetDijkstra(const graph::GridGraph& graph)
-    : SimpleDijkstra::SimpleDijkstra(graph) {}
+    : SimpleDijkstra::SimpleDijkstra(graph),
+      settled_(graph.width * graph.height, -1) {}
 
 
 auto MultiTargetDijkstra::findRoutes(const graph::Node& source, const std::vector<graph::Node>& targets)
