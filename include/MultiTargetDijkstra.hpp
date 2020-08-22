@@ -27,9 +27,6 @@ private:
     auto computeDistances(const graph::Node& source, const std::vector<graph::Node>& targets)
         -> std::vector<graph::Node>;
 
-    auto findSmallestDistance(const std::vector<graph::Node>& nodes) const
-        -> std::optional<std::int64_t>;
-
     auto settle(const graph::Node& n)
         -> void;
 
