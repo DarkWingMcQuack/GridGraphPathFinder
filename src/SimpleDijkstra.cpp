@@ -31,11 +31,11 @@ auto SimpleDijkstra::getIndex(const graph::Node& n) const
     auto row = n.row;
     auto column = n.column;
 
-    if(row > graph_.get().height || row < 0) {
+    if(row >= graph_.get().height || row < 0) {
         return std::nullopt;
     }
 
-    if(column > graph_.get().width || column < 0) {
+    if(column >= graph_.get().width || column < 0) {
         return std::nullopt;
     }
 
