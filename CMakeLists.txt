@@ -37,6 +37,7 @@ add_library(GridGraphPathFinderSrc "")
 target_sources(GridGraphPathFinderSrc
   PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/include/GridGraph.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/Node.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/ProgramOptions.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/Path.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/SimpleDijkstra.hpp
@@ -44,6 +45,7 @@ target_sources(GridGraphPathFinderSrc
 
   PRIVATE
   src/GridGraph.cpp
+  src/Node.cpp
   src/ProgramOptions.cpp
   src/Path.cpp
   src/SimpleDijkstra.cpp
