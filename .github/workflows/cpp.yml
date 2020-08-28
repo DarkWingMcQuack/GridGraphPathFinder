@@ -12,7 +12,6 @@ jobs:
     - name: gcc-update
       run: sudo apt-get update && sudo apt-get install gcc-9
     - name: cmake
-    - name: configure
       run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DUSE_CLANG=0 -DBUILD_TESTS=1 ..
     - name: build
       run: cmake --build build
