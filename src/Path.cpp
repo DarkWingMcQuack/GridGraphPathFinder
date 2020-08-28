@@ -1,13 +1,14 @@
 #include <GridGraph.hpp>
 #include <Path.hpp>
+#include <execution>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <functional>
+#include <numeric>
 #include <optional>
 #include <string_view>
 #include <vector>
-#include <numeric>
 
 
 using graph::Node;
@@ -78,9 +79,12 @@ auto pathfinding::findCommonNodes(const std::vector<Path>& paths)
     -> std::vector<Node>
 {
     std::vector<std::vector<Node>> raw_paths;
-    std::transform(std::cbegin(paths),
+	raw_paths.resize(paths.size());
+
+    std::transform(std::execution::par_unseq,
+                   std::cbegin(paths),
                    std::cend(paths),
-                   std::back_inserter(raw_paths),
+				   std::begin(raw_paths),
                    [](const auto& path) {
                        auto nodes = path.getNodes();
                        std::sort(std::begin(nodes),
@@ -88,7 +92,8 @@ auto pathfinding::findCommonNodes(const std::vector<Path>& paths)
                        return nodes;
                    });
 
-    return std::reduce(std::make_move_iterator(std::begin(raw_paths)),
+    return std::reduce(std::execution::par_unseq,
+					   std::make_move_iterator(std::begin(raw_paths)),
                        std::make_move_iterator(std::end(raw_paths)),
                        std::vector<Node>{},
                        [](auto&& acc, auto&& next) {
