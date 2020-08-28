@@ -24,7 +24,7 @@ public:
 
 protected:
     auto getDistanceTo(const graph::Node& n) const
-        -> std::optional<std::int64_t>;
+        -> Distance;
 
     auto setDistanceTo(const graph::Node& n, std::int64_t distance)
         -> void;
@@ -38,8 +38,8 @@ protected:
     auto resetDistances(const std::vector<graph::Node>& touched)
         -> void;
 
-    auto findSmallestDistance(const std::vector<graph::Node>& nodes) const
-        -> std::optional<std::int64_t>;
+    auto findSmallestDistanceGreaterThan(const std::vector<graph::Node>& nodes) const 
+        -> Distance;
 
     auto getWalkableNeigboursOf(const graph::Node& n) const
         -> std::vector<graph::Node>;
@@ -49,7 +49,7 @@ protected:
 
 private:
     const std::reference_wrapper<const graph::GridGraph> graph_;
-    std::vector<std::int64_t> distances_;
+    std::vector<Distance> distances_;
 };
 
 

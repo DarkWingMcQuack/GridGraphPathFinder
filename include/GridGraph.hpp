@@ -14,6 +14,9 @@ struct Node
     auto operator!=(const Node& other) const -> bool;
 };
 
+auto operator<<(std::ostream& os, Node n)
+  -> std::ostream&;
+
 class GridGraph
 {
 public:

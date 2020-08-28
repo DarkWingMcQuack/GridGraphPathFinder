@@ -18,6 +18,12 @@ auto Node::operator!=(const Node& other) const
     return !(*this == other);
 }
 
+auto graph::operator<<(std::ostream& os, Node n)
+    -> std::ostream&
+{
+    return os << "Node{" + std::to_string(n.row) + ", " + std::to_string(n.column) + "}";
+}
+
 GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
     : height(grid.size()),
       width(grid[0].size())

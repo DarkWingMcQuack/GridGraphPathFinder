@@ -8,6 +8,9 @@
 
 namespace pathfinding {
 
+using Distance = std::int64_t;
+constexpr inline auto UNREACHABLE = std::numeric_limits<Distance>::max();
+
 class Path
 {
 public:
@@ -30,7 +33,13 @@ public:
     auto getTarget() -> graph::Node&;
 
 private:
+    friend auto operator<<(std::ostream& os, const Path& p)
+        -> std::ostream&;
+
     std::vector<graph::Node> path_;
 };
+
+auto operator<<(std::ostream& os, const Path& p)
+    -> std::ostream&;
 
 } // namespace pathfinding

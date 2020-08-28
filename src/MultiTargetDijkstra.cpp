@@ -1,6 +1,7 @@
 #include <GridGraph.hpp>
 #include <MultiTargetDijkstra.hpp>
 #include <functional>
+#include <Path.hpp>
 #include <optional>
 #include <queue>
 #include <string_view>
@@ -9,10 +10,11 @@
 using graph::Node;
 using graph::GridGraph;
 using pathfinding::MultiTargetDijkstra;
+using pathfinding::Distance;
 
 MultiTargetDijkstra::MultiTargetDijkstra(const graph::GridGraph& graph)
     : SimpleDijkstra::SimpleDijkstra(graph),
-      settled_(graph.width * graph.height, -1) {}
+      settled_(graph.width * graph.height, false) {}
 
 
 auto MultiTargetDijkstra::findRoutes(const graph::Node& source, const std::vector<graph::Node>& targets)
@@ -69,13 +71,13 @@ auto MultiTargetDijkstra::isSettled(const graph::Node& n)
 }
 
 namespace {
-constexpr auto dijkstra_comperator = [](const std::pair<Node, std::int64_t>& lhs,
-                                        const std::pair<Node, std::int64_t>& rhs) {
+constexpr auto dijkstra_comperator = [](const std::pair<Node, Distance>& lhs,
+                                        const std::pair<Node, Distance>& rhs) {
     return lhs.second < rhs.second;
 };
 
-using DijkstraQueue = std::priority_queue<std::pair<Node, std::int64_t>,
-                                          std::vector<std::pair<Node, std::int64_t>>,
+using DijkstraQueue = std::priority_queue<std::pair<Node, Distance>,
+                                          std::vector<std::pair<Node, Distance>>,
                                           decltype(dijkstra_comperator)>;
 } // namespace
 
@@ -115,9 +117,9 @@ auto MultiTargetDijkstra::computeDistances(const graph::Node& source, const std:
         for(auto&& neig : neigbours) {
             touched.emplace_back(neig);
 
-            auto neig_dist = getDistanceTo(neig).value();
+            auto neig_dist = getDistanceTo(neig);
 
-            if(neig_dist == -1 || neig_dist > current_dist + 1) {
+            if(neig_dist > current_dist + 1) {
                 setDistanceTo(neig, current_dist + 1);
                 queue.emplace(neig, current_dist + 1);
             }
