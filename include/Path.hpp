@@ -32,6 +32,11 @@ public:
     auto getTarget() const -> const graph::Node&;
     auto getTarget() -> graph::Node&;
 
+    auto getNodes() const
+        -> const std::vector<graph::Node>&;
+    auto getNodes()
+        -> std::vector<graph::Node>&;
+
 private:
     friend auto operator<<(std::ostream& os, const Path& p)
         -> std::ostream&;
@@ -41,5 +46,8 @@ private:
 
 auto operator<<(std::ostream& os, const Path& p)
     -> std::ostream&;
+
+auto findCommonNodes(const std::vector<Path>& paths)
+    -> std::vector<graph::Node>;
 
 } // namespace pathfinding

@@ -7,6 +7,7 @@
 #include <optional>
 #include <string_view>
 #include <vector>
+#include <numeric>
 
 
 using graph::Node;
@@ -54,9 +55,51 @@ auto Path::getTarget() -> graph::Node&
     return path_.back();
 }
 
+auto Path::getNodes() const
+    -> const std::vector<graph::Node>&
+{
+    return path_;
+}
+auto Path::getNodes()
+    -> std::vector<graph::Node>&
+{
+    return path_;
+}
+
 
 auto pathfinding::operator<<(std::ostream& os, const Path& p)
     -> std::ostream&
 {
     return os << fmt::format("{}", p.path_);
+}
+
+
+auto pathfinding::findCommonNodes(const std::vector<Path>& paths)
+    -> std::vector<Node>
+{
+    std::vector<std::vector<Node>> raw_paths;
+    std::transform(std::cbegin(paths),
+                   std::cend(paths),
+                   std::back_inserter(raw_paths),
+                   [](const auto& path) {
+                       auto nodes = path.getNodes();
+                       std::sort(std::begin(nodes),
+                                 std::end(nodes));
+                       return nodes;
+                   });
+
+    return std::reduce(std::make_move_iterator(std::begin(raw_paths)),
+                       std::make_move_iterator(std::end(raw_paths)),
+                       std::vector<Node>{},
+                       [](auto&& acc, auto&& next) {
+                           std::vector<Node> intersect;
+
+                           std::set_intersection(std::begin(acc),
+                                                 std::end(acc),
+                                                 std::begin(next),
+                                                 std::end(next),
+                                                 std::back_inserter(intersect));
+
+                           return intersect;
+                       });
 }
