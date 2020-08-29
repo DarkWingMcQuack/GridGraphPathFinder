@@ -7,7 +7,7 @@
 using graph::GridGraph;
 using graph::Node;
 
-GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
+GridGraph::GridGraph(std::vector<std::vector<bool>> grid) noexcept
     : height(grid.size()),
       width(grid[0].size())
 {
@@ -21,13 +21,13 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid)
     }
 }
 
-auto GridGraph::isBarrier(const Node& n) const
+auto GridGraph::isBarrier(const Node& n) const noexcept
     -> bool
 {
     return !isWalkableNode(n);
 }
 
-auto GridGraph::isWalkableNode(const Node& n) const
+auto GridGraph::isWalkableNode(const Node& n) const noexcept
     -> bool
 {
     auto row = n.row;
@@ -45,7 +45,7 @@ auto GridGraph::isWalkableNode(const Node& n) const
     return grid_[index];
 }
 
-auto GridGraph::getWalkableNeigbours(const Node& n) const
+auto GridGraph::getWalkableNeigbours(const Node& n) const noexcept
     -> std::vector<Node>
 {
     std::array raw_neigs{
@@ -72,7 +72,7 @@ auto GridGraph::getWalkableNeigbours(const Node& n) const
     return nodes;
 }
 
-auto graph::parseFileToGridGraph(std::string_view path)
+auto graph::parseFileToGridGraph(std::string_view path) noexcept
     -> std::optional<GridGraph>
 {
     try {

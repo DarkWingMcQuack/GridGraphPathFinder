@@ -10,7 +10,7 @@ namespace graph {
 class GridGraph
 {
 public:
-    GridGraph(std::vector<std::vector<bool>> grid);
+    GridGraph(std::vector<std::vector<bool>> grid) noexcept;
 
     //the big 5
     GridGraph() = delete;
@@ -20,13 +20,16 @@ public:
     auto operator=(const GridGraph&) -> GridGraph& = delete;
 
     //https://godbolt.org/z/zx8M6K
-    auto isBarrier(const Node& n) const
+    auto isBarrier(const Node& n) const noexcept 
         -> bool;
 
-    auto isWalkableNode(const Node& n) const
+    auto isWalkableNode(const Node& n) const noexcept 
         -> bool;
 
-    auto getWalkableNeigbours(const Node& n) const
+    auto getWalkableNeigbours(const Node& n) const noexcept 
+        -> std::vector<Node>;
+
+    auto getWalkableManhattanNeigbours(const Node& n) const noexcept 
         -> std::vector<Node>;
 
     const std::size_t height;
@@ -36,7 +39,7 @@ private:
     std::vector<bool> grid_;
 };
 
-auto parseFileToGridGraph(std::string_view path)
+auto parseFileToGridGraph(std::string_view path) noexcept
     -> std::optional<GridGraph>;
 
 } // namespace graph
