@@ -9,6 +9,18 @@ using grid::GridCorner;
 using graph::Node;
 
 
+auto GridCorner::operator==(const GridCorner& other) const noexcept
+    -> bool
+{
+    return row == other.row && column == other.column;
+}
+
+auto GridCorner::operator!=(const GridCorner& other) const noexcept
+    -> bool
+{
+    return !(*this == other);
+}
+
 auto grid::operator<<(std::ostream& os, const GridCorner& c) noexcept
     -> std::ostream&
 {
