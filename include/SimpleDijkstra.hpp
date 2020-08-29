@@ -4,10 +4,20 @@
 #include <Path.hpp>
 #include <functional>
 #include <optional>
+#include <queue>
 #include <string_view>
 #include <vector>
 
 namespace pathfinding {
+
+constexpr auto DIJKSTRA_QUEUE_COMPERATOR = [](const auto& lhs,
+                                              const auto& rhs) {
+    return lhs.second < rhs.second;
+};
+
+using DijkstraQueue = std::priority_queue<std::pair<graph::Node, Distance>,
+                                          std::vector<std::pair<graph::Node, Distance>>,
+                                          decltype(DIJKSTRA_QUEUE_COMPERATOR)>;
 
 class SimpleDijkstra
 {
@@ -38,7 +48,7 @@ protected:
     auto resetDistances(const std::vector<graph::Node>& touched) noexcept
         -> void;
 
-    auto findSmallestDistanceGreaterThan(const std::vector<graph::Node>& nodes) const  noexcept
+    auto findSmallestDistanceGreaterThan(const std::vector<graph::Node>& nodes) const noexcept
         -> Distance;
 
     auto getWalkableNeigboursOf(const graph::Node& n) const noexcept

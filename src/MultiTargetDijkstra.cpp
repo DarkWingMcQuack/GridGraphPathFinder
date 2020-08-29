@@ -70,21 +70,10 @@ auto MultiTargetDijkstra::isSettled(const graph::Node& n)
     return std::nullopt;
 }
 
-namespace {
-constexpr auto dijkstra_comperator = [](const std::pair<Node, Distance>& lhs,
-                                        const std::pair<Node, Distance>& rhs) {
-    return lhs.second < rhs.second;
-};
-
-using DijkstraQueue = std::priority_queue<std::pair<Node, Distance>,
-                                          std::vector<std::pair<Node, Distance>>,
-                                          decltype(dijkstra_comperator)>;
-} // namespace
-
 auto MultiTargetDijkstra::computeDistances(const graph::Node& source, const std::vector<graph::Node>& targets)
     -> std::vector<graph::Node>
 {
-    DijkstraQueue queue(dijkstra_comperator);
+    DijkstraQueue queue(DIJKSTRA_QUEUE_COMPERATOR);
     queue.emplace(source, 0l);
 
     std::vector<Node> touched;

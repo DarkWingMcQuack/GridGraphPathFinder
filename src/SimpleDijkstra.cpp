@@ -136,22 +136,10 @@ auto SimpleDijkstra::getWalkableManhattanNeigboursOf(const graph::Node& n) const
     return graph_.get().getWalkableManhattanNeigbours(n);
 }
 
-
-namespace {
-constexpr auto dijkstra_comperator = [](const std::pair<Node, Distance>& lhs,
-                                        const std::pair<Node, Distance>& rhs) {
-    return lhs.second < rhs.second;
-};
-
-using DijkstraQueue = std::priority_queue<std::pair<Node, Distance>,
-                                          std::vector<std::pair<Node, Distance>>,
-                                          decltype(dijkstra_comperator)>;
-} // namespace
-
 auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::Node& target) noexcept
     -> std::vector<graph::Node>
 {
-    DijkstraQueue queue(dijkstra_comperator);
+    DijkstraQueue queue(DIJKSTRA_QUEUE_COMPERATOR);
     queue.emplace(source, 0l);
     setDistanceTo(source, 0);
 
