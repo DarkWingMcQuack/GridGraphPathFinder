@@ -6,6 +6,7 @@ add_executable(unit_tests
   grid_graph_test.cpp
   simple_dijkstra_test.cpp
   manhattan_dijkstra_test.cpp
+  grid_cell_test.cpp
   main.cpp
   )
 
