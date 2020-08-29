@@ -11,14 +11,14 @@ struct Node
     std::size_t row;
     std::size_t column;
 
-    auto operator==(const Node& other) const -> bool;
-    auto operator!=(const Node& other) const -> bool;
-    auto operator<(const Node& other) const -> bool;
-    auto operator>(const Node& other) const -> bool;
-    auto operator<=(const Node& other) const -> bool;
-    auto operator>=(const Node& other) const -> bool;
+    auto operator==(const Node& other) const noexcept -> bool;
+    auto operator!=(const Node& other) const noexcept -> bool;
+    auto operator<(const Node& other) const noexcept -> bool;
+    auto operator>(const Node& other) const noexcept -> bool;
+    auto operator<=(const Node& other) const noexcept -> bool;
+    auto operator>=(const Node& other) const noexcept -> bool;
 };
 
-auto operator<<(std::ostream& os, Node n)
+auto operator<<(std::ostream& os, Node n) noexcept
     -> std::ostream&;
 } // namespace graph
