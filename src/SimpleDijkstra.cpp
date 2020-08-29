@@ -153,7 +153,7 @@ auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::No
             return touched;
         }
 
-        auto neigbours = graph_.get().getWalkableNeigbours(current_node);
+        auto neigbours = getWalkableNeigboursOf(current_node);
 
         for(auto&& neig : neigbours) {
             touched.emplace_back(neig);
@@ -166,7 +166,6 @@ auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::No
             }
         }
     }
-
 
     return touched;
 }

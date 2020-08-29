@@ -32,6 +32,9 @@ public:
     auto findRoutes(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<Path>;
 
+    auto findManhattanRoutes(const graph::Node& source, const graph::Node& target) noexcept
+        -> std::vector<Path>;
+
 protected:
     auto getDistanceTo(const graph::Node& n) const noexcept
         -> Distance;
