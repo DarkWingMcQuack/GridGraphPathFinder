@@ -40,6 +40,9 @@ public:
     [[nodiscard]] auto isInCell(const graph::Node& node) const noexcept
         -> bool;
 
+    [[nodiscard]] auto isAtomic() const noexcept
+        -> bool;
+
     [[nodiscard]] auto isSplitable() const noexcept
         -> bool;
 

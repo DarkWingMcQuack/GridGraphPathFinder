@@ -42,8 +42,8 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
 [[nodiscard]] auto GridCell::isSplitable() const noexcept
     -> bool
 {
-    auto width = top_right_.column - top_left_.column;
-    auto height = bottom_left_.row - top_left_.row;
+    const auto width = top_right_.column - top_left_.column;
+    const auto height = bottom_left_.row - top_left_.row;
 
     return width >= 2
         && height >= 2
@@ -51,7 +51,45 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
         && height % 2 == 0;
 }
 
+[[nodiscard]] auto GridCell::isAtomic() const noexcept
+    -> bool
+{
+    const auto width = top_right_.column - top_left_.column;
+    const auto height = bottom_left_.row - top_left_.row;
+
+    return width == 1 && height == 2;
+}
+
 [[nodiscard]] auto GridCell::split() const noexcept
     -> std::array<GridCell, 4>
 {
+    const auto top_left = GridCell{
+        GridCorner{top_left_.row, top_left_.column},
+        GridCorner{top_left_.row, top_right_.column / 2},
+        GridCorner{bottom_left_.row / 2, top_left_.column},
+        GridCorner{bottom_left_.row / 2, top_right_.column / 2}};
+
+    const auto top_right = GridCell{
+        GridCorner{top_left_.row, top_right_.column / 2 + 1},
+        GridCorner{top_right_.row, top_right_.column},
+        GridCorner{bottom_left_.row / 2, top_right_.column / 2 + 1},
+        GridCorner{bottom_right_.row / 2, top_right_.column}};
+
+    const auto bottom_left = GridCell{
+        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column},
+        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column / 2},
+        GridCorner{bottom_left_.row, bottom_left_.column},
+        GridCorner{bottom_right_.row, bottom_right_.column / 2}};
+
+    const auto bottom_right = GridCell{
+        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column / 2 + 1},
+        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column},
+        GridCorner{bottom_left_.row, bottom_right_.column / 2 + 1},
+        GridCorner{bottom_right_.row, bottom_right_.column}};
+
+    return std::array{
+        std::move(top_left),
+        std::move(top_right),
+        std::move(bottom_left),
+        std::move(bottom_right)};
 }
