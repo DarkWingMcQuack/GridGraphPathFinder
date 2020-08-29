@@ -15,6 +15,11 @@ auto GridCorner::operator==(const GridCorner& other) const noexcept
     return row == other.row && column == other.column;
 }
 
+GridCorner::GridCorner(std::int64_t row,
+                       std::int64_t column)
+    : row(row),
+      column(column) {}
+
 auto GridCorner::operator!=(const GridCorner& other) const noexcept
     -> bool
 {

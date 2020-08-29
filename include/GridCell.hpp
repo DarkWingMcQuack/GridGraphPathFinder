@@ -8,8 +8,11 @@ namespace grid {
 
 struct GridCorner
 {
-    std::int64_t row;
-    std::int64_t column;
+    GridCorner(std::int64_t row,
+               std::int64_t column);
+
+    const std::int64_t row;
+    const std::int64_t column;
 
     auto operator==(const GridCorner& other) const noexcept
         -> bool;
