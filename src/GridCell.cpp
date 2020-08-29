@@ -80,7 +80,11 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
         && top_right_.column >= top_left_.column
         && top_left_.row <= bottom_left_.row
         && bottom_left_.row == bottom_right_.row
-        && bottom_right_.column >= bottom_left_.row;
+        && bottom_right_.column >= bottom_left_.row
+        && top_left_.row >= 0 && top_left_.column >= 0
+        && top_right_.row >= 0 && top_right_.column >= 0
+        && bottom_left_.row >= 0 && bottom_left_.column >= 0
+        && bottom_right_.row >= 0 && bottom_right_.column >= 0;
 }
 
 [[nodiscard]] auto GridCell::split() const noexcept
