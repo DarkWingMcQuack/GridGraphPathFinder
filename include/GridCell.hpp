@@ -17,7 +17,7 @@ struct GridCorner
         -> bool;
 };
 
-auto operator<<(std::ostream& os, GridCorner c) noexcept
+auto operator<<(std::ostream& os, const GridCorner& c) noexcept
     -> std::ostream&;
 
 class GridCell
@@ -54,7 +54,7 @@ public:
         -> std::array<GridCell, 4>;
 
 private:
-    friend auto operator<<(std::ostream& os, GridCell c) noexcept
+    friend auto operator<<(std::ostream& os, const GridCell& c) noexcept
         -> std::ostream&;
 
     GridCorner top_left_;
@@ -69,7 +69,7 @@ private:
                          const GridCell& fourth) noexcept
     -> GridCell;
 
-auto operator<<(std::ostream& os, GridCell c) noexcept
+auto operator<<(std::ostream& os, const GridCell& c) noexcept
     -> std::ostream&;
 
 } // namespace grid

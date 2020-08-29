@@ -9,7 +9,7 @@ using grid::GridCorner;
 using graph::Node;
 
 
-auto grid::operator<<(std::ostream& os, GridCorner c) noexcept
+auto grid::operator<<(std::ostream& os, const GridCorner& c) noexcept
     -> std::ostream&
 {
     return os << "("
@@ -111,7 +111,7 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
 }
 
 
-auto grid::operator<<(std::ostream& os, GridCell c) noexcept
+auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
     -> std::ostream&
 {
     return os << "GridCell{"
