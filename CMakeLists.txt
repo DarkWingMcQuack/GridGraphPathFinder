@@ -10,7 +10,7 @@ project(GridGraphPathFinder)
 project(GridGraphPathFinder LANGUAGES CXX)
 
 #set C++ standard to C++17
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -37,6 +37,7 @@ add_library(GridGraphPathFinderSrc "")
 target_sources(GridGraphPathFinderSrc
   PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/include/GridGraph.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/GridCell.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/Node.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/ProgramOptions.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/Path.hpp
@@ -47,6 +48,7 @@ target_sources(GridGraphPathFinderSrc
 
   PRIVATE
   src/GridGraph.cpp
+  src/GridCell.cpp
   src/Node.cpp
   src/ProgramOptions.cpp
   src/Path.cpp
