@@ -70,7 +70,7 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
     const auto width = top_right_.column - top_left_.column;
     const auto height = bottom_left_.row - top_left_.row;
 
-    return width == 1 && height == 2;
+    return width == 1 && height == 1;
 }
 
 [[nodiscard]] auto GridCell::split() const noexcept
