@@ -2,6 +2,7 @@
 
 #include <Node.hpp>
 #include <array>
+#include <iostream>
 
 namespace grid {
 
@@ -15,6 +16,9 @@ struct GridCorner
     auto operator!=(const GridCorner& other) const noexcept
         -> bool;
 };
+
+auto operator<<(std::ostream& os, GridCorner c) noexcept
+    -> std::ostream&;
 
 class GridCell
 {
@@ -50,6 +54,9 @@ public:
         -> std::array<GridCell, 4>;
 
 private:
+    friend auto operator<<(std::ostream& os, GridCell c) noexcept
+        -> std::ostream&;
+
     GridCorner top_left_;
     GridCorner top_right_;
     GridCorner bottom_left_;
@@ -61,5 +68,8 @@ private:
                          const GridCell& third,
                          const GridCell& fourth) noexcept
     -> GridCell;
+
+auto operator<<(std::ostream& os, GridCell c) noexcept
+    -> std::ostream&;
 
 } // namespace grid

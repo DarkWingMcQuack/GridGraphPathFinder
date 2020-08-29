@@ -1,10 +1,22 @@
 #include <GridCell.hpp>
 #include <Node.hpp>
 #include <array>
+#include <iostream>
 
 using grid::GridCell;
 using grid::GridCorner;
 using graph::Node;
+
+
+auto grid::operator<<(std::ostream& os, GridCorner c) noexcept
+    -> std::ostream&
+{
+    return os << "("
+              << std::to_string(c.row)
+              << ", "
+              << std::to_string(c.column)
+              << ")";
+}
 
 GridCell::GridCell(GridCorner top_left,
                    GridCorner top_right,
@@ -92,4 +104,19 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
         std::move(top_right),
         std::move(bottom_left),
         std::move(bottom_right)};
+}
+
+
+auto grid::operator<<(std::ostream& os, GridCell c) noexcept
+    -> std::ostream&
+{
+    return os << "GridCell{"
+              << c.top_left_
+              << ", "
+              << c.top_right_
+              << ", "
+              << c.bottom_left_
+              << ", "
+              << c.bottom_right_
+              << "}";
 }
