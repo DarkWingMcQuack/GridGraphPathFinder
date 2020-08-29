@@ -1,5 +1,6 @@
 #include <GridGraph.hpp>
 #include <SimpleDijkstra.hpp>
+#include <fmt/core.h>
 #include <functional>
 #include <optional>
 #include <queue>
@@ -86,12 +87,23 @@ auto SimpleDijkstra::extractShortestPaths(const graph::Node& source, const graph
     }
 
     Path initial{std::vector{target}};
-    std::vector<Path> unfinished_paths{std::move(initial)};
+
+    std::priority_queue unfinished(
+        [](const auto& lhs, const auto& rhs) {
+            return lhs.getLength() > rhs.getLength();
+        },
+        std::vector<Path>{std::move(initial)});
+
     std::vector<Path> complete_paths;
 
-    while(!unfinished_paths.empty()) {
-        auto path = std::move(unfinished_paths.back());
-        unfinished_paths.pop_back();
+    while(!unfinished.empty()) {
+        auto path = std::move(unfinished.top());
+        unfinished.pop();
+
+        if(!complete_paths.empty()
+           && path.getLength() + 1 > complete_paths[0].getLength()) {
+            return complete_paths;
+        }
 
         const auto& last_inserted = path.getSource();
         auto neigbours = getWalkableNeigboursOf(last_inserted);
@@ -102,6 +114,7 @@ auto SimpleDijkstra::extractShortestPaths(const graph::Node& source, const graph
             continue;
         }
 
+
         for(const auto& neig : neigbours) {
             auto neig_dist = getDistanceTo(neig);
 
@@ -109,13 +122,14 @@ auto SimpleDijkstra::extractShortestPaths(const graph::Node& source, const graph
                 continue;
             }
 
+
             auto path_copy = path;
             path_copy.pushFront(neig);
 
             if(neig == source) {
                 complete_paths.emplace_back(std::move(path_copy));
             } else {
-                unfinished_paths.emplace_back(std::move(path_copy));
+                unfinished.emplace(std::move(path_copy));
             }
         }
     }

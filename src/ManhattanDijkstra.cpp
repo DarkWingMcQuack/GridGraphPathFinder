@@ -87,12 +87,23 @@ auto ManhattanDijkstra::extractShortestPaths(const graph::Node& source, const gr
     }
 
     Path initial{std::vector{target}};
-    std::vector<Path> unfinished_paths{std::move(initial)};
+
+    std::priority_queue unfinished(
+        [](const auto& lhs, const auto& rhs) {
+            return lhs.getLength() > rhs.getLength();
+        },
+        std::vector<Path>{std::move(initial)});
+
     std::vector<Path> complete_paths;
 
-    while(!unfinished_paths.empty()) {
-        auto path = std::move(unfinished_paths.back());
-        unfinished_paths.pop_back();
+    while(!unfinished.empty()) {
+        auto path = std::move(unfinished.top());
+        unfinished.pop();
+
+        if(!complete_paths.empty()
+           && path.getLength() + 1 > complete_paths[0].getLength()) {
+            return complete_paths;
+        }
 
         const auto& last_inserted = path.getSource();
         auto neigbours = getWalkableManhattanNeigboursOf(last_inserted);
@@ -110,13 +121,14 @@ auto ManhattanDijkstra::extractShortestPaths(const graph::Node& source, const gr
                 continue;
             }
 
+
             auto path_copy = path;
             path_copy.pushFront(neig);
 
             if(neig == source) {
                 complete_paths.emplace_back(std::move(path_copy));
             } else {
-                unfinished_paths.emplace_back(std::move(path_copy));
+                unfinished.emplace(std::move(path_copy));
             }
         }
     }
