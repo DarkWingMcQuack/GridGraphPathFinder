@@ -1,6 +1,7 @@
 #include <GridCell.hpp>
 #include <Node.hpp>
 #include <array>
+#include <cmath>
 #include <iostream>
 
 using grid::GridCell;
@@ -75,28 +76,31 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
 [[nodiscard]] auto GridCell::split() const noexcept
     -> std::array<GridCell, 4>
 {
+    const std::int64_t half_width = std::floor(top_right_.column / 2.);
+    const std::int64_t half_hight = std::floor(bottom_left_.row / 2.);
+
     const auto top_left = GridCell{
         GridCorner{top_left_.row, top_left_.column},
         GridCorner{top_left_.row, top_right_.column / 2},
-        GridCorner{bottom_left_.row / 2, top_left_.column},
-        GridCorner{bottom_left_.row / 2, top_right_.column / 2}};
+        GridCorner{half_hight, top_left_.column},
+        GridCorner{half_hight, half_width}};
 
     const auto top_right = GridCell{
-        GridCorner{top_left_.row, top_right_.column / 2 + 1},
+        GridCorner{top_left_.row, half_width + 1},
         GridCorner{top_right_.row, top_right_.column},
-        GridCorner{bottom_left_.row / 2, top_right_.column / 2 + 1},
-        GridCorner{bottom_right_.row / 2, top_right_.column}};
+        GridCorner{half_hight, half_width + 1},
+        GridCorner{half_hight, top_right_.column}};
 
     const auto bottom_left = GridCell{
-        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column},
-        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column / 2},
+        GridCorner{half_hight + 1, bottom_right_.column},
+        GridCorner{half_hight + 1, half_width},
         GridCorner{bottom_left_.row, bottom_left_.column},
-        GridCorner{bottom_right_.row, bottom_right_.column / 2}};
+        GridCorner{bottom_right_.row, half_width}};
 
     const auto bottom_right = GridCell{
-        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column / 2 + 1},
-        GridCorner{bottom_left_.row / 2 + 1, bottom_right_.column},
-        GridCorner{bottom_left_.row, bottom_right_.column / 2 + 1},
+        GridCorner{half_hight + 1, half_width + 1},
+        GridCorner{half_hight + 1, bottom_right_.column},
+        GridCorner{bottom_left_.row, half_width + 1},
         GridCorner{bottom_right_.row, bottom_right_.column}};
 
     return std::array{
