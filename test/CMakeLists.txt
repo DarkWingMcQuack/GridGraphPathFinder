@@ -5,6 +5,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(unit_tests
   grid_graph_test.cpp
   simple_dijkstra_test.cpp
+  manhattan_dijkstra_test.cpp
   main.cpp
   )
 
