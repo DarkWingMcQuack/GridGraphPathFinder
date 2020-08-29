@@ -75,6 +75,7 @@ auto MultiTargetDijkstra::computeDistances(const graph::Node& source, const std:
 {
     DijkstraQueue queue(DIJKSTRA_QUEUE_COMPERATOR);
     queue.emplace(source, 0l);
+	setDistanceTo(source, 0l);
 
     std::vector<Node> touched;
     std::size_t settled_targets{0};
