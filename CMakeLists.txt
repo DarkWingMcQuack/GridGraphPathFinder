@@ -43,6 +43,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/SimpleDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/ManhattanDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/MultiTargetDijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/MultiTargetManhattanDijkstra.hpp
 
   PRIVATE
   src/GridGraph.cpp
@@ -52,6 +53,7 @@ target_sources(GridGraphPathFinderSrc
   src/SimpleDijkstra.cpp
   src/ManhattanDijkstra.cpp
   src/MultiTargetDijkstra.cpp
+  src/MultiTargetManhattanDijkstra.cpp
   )
 
 # add the dependencies of the target to enforce
