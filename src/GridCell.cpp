@@ -67,8 +67,8 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
 [[nodiscard]] auto GridCell::isSplitable() const noexcept
     -> bool
 {
-    const auto width = top_right_.column - top_left_.column;
-    const auto height = bottom_left_.row - top_left_.row;
+    const auto width = top_right_.column - top_left_.column + 1;
+    const auto height = bottom_left_.row - top_left_.row + 1;
 
     return width >= 2
         && height >= 2
@@ -79,8 +79,8 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
 [[nodiscard]] auto GridCell::isAtomic() const noexcept
     -> bool
 {
-    const auto width = top_right_.column - top_left_.column;
-    const auto height = bottom_left_.row - top_left_.row;
+    const auto width = top_right_.column - top_left_.column + 1;
+    const auto height = bottom_left_.row - top_left_.row + 1;
 
     return width == 1 && height == 1;
 }
