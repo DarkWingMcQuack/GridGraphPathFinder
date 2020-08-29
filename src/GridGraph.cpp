@@ -72,6 +72,31 @@ auto GridGraph::getWalkableNeigbours(const Node& n) const noexcept
     return nodes;
 }
 
+
+auto GridGraph::getWalkableManhattanNeigbours(const Node& n) const noexcept
+    -> std::vector<Node>
+{
+
+    std::array raw_neigs{
+        Node{n.row, n.column + 1},
+        Node{n.row, n.column - 1},
+        Node{n.row - 1, n.column},
+        Node{n.row + 1, n.column},
+    };
+
+    std::vector<Node> nodes;
+    nodes.reserve(4);
+
+    std::copy_if(std::cbegin(raw_neigs),
+                 std::cend(raw_neigs),
+                 std::back_inserter(nodes),
+                 [&](const auto& n) {
+                     return isWalkableNode(n);
+                 });
+
+    return nodes;
+}
+
 auto graph::parseFileToGridGraph(std::string_view path) noexcept
     -> std::optional<GridGraph>
 {
