@@ -130,6 +130,12 @@ auto SimpleDijkstra::getWalkableNeigboursOf(const graph::Node& n) const noexcept
     return graph_.get().getWalkableNeigbours(n);
 }
 
+auto SimpleDijkstra::getWalkableManhattanNeigboursOf(const graph::Node& n) const noexcept
+    -> std::vector<graph::Node>
+{
+    return graph_.get().getWalkableManhattanNeigbours(n);
+}
+
 
 namespace {
 constexpr auto dijkstra_comperator = [](const std::pair<Node, Distance>& lhs,
@@ -196,7 +202,7 @@ auto SimpleDijkstra::findSmallestDistanceGreaterThan(const std::vector<graph::No
     std::sort(std::begin(distances),
               std::end(distances));
 
-	return distances[0];
+    return distances[0];
     // for(int i{0}; i < distances.size(); i++) {
     //     auto dist = distances[i];
     //     if(dist > limit) {

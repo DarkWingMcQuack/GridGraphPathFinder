@@ -44,6 +44,9 @@ protected:
     auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
         -> std::vector<graph::Node>;
 
+    auto getWalkableManhattanNeigboursOf(const graph::Node& n) const noexcept
+        -> std::vector<graph::Node>;
+
     auto getIndex(const graph::Node& n) const noexcept
         -> std::optional<std::size_t>;
 
