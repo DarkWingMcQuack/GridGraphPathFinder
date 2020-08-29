@@ -397,3 +397,52 @@ TEST(GridGraphTest, WalkableNeigGridGraphTest)
 	EXPECT_NE(std::find(std::cbegin(neigs3), std::cend(neigs3), Node{0, 1}), std::cend(neigs3));
 }
 
+TEST(GridGraphTest, WalkableManhattanNeigGridGraphTest)
+{
+    std::vector test1{
+        std::vector{true, true, true, true, true},
+        std::vector{true, true, true, true, true},
+        std::vector{true, true, false, true, true},
+        std::vector{true, true, true, true, true},
+        std::vector{true, true, true, true, true}};
+
+    GridGraph graph_test1{test1};
+
+	auto neigs1 = graph_test1.getWalkableManhattanNeigbours({2, 2});
+	ASSERT_EQ(neigs1.size(), 4);
+	EXPECT_NE(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{1, 2}), std::cend(neigs1));
+	EXPECT_NE(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{2, 1}), std::cend(neigs1));
+	EXPECT_NE(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{2, 3}), std::cend(neigs1));
+	EXPECT_NE(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{3, 2}), std::cend(neigs1));
+
+	EXPECT_EQ(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{1, 1}), std::cend(neigs1));
+	EXPECT_EQ(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{2, 2}), std::cend(neigs1));
+	EXPECT_EQ(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{1, 3}), std::cend(neigs1));
+	EXPECT_EQ(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{3, 3}), std::cend(neigs1));
+	EXPECT_EQ(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{3, 1}), std::cend(neigs1));
+
+	
+	auto neigs2 = graph_test1.getWalkableManhattanNeigbours({0, 0});
+	ASSERT_EQ(neigs2.size(), 2);
+
+	EXPECT_NE(std::find(std::cbegin(neigs2), std::cend(neigs2), Node{1, 0}), std::cend(neigs2));
+	EXPECT_NE(std::find(std::cbegin(neigs2), std::cend(neigs2), Node{0, 1}), std::cend(neigs2));
+
+	EXPECT_EQ(std::find(std::cbegin(neigs2), std::cend(neigs2), Node{1, 1}), std::cend(neigs2));
+
+	
+    std::vector test2{
+        std::vector{true, true, true, true, true},
+        std::vector{false, false, true, true, true},
+        std::vector{true, true, false, true, true},
+        std::vector{true, true, true, true, true},
+        std::vector{true, true, true, true, true}};
+
+    GridGraph graph_test2{test2};
+
+	auto neigs3 = graph_test2.getWalkableNeigbours({0, 0});
+	ASSERT_EQ(neigs3.size(), 1);
+
+	EXPECT_NE(std::find(std::cbegin(neigs3), std::cend(neigs3), Node{0, 1}), std::cend(neigs3));
+	EXPECT_EQ(std::find(std::cbegin(neigs3), std::cend(neigs3), Node{1, 0}), std::cend(neigs3));
+}
