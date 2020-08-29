@@ -92,7 +92,7 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
         && top_right_.column >= top_left_.column
         && top_left_.row <= bottom_left_.row
         && bottom_left_.row == bottom_right_.row
-        && bottom_right_.column >= bottom_left_.row
+        && bottom_right_.column >= bottom_left_.column
         && top_left_.row >= 0 && top_left_.column >= 0
         && top_right_.row >= 0 && top_right_.column >= 0
         && bottom_left_.row >= 0 && bottom_left_.column >= 0
@@ -118,7 +118,7 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
         GridCorner{half_hight, top_right_.column}};
 
     const auto bottom_left = GridCell{
-        GridCorner{half_hight + 1, bottom_right_.column},
+        GridCorner{half_hight + 1, bottom_left_.column},
         GridCorner{half_hight + 1, half_width},
         GridCorner{bottom_left_.row, bottom_left_.column},
         GridCorner{bottom_right_.row, half_width}};
