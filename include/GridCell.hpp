@@ -47,6 +47,9 @@ public:
     [[nodiscard]] auto isAtomic() const noexcept
         -> bool;
 
+    [[nodiscard]] auto isValid() const noexcept
+        -> bool;
+
     [[nodiscard]] auto isSplitable() const noexcept
         -> bool;
 

@@ -73,6 +73,16 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
     return width == 1 && height == 1;
 }
 
+[[nodiscard]] auto GridCell::isValid() const noexcept
+    -> bool
+{
+    return top_right_.row == top_left_.row
+        && top_right_.column >= top_left_.column
+        && top_left_.row <= bottom_left_.row
+        && bottom_left_.row == bottom_right_.row
+        && bottom_right_.column >= bottom_left_.row;
+}
+
 [[nodiscard]] auto GridCell::split() const noexcept
     -> std::array<GridCell, 4>
 {
