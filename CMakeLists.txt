@@ -41,6 +41,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/ProgramOptions.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/Path.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/SimpleDijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/ManhattanDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/MultiTargetDijkstra.hpp
 
   PRIVATE
@@ -49,6 +50,7 @@ target_sources(GridGraphPathFinderSrc
   src/ProgramOptions.cpp
   src/Path.cpp
   src/SimpleDijkstra.cpp
+  src/ManhattanDijkstra.cpp
   src/MultiTargetDijkstra.cpp
   )
 
