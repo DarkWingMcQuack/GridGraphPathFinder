@@ -1,9 +1,9 @@
 #pragma once
 
+#include <Node.hpp>
 #include <optional>
 #include <string_view>
 #include <vector>
-#include <Node.hpp>
 
 namespace graph {
 
@@ -20,16 +20,16 @@ public:
     auto operator=(const GridGraph&) -> GridGraph& = delete;
 
     //https://godbolt.org/z/zx8M6K
-    auto isBarrier(const Node& n) const noexcept 
+    auto isBarrier(const Node& n) const noexcept
         -> bool;
 
-    auto isWalkableNode(const Node& n) const noexcept 
+    auto isWalkableNode(const Node& n) const noexcept
         -> bool;
 
-    auto getWalkableNeigbours(const Node& n) const noexcept 
+    auto getWalkableNeigbours(const Node& n) const noexcept
         -> std::vector<Node>;
 
-    auto getWalkableManhattanNeigbours(const Node& n) const noexcept 
+    auto getWalkableManhattanNeigbours(const Node& n) const noexcept
         -> std::vector<Node>;
 
     const std::size_t height;
