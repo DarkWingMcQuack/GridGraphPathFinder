@@ -130,12 +130,6 @@ auto SimpleDijkstra::getWalkableNeigboursOf(const graph::Node& n) const noexcept
     return graph_.get().getWalkableNeigbours(n);
 }
 
-auto SimpleDijkstra::getWalkableManhattanNeigboursOf(const graph::Node& n) const noexcept
-    -> std::vector<graph::Node>
-{
-    return graph_.get().getWalkableManhattanNeigbours(n);
-}
-
 auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::Node& target) noexcept
     -> std::vector<graph::Node>
 {

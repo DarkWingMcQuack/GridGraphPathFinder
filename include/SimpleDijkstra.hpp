@@ -32,9 +32,6 @@ public:
     auto findRoutes(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<Path>;
 
-    auto findManhattanRoutes(const graph::Node& source, const graph::Node& target) noexcept
-        -> std::vector<Path>;
-
 protected:
     auto getDistanceTo(const graph::Node& n) const noexcept
         -> Distance;
@@ -55,9 +52,6 @@ protected:
         -> Distance;
 
     auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
-        -> std::vector<graph::Node>;
-
-    auto getWalkableManhattanNeigboursOf(const graph::Node& n) const noexcept
         -> std::vector<graph::Node>;
 
     auto getIndex(const graph::Node& n) const noexcept
