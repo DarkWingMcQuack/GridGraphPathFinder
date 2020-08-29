@@ -48,7 +48,7 @@ protected:
     auto resetDistances(const std::vector<graph::Node>& touched) noexcept
         -> void;
 
-    auto findSmallestDistanceGreaterThan(const std::vector<graph::Node>& nodes) const noexcept
+    auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
         -> Distance;
 
     auto getWalkableNeigboursOf(const graph::Node& n) const noexcept

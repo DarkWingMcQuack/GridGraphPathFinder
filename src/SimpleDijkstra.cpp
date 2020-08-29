@@ -96,7 +96,7 @@ auto SimpleDijkstra::extractShortestPaths(const graph::Node& source, const graph
         const auto& last_inserted = path.getSource();
         auto neigbours = getWalkableNeigboursOf(last_inserted);
         auto last_dist = getDistanceTo(last_inserted);
-        auto smallest_distance = findSmallestDistanceGreaterThan(neigbours);
+        auto smallest_distance = findSmallestDistance(neigbours);
 
         if(smallest_distance == UNREACHABLE) {
             continue;
@@ -164,8 +164,7 @@ auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::No
     return touched;
 }
 
-
-auto SimpleDijkstra::findSmallestDistanceGreaterThan(const std::vector<graph::Node>& nodes) const noexcept
+auto SimpleDijkstra::findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
     -> Distance
 {
     if(nodes.empty()) {
@@ -180,16 +179,6 @@ auto SimpleDijkstra::findSmallestDistanceGreaterThan(const std::vector<graph::No
                        return getDistanceTo(n);
                    });
 
-    std::sort(std::begin(distances),
-              std::end(distances));
-
-    return distances[0];
-    // for(int i{0}; i < distances.size(); i++) {
-    //     auto dist = distances[i];
-    //     if(dist > limit) {
-    //         return dist;
-    //     }
-    // }
-
-    // return UNREACHABLE;
+    return *std::min_element(std::cbegin(distances),
+                             std::cend(distances));
 }
