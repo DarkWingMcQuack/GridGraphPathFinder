@@ -11,7 +11,7 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid) noexcept
     : height(grid.size()),
       width(grid[0].size())
 {
-    auto total_size = grid.size() * grid[0].size();
+    const auto total_size = grid.size() * grid[0].size();
     grid_.reserve(total_size);
 
     for(const auto& sub_grid : grid) {
@@ -30,8 +30,8 @@ auto GridGraph::isBarrier(const Node& n) const noexcept
 auto GridGraph::isWalkableNode(const Node& n) const noexcept
     -> bool
 {
-    auto row = n.row;
-    auto column = n.column;
+    const auto row = n.row;
+    const auto column = n.column;
 
     if(row >= height || row < 0) {
         return false;
@@ -41,14 +41,14 @@ auto GridGraph::isWalkableNode(const Node& n) const noexcept
         return false;
     }
 
-    auto index = n.row * width + n.column;
+    const auto index = n.row * width + n.column;
     return grid_[index];
 }
 
 auto GridGraph::getWalkableNeigbours(const Node& n) const noexcept
     -> std::vector<Node>
 {
-    std::array raw_neigs{
+    const std::array raw_neigs{
         Node{n.row, n.column + 1},
         Node{n.row, n.column - 1},
         Node{n.row - 1, n.column},
@@ -76,8 +76,7 @@ auto GridGraph::getWalkableNeigbours(const Node& n) const noexcept
 auto GridGraph::getWalkableManhattanNeigbours(const Node& n) const noexcept
     -> std::vector<Node>
 {
-
-    std::array raw_neigs{
+    const std::array raw_neigs{
         Node{n.row, n.column + 1},
         Node{n.row, n.column - 1},
         Node{n.row - 1, n.column},
