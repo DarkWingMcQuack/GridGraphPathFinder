@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GridCellIterator.hpp>
 #include <Node.hpp>
 #include <array>
 #include <iostream>
@@ -10,14 +11,32 @@ struct GridCorner
 {
     GridCorner(std::int64_t row,
                std::int64_t column);
+    GridCorner(GridCorner&&) = default;
+    GridCorner(const GridCorner&) = default;
 
-    const std::int64_t row;
-    const std::int64_t column;
+    auto operator=(GridCorner &&) -> GridCorner& = default;
+    auto operator=(const GridCorner&) -> GridCorner& = default;
+
 
     auto operator==(const GridCorner& other) const noexcept
         -> bool;
     auto operator!=(const GridCorner& other) const noexcept
         -> bool;
+
+    auto getRow() const noexcept
+        -> std::int64_t;
+    auto getColumn() const noexcept
+        -> std::int64_t;
+
+
+private:
+    friend auto operator<<(std::ostream& os, const GridCorner& c) noexcept
+        -> std::ostream&;
+
+    friend class GridCell;
+
+    std::int64_t row_;
+    std::int64_t column_;
 };
 
 auto operator<<(std::ostream& os, const GridCorner& c) noexcept
@@ -58,6 +77,21 @@ public:
 
     [[nodiscard]] auto split() const noexcept
         -> std::array<GridCell, 4>;
+
+    [[nodiscard]] auto getWidth() const noexcept
+        -> std::size_t;
+
+    [[nodiscard]] auto getHeight() const noexcept
+        -> std::size_t;
+
+    auto getNodeAt(std::size_t row, std::size_t column) const noexcept
+        -> std::optional<graph::Node>;
+
+    auto begin() const noexcept
+        -> GridCellIterator;
+
+    auto end() const noexcept
+        -> GridCellIterator;
 
 private:
     friend auto operator<<(std::ostream& os, const GridCell& c) noexcept
