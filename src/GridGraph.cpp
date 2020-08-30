@@ -97,6 +97,22 @@ auto GridGraph::getWalkableManhattanNeigbours(const Node& n) const noexcept
     return nodes;
 }
 
+auto GridGraph::getAllWalkableNodesOfCell(const grid::GridCell& cell) const noexcept
+    -> std::vector<Node>
+{
+    std::vector<Node> nodes;
+    nodes.reserve(cell.getWidth() * cell.getWidth());
+
+    std::copy_if(std::cbegin(cell),
+                 std::cend(cell),
+                 std::back_inserter(nodes),
+                 [&](const auto& node) {
+                     return isWalkableNode(node);
+                 });
+
+    return nodes;
+}
+
 auto graph::parseFileToGridGraph(std::string_view path) noexcept
     -> std::optional<GridGraph>
 {

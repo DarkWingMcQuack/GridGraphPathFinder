@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GridCell.hpp>
 #include <Node.hpp>
 #include <optional>
 #include <string_view>
@@ -30,6 +31,9 @@ public:
         -> std::vector<Node>;
 
     auto getWalkableManhattanNeigbours(const Node& n) const noexcept
+        -> std::vector<Node>;
+
+    auto getAllWalkableNodesOfCell(const grid::GridCell& cell) const noexcept
         -> std::vector<Node>;
 
     const std::size_t height;
