@@ -2,6 +2,7 @@
 #include <GridCellIterator.hpp>
 #include <GridCorner.hpp>
 #include <Node.hpp>
+#include <Utils.hpp>
 #include <array>
 #include <cmath>
 #include <iostream>
@@ -10,6 +11,8 @@ using grid::GridCell;
 using grid::GridCorner;
 using grid::GridCellIterator;
 using graph::Node;
+using util::min;
+using util::max;
 
 
 GridCell::GridCell(GridCorner top_left,
@@ -169,26 +172,6 @@ auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
               << ", "
               << c.bottom_right_
               << "}";
-}
-
-template<class Head0, class Head1, class... Tail>
-constexpr auto min(Head0&& head0, Head1&& head1, Tail&&... tail)
-{
-    if constexpr(sizeof...(tail) == 0) {
-        return head0 < head1 ? head0 : head1;
-    } else {
-        return min(min(head0, head1), tail...);
-    }
-}
-
-template<class Head0, class Head1, class... Tail>
-constexpr auto max(Head0&& head0, Head1&& head1, Tail&&... tail)
-{
-    if constexpr(sizeof...(tail) == 0) {
-        return head0 > head1 ? head0 : head1;
-    } else {
-        return min(min(head0, head1), tail...);
-    }
 }
 
 auto grid::merge(const GridCell& first,
