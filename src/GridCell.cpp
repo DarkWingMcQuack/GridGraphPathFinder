@@ -11,16 +11,16 @@ using grid::GridCellIterator;
 using graph::Node;
 
 
+GridCorner::GridCorner(std::int64_t row,
+                       std::int64_t column)
+    : row_(row),
+      column_(column) {}
+
 auto GridCorner::operator==(const GridCorner& other) const noexcept
     -> bool
 {
     return row_ == other.row_ && column_ == other.column_;
 }
-
-GridCorner::GridCorner(std::int64_t row,
-                       std::int64_t column)
-    : row_(row),
-      column_(column) {}
 
 auto GridCorner::operator!=(const GridCorner& other) const noexcept
     -> bool
