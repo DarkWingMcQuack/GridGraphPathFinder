@@ -170,3 +170,75 @@ auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
               << c.bottom_right_
               << "}";
 }
+
+template<class Head0, class Head1, class... Tail>
+constexpr auto min(Head0&& head0, Head1&& head1, Tail&&... tail)
+{
+    if constexpr(sizeof...(tail) == 0) {
+        return head0 < head1 ? head0 : head1;
+    } else {
+        return min(min(head0, head1), tail...);
+    }
+}
+
+template<class Head0, class Head1, class... Tail>
+constexpr auto max(Head0&& head0, Head1&& head1, Tail&&... tail)
+{
+    if constexpr(sizeof...(tail) == 0) {
+        return head0 > head1 ? head0 : head1;
+    } else {
+        return min(min(head0, head1), tail...);
+    }
+}
+
+auto grid::merge(const GridCell& first,
+                 const GridCell& second,
+                 const GridCell& third,
+                 const GridCell& fourth) noexcept
+    -> GridCell
+{
+    GridCorner top_left{
+        min(first.top_left_.getRow(),
+            second.top_left_.getRow(),
+            third.top_left_.getRow(),
+            fourth.top_left_.getRow()),
+        min(first.top_left_.getColumn(),
+            second.top_left_.getColumn(),
+            third.top_left_.getColumn(),
+            fourth.top_left_.getColumn())};
+
+    GridCorner top_right{
+        min(first.top_right_.getRow(),
+            second.top_right_.getRow(),
+            third.top_right_.getRow(),
+            fourth.top_right_.getRow()),
+        max(first.top_right_.getColumn(),
+            second.top_right_.getColumn(),
+            third.top_right_.getColumn(),
+            fourth.top_right_.getColumn())};
+
+    GridCorner bottom_left{
+        max(first.bottom_left_.getRow(),
+            second.bottom_left_.getRow(),
+            third.bottom_left_.getRow(),
+            fourth.bottom_left_.getRow()),
+        min(first.bottom_left_.getColumn(),
+            second.bottom_left_.getColumn(),
+            third.bottom_left_.getColumn(),
+            fourth.bottom_left_.getColumn())};
+
+    GridCorner bottom_right{
+        max(first.bottom_right_.getRow(),
+            second.bottom_right_.getRow(),
+            third.bottom_right_.getRow(),
+            fourth.bottom_right_.getRow()),
+        max(first.bottom_right_.getColumn(),
+            second.bottom_right_.getColumn(),
+            third.bottom_right_.getColumn(),
+            fourth.bottom_right_.getColumn())};
+
+    return GridCell{top_left,
+                    top_right,
+                    bottom_left,
+                    bottom_right};
+}

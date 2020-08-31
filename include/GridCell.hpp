@@ -63,6 +63,13 @@ private:
     friend auto operator<<(std::ostream& os, const GridCell& c) noexcept
         -> std::ostream&;
 
+
+    friend auto merge(const GridCell& first,
+                      const GridCell& second,
+                      const GridCell& third,
+                      const GridCell& fourth) noexcept
+        -> GridCell;
+
     GridCorner top_left_;
     GridCorner top_right_;
     GridCorner bottom_left_;
