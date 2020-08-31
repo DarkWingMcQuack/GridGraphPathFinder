@@ -2,7 +2,8 @@
 Checks: "-*,\
 bugprone-*,\
 -bugprone-lambda-function-name,\
-# clang-analyzer-*,\
+clang-analyzer-*,\
+performance-*,\
 google-readability-casting,\
 cppcoreguidelines-avoid-goto,\
 cppcoreguidelines-interfaces-global-init,\
