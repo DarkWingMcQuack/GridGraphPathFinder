@@ -18,8 +18,8 @@ public:
     using reference = graph::Node;
     using iterator_category = std::random_access_iterator_tag;
 
-    GridCellIterator(const GridCell& cell,
-                     difference_type idx = 0);
+    explicit GridCellIterator(const GridCell& cell,
+                              difference_type idx = 0);
 
     auto operator++() noexcept
         -> GridCellIterator&;
@@ -38,9 +38,18 @@ public:
     auto operator-(difference_type rhs) const noexcept
         -> GridCellIterator;
 
+    auto operator+(const GridCellIterator& rhs) const noexcept
+        -> GridCellIterator;
+    auto operator-(const GridCellIterator& rhs) const noexcept
+        -> GridCellIterator;
+
     auto operator+=(difference_type rhs) noexcept
         -> GridCellIterator&;
     auto operator-=(difference_type rhs) noexcept
+        -> GridCellIterator&;
+    auto operator+=(const GridCellIterator& rhs) noexcept
+        -> GridCellIterator&;
+    auto operator-=(const GridCellIterator& rhs) noexcept
         -> GridCellIterator&;
 
     auto operator==(const GridCellIterator& other) const noexcept
