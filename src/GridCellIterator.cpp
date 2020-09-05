@@ -1,5 +1,5 @@
-#include <GridCellIterator.hpp>
 #include <GridCell.hpp>
+#include <GridCellIterator.hpp>
 #include <Node.hpp>
 #include <cmath>
 
@@ -56,10 +56,5 @@ auto GridCellIterator::operator!=(GridCellIterator other) const noexcept
 
 auto GridCellIterator::operator*() noexcept -> graph::Node
 {
-    const auto width = cell_.getWidth();
-
-    const std::size_t row = std::floor(idx_ / static_cast<double>(width));
-    const std::size_t column = idx_ % width;
-
-    return cell_.getNodeAt(row, column).value();
+    return cell_[idx_];
 }
