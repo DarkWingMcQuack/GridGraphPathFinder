@@ -105,7 +105,7 @@ auto pathfinding::findCommonNodes(const std::vector<Path>& paths) noexcept
     std::vector<std::vector<Node>> raw_paths;
     raw_paths.resize(paths.size());
 
-    std::transform(std::execution::par_unseq,
+    std::transform(std::execution::par,
                    std::cbegin(paths),
                    std::cend(paths),
                    std::begin(raw_paths),
@@ -116,7 +116,7 @@ auto pathfinding::findCommonNodes(const std::vector<Path>& paths) noexcept
                        return nodes;
                    });
 
-    return std::reduce(std::execution::par_unseq,
+    return std::reduce(std::execution::par,
                        std::make_move_iterator(std::begin(raw_paths)),
                        std::make_move_iterator(std::end(raw_paths)),
                        std::vector<Node>{},
@@ -130,17 +130,5 @@ auto pathfinding::findCommonNodes(const std::vector<Path>& paths) noexcept
                                                  std::back_inserter(intersect));
 
                            return intersect;
-                       });
-}
-
-
-auto pathfinding::pathSetContainsPathWithNode(const std::vector<Path>& set,
-                                              const graph::Node& node) noexcept
-    -> bool
-{
-    return std::any_of(std::begin(set),
-                       std::end(set),
-                       [&](const auto& path) {
-                           return path.contains(node);
                        });
 }

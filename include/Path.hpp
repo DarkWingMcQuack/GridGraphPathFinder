@@ -57,8 +57,4 @@ auto operator<<(std::ostream& os, const Path& p) noexcept
 auto findCommonNodes(const std::vector<Path>& paths) noexcept
     -> std::vector<graph::Node>;
 
-auto pathSetContainsPathWithNode(const std::vector<Path>& set,
-                                 const graph::Node& node) noexcept
-    -> bool;
-
 } // namespace pathfinding
