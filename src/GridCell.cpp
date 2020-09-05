@@ -158,6 +158,12 @@ auto GridCell::end() const noexcept
                             getWidth() * getHeight()};
 }
 
+auto GridCell::size() const noexcept
+    -> std::size_t
+{
+    return getHeight() * getWidth();
+}
+
 
 auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
     -> std::ostream&

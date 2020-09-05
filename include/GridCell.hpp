@@ -50,6 +50,9 @@ public:
     [[nodiscard]] auto getHeight() const noexcept
         -> std::size_t;
 
+    [[nodiscard]] auto size() const noexcept
+        -> std::size_t;
+
     auto getNodeAt(std::size_t row, std::size_t column) const noexcept
         -> std::optional<graph::Node>;
 
