@@ -11,8 +11,15 @@ class GridCell;
 class GridCellIterator
 {
 public:
+    // GridCellIterator traits
+    using difference_type = long;
+    using value_type = graph::Node;
+    using pointer = graph::Node;
+    using reference = graph::Node;
+    using iterator_category = std::random_access_iterator_tag;
+
     GridCellIterator(const GridCell& cell,
-                     std::size_t idx = 0);
+                     difference_type idx = 0);
 
     auto operator++() noexcept
         -> GridCellIterator&;
@@ -26,23 +33,37 @@ public:
     auto operator--(int) noexcept
         -> GridCellIterator;
 
-    auto operator==(GridCellIterator other) const noexcept
+    auto operator+(difference_type rhs) const noexcept
+        -> GridCellIterator;
+    auto operator-(difference_type rhs) const noexcept
+        -> GridCellIterator;
+
+    auto operator+=(difference_type rhs) noexcept
+        -> GridCellIterator&;
+    auto operator-=(difference_type rhs) noexcept
+        -> GridCellIterator&;
+
+    auto operator==(const GridCellIterator& other) const noexcept
         -> bool;
-    auto operator!=(GridCellIterator other) const noexcept
+    auto operator!=(const GridCellIterator& other) const noexcept
+        -> bool;
+    auto operator<=(const GridCellIterator& other) const noexcept
+        -> bool;
+    auto operator>=(const GridCellIterator& other) const noexcept
+        -> bool;
+    auto operator<(const GridCellIterator& other) const noexcept
+        -> bool;
+    auto operator>(const GridCellIterator& other) const noexcept
         -> bool;
 
     auto operator*() noexcept -> graph::Node;
+    auto operator->() noexcept -> graph::Node;
+    auto operator[](int) noexcept -> graph::Node;
 
-    // GridCellIterator traits
-    using difference_type = long;
-    using value_type = graph::Node;
-    using pointer = const graph::Node*;
-    using reference = const graph::Node&;
-    using iterator_category = std::bidirectional_iterator_tag;
 
 private:
     const GridCell& cell_;
-    std::size_t idx_;
+    difference_type idx_;
 };
 
 } // namespace grid

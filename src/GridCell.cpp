@@ -167,8 +167,8 @@ auto GridCell::begin() const noexcept
 auto GridCell::end() const noexcept
     -> GridCellIterator
 {
-    return GridCellIterator{*this,
-                            getWidth() * getHeight()};
+    auto end_index = static_cast<GridCellIterator::difference_type>(getWidth() * getHeight());
+    return GridCellIterator{*this, end_index};
 }
 
 auto GridCell::size() const noexcept

@@ -8,7 +8,7 @@ using grid::GridCellIterator;
 using graph::Node;
 
 GridCellIterator::GridCellIterator(const GridCell& cell,
-                                   std::size_t idx)
+                                   difference_type idx)
     : cell_(cell),
       idx_(idx) {}
 
@@ -42,19 +42,80 @@ auto GridCellIterator::operator--(int) noexcept
     return ret;
 }
 
-auto GridCellIterator::operator==(GridCellIterator other) const noexcept
+auto GridCellIterator::operator+(difference_type rhs) const noexcept
+    -> GridCellIterator
+{
+    return GridCellIterator{cell_, idx_ + rhs};
+}
+
+auto GridCellIterator::operator-(difference_type rhs) const noexcept
+    -> GridCellIterator
+{
+    return GridCellIterator{cell_, idx_ - rhs};
+}
+
+auto GridCellIterator::operator+=(difference_type rhs) noexcept
+    -> GridCellIterator&
+{
+    idx_ += rhs;
+    return *this;
+}
+
+auto GridCellIterator::operator-=(difference_type rhs) noexcept
+    -> GridCellIterator&
+{
+    idx_ -= rhs;
+    return *this;
+}
+
+auto GridCellIterator::operator==(const GridCellIterator& other) const noexcept
     -> bool
 {
     return idx_ == other.idx_ && cell_ == other.cell_;
 }
 
-auto GridCellIterator::operator!=(GridCellIterator other) const noexcept
+auto GridCellIterator::operator!=(const GridCellIterator& other) const noexcept
     -> bool
 {
     return !(*this == other);
 }
 
+
+auto GridCellIterator::operator<=(const GridCellIterator& other) const noexcept
+    -> bool
+{
+    return *this < other or *this == other;
+}
+
+auto GridCellIterator::operator>=(const GridCellIterator& other) const noexcept
+    -> bool
+{
+    return *this > other or *this == other;
+}
+
+auto GridCellIterator::operator<(const GridCellIterator& other) const noexcept
+    -> bool
+{
+    return this->idx_ < other.idx_;
+}
+
+auto GridCellIterator::operator>(const GridCellIterator& other) const noexcept
+    -> bool
+{
+    return this->idx_ > other.idx_;
+}
+
 auto GridCellIterator::operator*() noexcept -> graph::Node
 {
     return cell_[idx_];
+}
+
+auto GridCellIterator::operator->() noexcept -> graph::Node
+{
+    return cell_[idx_];
+}
+
+auto GridCellIterator::operator[](int idx) noexcept -> graph::Node
+{
+    return cell_[idx];
 }
