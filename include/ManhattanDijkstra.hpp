@@ -23,6 +23,9 @@ public:
     auto findRoutes(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<Path>;
 
+    auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
+        -> Distance;
+
 protected:
     auto getDistanceTo(const graph::Node& n) const noexcept
         -> Distance;

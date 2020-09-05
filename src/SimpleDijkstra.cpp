@@ -117,7 +117,6 @@ auto SimpleDijkstra::extractShortestPaths(const graph::Node& source, const graph
 
         const auto& last_inserted = path.getSource();
         auto neigbours = getWalkableNeigboursOf(last_inserted);
-        auto last_dist = getDistanceTo(last_inserted);
         auto smallest_distance = findSmallestDistance(neigbours);
 
         if(smallest_distance == UNREACHABLE) {
@@ -157,6 +156,10 @@ auto SimpleDijkstra::getWalkableNeigboursOf(const graph::Node& n) const noexcept
 auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::Node& target) noexcept
     -> std::vector<graph::Node>
 {
+    if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
+        return {};
+    }
+
     DijkstraQueue queue(DIJKSTRA_QUEUE_COMPERATOR);
     queue.emplace(source, 0l);
     setDistanceTo(source, 0);
@@ -164,7 +167,7 @@ auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::No
     std::vector<Node> touched;
 
     while(!queue.empty()) {
-        auto [current_node, current_dist] = std::move(queue.top());
+        auto [current_node, current_dist] = queue.top();
         queue.pop();
 
         if(current_node == target) {
@@ -173,12 +176,12 @@ auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::No
 
         auto neigbours = getWalkableNeigboursOf(current_node);
 
-        for(auto&& neig : neigbours) {
+        for(const auto& neig : neigbours) {
             touched.emplace_back(neig);
 
             auto neig_dist = getDistanceTo(neig);
 
-            if(neig_dist > current_dist + 1) {
+            if(neig_dist != current_dist and neig_dist > current_dist + 1) {
                 setDistanceTo(neig, current_dist + 1);
                 queue.emplace(neig, current_dist + 1);
             }

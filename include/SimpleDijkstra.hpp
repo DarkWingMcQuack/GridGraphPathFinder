@@ -12,7 +12,7 @@ namespace pathfinding {
 
 constexpr auto DIJKSTRA_QUEUE_COMPERATOR = [](const auto& lhs,
                                               const auto& rhs) {
-    return lhs.second < rhs.second;
+    return lhs.second > rhs.second;
 };
 
 using DijkstraQueue = std::priority_queue<std::pair<graph::Node, Distance>,

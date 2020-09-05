@@ -37,6 +37,27 @@ auto MultiTargetManhattanDijkstra::findRoutes(const graph::Node& source, const s
     return paths;
 }
 
+auto MultiTargetManhattanDijkstra::findDistances(const graph::Node& source,
+                                        const std::vector<graph::Node>& targets) noexcept
+    -> std::vector<Distance>
+{
+    auto touched = computeDistances(source, targets);
+
+
+    std::vector<Distance> distances;
+    std::transform(std::cbegin(targets),
+                   std::cend(targets),
+                   std::back_inserter(distances),
+                   [&](const auto& target) {
+					 return getDistanceTo(target);
+                   });
+
+    resetDistances(touched);
+    resetSettlements(touched);
+
+    return distances;
+}
+
 
 auto MultiTargetManhattanDijkstra::settle(const graph::Node& n)
     -> void

@@ -29,6 +29,16 @@ auto ManhattanDijkstra::findRoutes(const graph::Node& source, const graph::Node&
     return path;
 }
 
+auto ManhattanDijkstra::findDistance(const graph::Node& source, const graph::Node& target) noexcept
+    -> Distance
+{
+    auto touched = computeDistances(source, target);
+    auto distance = getDistanceTo(target);
+    resetDistances(touched);
+
+    return distance;
+}
+
 auto ManhattanDijkstra::getIndex(const graph::Node& n) const noexcept
     -> std::optional<std::size_t>
 {
@@ -97,7 +107,7 @@ auto ManhattanDijkstra::extractShortestPaths(const graph::Node& source, const gr
     std::vector<Path> complete_paths;
 
     while(!unfinished.empty()) {
-        auto path = std::move(unfinished.top());
+        auto path = unfinished.top();
         unfinished.pop();
 
         if(!complete_paths.empty()
@@ -107,7 +117,6 @@ auto ManhattanDijkstra::extractShortestPaths(const graph::Node& source, const gr
 
         const auto& last_inserted = path.getSource();
         auto neigbours = getWalkableManhattanNeigboursOf(last_inserted);
-        auto last_dist = getDistanceTo(last_inserted);
         auto smallest_distance = findSmallestDistance(neigbours);
 
         if(smallest_distance == UNREACHABLE) {

@@ -23,6 +23,10 @@ public:
     auto findRoutes(const graph::Node& source, const std::vector<graph::Node>& targets)
         -> std::vector<std::vector<Path>>;
 
+    auto findDistances(const graph::Node& source,
+                       const std::vector<graph::Node>& targets) noexcept
+        -> std::vector<Distance>;
+
 private:
     auto computeDistances(const graph::Node& source,
                           const std::vector<graph::Node>& targets)
