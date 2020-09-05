@@ -1,7 +1,7 @@
 #include <GridGraph.hpp>
 #include <MultiTargetDijkstra.hpp>
-#include <functional>
 #include <Path.hpp>
+#include <functional>
 #include <optional>
 #include <queue>
 #include <string_view>
@@ -34,6 +34,27 @@ auto MultiTargetDijkstra::findRoutes(const graph::Node& source, const std::vecto
     resetSettlements(touched);
 
     return paths;
+}
+
+auto MultiTargetDijkstra::findDistances(const graph::Node& source,
+                                        const std::vector<graph::Node>& targets) noexcept
+    -> std::vector<Distance>
+{
+    auto touched = computeDistances(source, targets);
+
+
+    std::vector<Distance> distances;
+    std::transform(std::cbegin(targets),
+                   std::cend(targets),
+                   std::back_inserter(distances),
+                   [&](const auto& target) {
+					 return getDistanceTo(target);
+                   });
+
+    resetDistances(touched);
+    resetSettlements(touched);
+
+    return distances;
 }
 
 
@@ -75,7 +96,7 @@ auto MultiTargetDijkstra::computeDistances(const graph::Node& source, const std:
 {
     DijkstraQueue queue(DIJKSTRA_QUEUE_COMPERATOR);
     queue.emplace(source, 0l);
-	setDistanceTo(source, 0l);
+    setDistanceTo(source, 0l);
 
     std::vector<Node> touched;
     std::size_t settled_targets{0};

@@ -24,6 +24,10 @@ public:
                                   const std::vector<graph::Node>& targets) noexcept
         -> std::vector<std::vector<Path>>;
 
+    [[nodiscard]] auto findDistances(const graph::Node& source,
+                                     const std::vector<graph::Node>& targets) noexcept
+        -> std::vector<Distance>;
+
 private:
     [[nodiscard]] auto computeDistances(const graph::Node& source,
                                         const std::vector<graph::Node>& targets) noexcept
