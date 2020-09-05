@@ -29,35 +29,35 @@ public:
     auto operator=(const SimpleDijkstra&) -> SimpleDijkstra& = delete;
     auto operator=(SimpleDijkstra &&) -> SimpleDijkstra& = delete;
 
-    auto findRoutes(const graph::Node& source, const graph::Node& target) noexcept
+    [[nodiscard]] auto findRoutes(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<Path>;
 
-    auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
+    [[nodiscard]] auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
         -> Distance;
 
 protected:
-    auto getDistanceTo(const graph::Node& n) const noexcept
+    [[nodiscard]] auto getDistanceTo(const graph::Node& n) const noexcept
         -> Distance;
 
     auto setDistanceTo(const graph::Node& n, std::int64_t distance) noexcept
         -> void;
 
-    auto computeDistances(const graph::Node& source, const graph::Node& target) noexcept
+    [[nodiscard]] auto computeDistances(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<graph::Node>;
 
-    auto extractShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
+    [[nodiscard]] auto extractShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
         -> std::vector<Path>;
 
     auto resetDistances(const std::vector<graph::Node>& touched) noexcept
         -> void;
 
-    auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
+    [[nodiscard]] auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
         -> Distance;
 
-    auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
+    [[nodiscard]] auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
         -> std::vector<graph::Node>;
 
-    auto getIndex(const graph::Node& n) const noexcept
+    [[nodiscard]] auto getIndex(const graph::Node& n) const noexcept
         -> std::optional<std::size_t>;
 
 private:
