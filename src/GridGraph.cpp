@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <fmt/core.h>
 #include <fstream>
+#include <random>
 #include <vector>
 
 using graph::GridGraph;
@@ -110,6 +111,27 @@ auto GridGraph::getAllWalkableNodesOfCell(const grid::GridCell& cell) const noex
                  });
 
     return nodes;
+}
+
+
+auto GridGraph::generateRandomCellOfSize(std::int64_t cell_size) const noexcept
+    -> grid::GridCell
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> width_dis(0, width - 1);
+    std::uniform_int_distribution<> heigth_dis(0, height - 1);
+
+    grid::GridCorner top_left{heigth_dis(gen), width_dis(gen)};
+    grid::GridCorner top_right{top_left.getRow(), top_left.getColumn() + cell_size};
+    grid::GridCorner bottom_left{top_left.getRow() + cell_size, top_left.getColumn()};
+    grid::GridCorner bottom_right{top_left.getRow() + cell_size, top_left.getColumn() + cell_size};
+
+    return grid::GridCell{
+        top_left,
+        top_right,
+        bottom_left,
+        bottom_right};
 }
 
 auto graph::parseFileToGridGraph(std::string_view path) noexcept

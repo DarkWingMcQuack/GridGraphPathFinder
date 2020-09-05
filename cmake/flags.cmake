@@ -9,7 +9,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
           -ferror-limit=2\
           -O0\
           -g3\
-          -fsanitize=memory\
           -fno-optimize-sibling-calls\
           -fno-omit-frame-pointer\
           -Wfloat-equal\

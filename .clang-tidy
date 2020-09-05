@@ -2,7 +2,7 @@
 Checks: "-*,\
 bugprone-*,\
 -bugprone-lambda-function-name,\
-clang-analyzer-*,\
+# clang-analyzer-*,\
 performance-*,\
 google-readability-casting,\
 cppcoreguidelines-avoid-goto,\
@@ -13,6 +13,7 @@ modernize-*,\
 -modernize-use-nodiscard,\
 readability-*,\
 -readability-magic-numbers,\
+-readability-redundant-access-specifiers,\
 -readability-braces-around-statements,\
 -readability-implicit-bool-cast,\
 -readability-implicit-bool-conversion,\

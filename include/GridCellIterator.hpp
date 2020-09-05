@@ -38,7 +38,7 @@ public:
     using value_type = graph::Node;
     using pointer = const graph::Node*;
     using reference = const graph::Node&;
-    using GridCellIterator_category = std::bidirectional_iterator_tag;
+    using iterator_category = std::bidirectional_iterator_tag;
 
 private:
     const GridCell& cell_;

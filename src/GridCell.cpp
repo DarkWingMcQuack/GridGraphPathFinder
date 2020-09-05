@@ -113,11 +113,10 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
         GridCorner{bottom_left_.row_, half_width + 1},
         GridCorner{bottom_right_.row_, bottom_right_.column_}};
 
-    return std::array{
-        std::move(top_left),
-        std::move(top_right),
-        std::move(bottom_left),
-        std::move(bottom_right)};
+    return std::array{top_left,
+                      top_right,
+                      bottom_left,
+                      bottom_right};
 }
 
 [[nodiscard]] auto GridCell::getWidth() const noexcept

@@ -23,7 +23,7 @@ auto GridCellIterator::operator++(int) noexcept
     -> GridCellIterator
 {
     auto ret = *this;
-    (*this)++;
+    ++(*this);
     return ret;
 }
 
@@ -38,7 +38,7 @@ auto GridCellIterator::operator--(int) noexcept
     -> GridCellIterator
 {
     auto ret = *this;
-    (*this)--;
+    --(*this);
     return ret;
 }
 

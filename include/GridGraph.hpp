@@ -36,6 +36,9 @@ public:
     [[nodiscard]] auto getAllWalkableNodesOfCell(const grid::GridCell& cell) const noexcept
         -> std::vector<Node>;
 
+    [[nodiscard]] auto generateRandomCellOfSize(std::int64_t cell_size) const noexcept
+        -> grid::GridCell;
+
     auto begin() const noexcept
         -> GridGraphIterator;
 

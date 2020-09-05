@@ -20,23 +20,25 @@ public:
     auto operator=(const MultiTargetDijkstra&) -> MultiTargetDijkstra& = delete;
     auto operator=(MultiTargetDijkstra &&) -> MultiTargetDijkstra& = delete;
 
-    auto findRoutes(const graph::Node& source, const std::vector<graph::Node>& targets)
+    [[nodiscard]] auto findRoutes(const graph::Node& source,
+                                  const std::vector<graph::Node>& targets) noexcept
         -> std::vector<std::vector<Path>>;
 
 private:
-    auto computeDistances(const graph::Node& source, const std::vector<graph::Node>& targets)
+    [[nodiscard]] auto computeDistances(const graph::Node& source,
+                                        const std::vector<graph::Node>& targets) noexcept
         -> std::vector<graph::Node>;
 
-    auto settle(const graph::Node& n)
+    auto settle(const graph::Node& n) noexcept
         -> void;
 
-    auto unSettle(const graph::Node& n)
+    auto unSettle(const graph::Node& n) noexcept
         -> void;
 
-    auto isSettled(const graph::Node& n)
+    [[nodiscard]] auto isSettled(const graph::Node& n) noexcept
         -> std::optional<bool>;
 
-    auto resetSettlements(const std::vector<graph::Node>& touched)
+    auto resetSettlements(const std::vector<graph::Node>& touched) noexcept
         -> void;
 
 private:

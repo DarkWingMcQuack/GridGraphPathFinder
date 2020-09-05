@@ -17,7 +17,7 @@ MultiTargetDijkstra::MultiTargetDijkstra(const graph::GridGraph& graph)
       settled_(graph.width * graph.height, false) {}
 
 
-auto MultiTargetDijkstra::findRoutes(const graph::Node& source, const std::vector<graph::Node>& targets)
+auto MultiTargetDijkstra::findRoutes(const graph::Node& source, const std::vector<graph::Node>& targets) noexcept
     -> std::vector<std::vector<Path>>
 {
     auto touched = computeDistances(source, targets);
@@ -37,7 +37,7 @@ auto MultiTargetDijkstra::findRoutes(const graph::Node& source, const std::vecto
 }
 
 
-auto MultiTargetDijkstra::settle(const graph::Node& n)
+auto MultiTargetDijkstra::settle(const graph::Node& n) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -47,7 +47,7 @@ auto MultiTargetDijkstra::settle(const graph::Node& n)
     }
 }
 
-auto MultiTargetDijkstra::unSettle(const graph::Node& n)
+auto MultiTargetDijkstra::unSettle(const graph::Node& n) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -58,7 +58,7 @@ auto MultiTargetDijkstra::unSettle(const graph::Node& n)
 }
 
 
-auto MultiTargetDijkstra::isSettled(const graph::Node& n)
+auto MultiTargetDijkstra::isSettled(const graph::Node& n) noexcept
     -> std::optional<bool>
 {
     auto index_opt = getIndex(n);
@@ -70,7 +70,7 @@ auto MultiTargetDijkstra::isSettled(const graph::Node& n)
     return std::nullopt;
 }
 
-auto MultiTargetDijkstra::computeDistances(const graph::Node& source, const std::vector<graph::Node>& targets)
+auto MultiTargetDijkstra::computeDistances(const graph::Node& source, const std::vector<graph::Node>& targets) noexcept
     -> std::vector<graph::Node>
 {
     DijkstraQueue queue(DIJKSTRA_QUEUE_COMPERATOR);
@@ -119,7 +119,7 @@ auto MultiTargetDijkstra::computeDistances(const graph::Node& source, const std:
     return touched;
 }
 
-auto MultiTargetDijkstra::resetSettlements(const std::vector<graph::Node>& touched)
+auto MultiTargetDijkstra::resetSettlements(const std::vector<graph::Node>& touched) noexcept
     -> void
 {
     for(const auto& n : touched) {

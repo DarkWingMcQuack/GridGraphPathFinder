@@ -14,40 +14,51 @@ constexpr inline auto UNREACHABLE = std::numeric_limits<Distance>::max();
 class Path
 {
 public:
-    Path(std::vector<graph::Node> path = {});
+    Path(std::vector<graph::Node> path = {}) noexcept;
     Path(Path&&) = default;
     Path(const Path&) = default;
 
     auto operator=(Path &&) -> Path& = default;
     auto operator=(const Path&) -> Path& = default;
 
-    auto pushBack(graph::Node node) -> void;
-    auto pushFront(graph::Node node) -> void;
+    auto pushBack(graph::Node node) noexcept -> void;
+    auto pushFront(graph::Node node) noexcept -> void;
 
-    auto getLength() const -> std::size_t;
+    auto getLength() const noexcept -> std::size_t;
 
-    auto getSource() const -> const graph::Node&;
-    auto getSource() -> graph::Node&;
+    auto getSource() const noexcept -> const graph::Node&;
+    auto getSource() noexcept -> graph::Node&;
 
-    auto getTarget() const -> const graph::Node&;
-    auto getTarget() -> graph::Node&;
+    auto getTarget() const noexcept -> const graph::Node&;
+    auto getTarget() noexcept -> graph::Node&;
 
-    auto getNodes() const
+    auto getNodes() const noexcept
         -> const std::vector<graph::Node>&;
-    auto getNodes()
+    auto getNodes() noexcept
         -> std::vector<graph::Node>&;
 
+    auto getNodesIn(const grid::GridCell&) const noexcept
+	  -> std::vector<graph::Node>;
+
+    auto contains(const graph::Node&) const noexcept
+        -> bool;
+
 private:
-    friend auto operator<<(std::ostream& os, const Path& p)
+    friend auto operator<<(std::ostream& os, const Path& p) noexcept
         -> std::ostream&;
 
     std::vector<graph::Node> path_;
 };
 
-auto operator<<(std::ostream& os, const Path& p)
+auto operator<<(std::ostream& os, const Path& p) noexcept
     -> std::ostream&;
 
-auto findCommonNodes(const std::vector<Path>& paths)
+
+auto findCommonNodes(const std::vector<Path>& paths) noexcept
     -> std::vector<graph::Node>;
+
+auto pathSetContainsPathWithNode(const std::vector<Path>& set,
+                                 const graph::Node& node) noexcept
+    -> bool;
 
 } // namespace pathfinding

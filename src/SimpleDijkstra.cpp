@@ -29,6 +29,16 @@ auto SimpleDijkstra::findRoutes(const graph::Node& source, const graph::Node& ta
     return path;
 }
 
+auto SimpleDijkstra::findDistance(const graph::Node& source, const graph::Node& target) noexcept
+    -> Distance
+{
+    auto touched = computeDistances(source, target);
+    auto distance = getDistanceTo(target);
+    resetDistances(touched);
+
+    return distance;
+}
+
 auto SimpleDijkstra::getIndex(const graph::Node& n) const noexcept
     -> std::optional<std::size_t>
 {
@@ -97,7 +107,7 @@ auto SimpleDijkstra::extractShortestPaths(const graph::Node& source, const graph
     std::vector<Path> complete_paths;
 
     while(!unfinished.empty()) {
-        auto path = std::move(unfinished.top());
+        auto path = unfinished.top();
         unfinished.pop();
 
         if(!complete_paths.empty()
