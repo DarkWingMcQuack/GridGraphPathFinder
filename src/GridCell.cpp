@@ -39,6 +39,19 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
     return !(*this == other);
 }
 
+auto GridCell::operator[](std::size_t idx) const noexcept
+    -> graph::Node
+{
+    const auto width = getWidth();
+    const auto row = static_cast<std::size_t>(
+        std::floor(static_cast<double>(idx)
+                   / static_cast<double>(width)));
+    const auto column = idx % (width);
+
+    return graph::Node{row + top_left_.row_,
+                       column + top_left_.column_};
+}
+
 [[nodiscard]] auto GridCell::isInCell(const graph::Node& node) const noexcept
     -> bool
 {

@@ -70,3 +70,88 @@ TEST(GridCellTest, AnotherSimpleSplitTest)
     EXPECT_TRUE(bottom_l.isSplitable());
     EXPECT_TRUE(bottom_r.isSplitable());
 }
+
+TEST(GridCellTest, IndexTest)
+{
+    GridCorner tl{0, 0};
+    GridCorner tr{0, 3};
+    GridCorner bl{3, 0};
+    GridCorner br{3, 3};
+
+    GridCell cell{tl, tr, bl, br};
+
+    ASSERT_TRUE(cell.isValid());
+    ASSERT_TRUE(cell.isSplitable());
+    ASSERT_FALSE(cell.isAtomic());
+
+    auto n = cell[0];
+
+    EXPECT_EQ(n.row, 0);
+    EXPECT_EQ(n.column, 0);
+
+    n = cell[1];
+    EXPECT_EQ(n.row, 0);
+    EXPECT_EQ(n.column, 1);
+
+    n = cell[2];
+    EXPECT_EQ(n.row, 0);
+    EXPECT_EQ(n.column, 2);
+
+    n = cell[3];
+    EXPECT_EQ(n.row, 0);
+    EXPECT_EQ(n.column, 3);
+
+    n = cell[4];
+    EXPECT_EQ(n.row, 1);
+    EXPECT_EQ(n.column, 0);
+
+    n = cell[5];
+    EXPECT_EQ(n.row, 1);
+    EXPECT_EQ(n.column, 1);
+
+    n = cell[6];
+    EXPECT_EQ(n.row, 1);
+    EXPECT_EQ(n.column, 2);
+
+    n = cell[7];
+    EXPECT_EQ(n.row, 1);
+    EXPECT_EQ(n.column, 3);
+
+    n = cell[8];
+    EXPECT_EQ(n.row, 2);
+    EXPECT_EQ(n.column, 0);
+
+    n = cell[9];
+    EXPECT_EQ(n.row, 2);
+    EXPECT_EQ(n.column, 1);
+
+    n = cell[10];
+    EXPECT_EQ(n.row, 2);
+    EXPECT_EQ(n.column, 2);
+
+    n = cell[11];
+    EXPECT_EQ(n.row, 2);
+    EXPECT_EQ(n.column, 3);
+
+    n = cell[12];
+    EXPECT_EQ(n.row, 3);
+    EXPECT_EQ(n.column, 0);
+
+    n = cell[13];
+    EXPECT_EQ(n.row, 3);
+    EXPECT_EQ(n.column, 1);
+
+    n = cell[14];
+    EXPECT_EQ(n.row, 3);
+    EXPECT_EQ(n.column, 2);
+
+    n = cell[15];
+    EXPECT_EQ(n.row, 3);
+    EXPECT_EQ(n.column, 3);
+
+    n = cell[16];
+    EXPECT_EQ(n.row, 4);
+    EXPECT_EQ(n.column, 0);
+
+	EXPECT_FALSE(cell.isInCell(n));
+}

@@ -29,6 +29,9 @@ public:
     auto operator!=(const GridCell& other) const noexcept
         -> bool;
 
+    auto operator[](std::size_t idx) const noexcept
+        -> graph::Node;
+
     [[nodiscard]] auto isInCell(const graph::Node& node) const noexcept
         -> bool;
 

@@ -34,7 +34,7 @@ TEST(SimpleDijkstraTest, SimpleDijkstraWithoutBarriersTest)
         EXPECT_EQ(p.getLength(), 4);
     }
 
-    EXPECT_EQ(paths.size(), 8);
+    EXPECT_EQ(paths.size(), 9);
 }
 
 TEST(SimpleDijkstraTest, SimpleDijkstraWithOneBarrierTest)
@@ -59,7 +59,7 @@ TEST(SimpleDijkstraTest, SimpleDijkstraWithOneBarrierTest)
         EXPECT_EQ(p.getLength(), 4);
     }
 
-    EXPECT_EQ(paths.size(), 4);
+    EXPECT_EQ(paths.size(), 5);
 }
 
 TEST(SimpleDijkstraTest, SimpleDijkstraWithMoreBarriersTest)
