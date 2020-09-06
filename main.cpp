@@ -1,6 +1,7 @@
 #include <GridGraph.hpp>
 #include <ManhattanDijkstra.hpp>
 #include <MultiTargetManhattanDijkstra.hpp>
+#include <PathQuerySystem.hpp>
 #include <ProgramOptions.hpp>
 #include <SimpleDijkstra.hpp>
 #include <WellSeparationChecker.hpp>
@@ -10,6 +11,7 @@
 
 using pathfinding::MultiTargetManhattanDijkstra;
 using pathfinding::ManhattanDijkstra;
+using pathfinding::PathQuerySystem;
 
 auto main(int argc, char* argv[])
     -> int
@@ -19,9 +21,9 @@ auto main(int argc, char* argv[])
 
     auto graph_opt = graph::parseFileToGridGraph(graph_file);
 
-    auto graph = std::move(graph_opt.value());
-    ManhattanDijkstra single_target_path_solver{graph};
-    MultiTargetManhattanDijkstra multi_path_solver{graph};
+    PathQuerySystem<MultiTargetManhattanDijkstra> query_system{std::move(graph_opt.value()), 4};
+
+    const auto& graph = query_system.getGraph();
 
     auto first = graph.generateRandomCellOfSize(100);
     auto second = graph.generateRandomCellOfSize(100);
@@ -41,7 +43,7 @@ auto main(int argc, char* argv[])
         }
         compares++;
         fmt::print("---------------------------------------------------------------------\n");
-        auto separation = separation::checkSeparation(multi_path_solver,
+        auto separation = separation::checkSeparation(query_system,
                                                       first,
                                                       second);
         separated = (bool)separation;

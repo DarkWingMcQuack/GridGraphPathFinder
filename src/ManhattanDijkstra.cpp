@@ -163,7 +163,7 @@ auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph:
     std::vector<Node> touched;
 
     while(!queue.empty()) {
-        auto [current_node, current_dist] = std::move(queue.top());
+        auto [current_node, current_dist] = queue.top();
         queue.pop();
 
         if(current_node == target) {
