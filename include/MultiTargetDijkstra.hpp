@@ -1,12 +1,16 @@
 #pragma once
 
-#include <GridGraph.hpp>
+#include <Distance.hpp>
 #include <Path.hpp>
 #include <SimpleDijkstra.hpp>
 #include <functional>
 #include <optional>
 #include <string_view>
 #include <vector>
+
+namespace graph {
+class GridGraph;
+}
 
 namespace pathfinding {
 
@@ -26,7 +30,7 @@ public:
 
     [[nodiscard]] auto findDistances(const graph::Node& source,
                                      const grid::GridCell& targets) noexcept
-        -> std::vector<Distance>;
+        -> std::vector<graph::Distance>;
 
 private:
     [[nodiscard]] auto computeDistances(const graph::Node& source,

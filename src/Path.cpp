@@ -1,4 +1,4 @@
-#include <GridGraph.hpp>
+#include <Node.hpp>
 #include <Path.hpp>
 #include <execution>
 #include <fmt/format.h>

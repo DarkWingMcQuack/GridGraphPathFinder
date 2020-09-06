@@ -9,8 +9,8 @@
 
 using graph::Node;
 using graph::GridGraph;
+using graph::Distance;
 using pathfinding::MultiTargetDijkstra;
-using pathfinding::Distance;
 
 MultiTargetDijkstra::MultiTargetDijkstra(const graph::GridGraph& graph)
     : SimpleDijkstra::SimpleDijkstra(graph),

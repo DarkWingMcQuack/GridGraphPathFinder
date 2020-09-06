@@ -1,6 +1,7 @@
 #pragma once
 
-#include <GridGraph.hpp>
+#include <GridCell.hpp>
+#include <Node.hpp>
 #include <functional>
 #include <optional>
 #include <string_view>
@@ -8,8 +9,6 @@
 
 namespace pathfinding {
 
-using Distance = std::int64_t;
-constexpr inline auto UNREACHABLE = std::numeric_limits<Distance>::max();
 
 class Path
 {
@@ -38,7 +37,7 @@ public:
         -> std::vector<graph::Node>&;
 
     auto getNodesIn(const grid::GridCell&) const noexcept
-	  -> std::vector<graph::Node>;
+        -> std::vector<graph::Node>;
 
     auto contains(const graph::Node&) const noexcept
         -> bool;

@@ -10,7 +10,6 @@
 
 using pathfinding::MultiTargetManhattanDijkstra;
 using pathfinding::ManhattanDijkstra;
-using separation::WellSeperationChecker;
 
 auto main(int argc, char* argv[])
     -> int
@@ -24,16 +23,36 @@ auto main(int argc, char* argv[])
     ManhattanDijkstra single_target_path_solver{graph};
     MultiTargetManhattanDijkstra multi_path_solver{graph};
 
-    auto first = graph.generateRandomCellOfSize(16);
-    auto second = graph.generateRandomCellOfSize(16);
+    auto first = graph.generateRandomCellOfSize(100);
+    auto second = graph.generateRandomCellOfSize(100);
 
-    WellSeperationChecker separation_checker{std::move(multi_path_solver),
-                                             std::move(single_target_path_solver),
-                                             graph,
-                                             first,
-                                             second};
 
-    auto are_separated = separation_checker.checkIfWellSeparated(first, second);
+    bool separated{false};
+    auto compares{0};
+    while(!separated) {
+        first = graph.generateRandomCellOfSize(20);
+        second = graph.generateRandomCellOfSize(20);
+        if(!graph.hasWalkableNode(first)) {
+            continue;
+        }
 
-    fmt::print("are the two well separate? {}\n", are_separated);
+        if(!graph.hasWalkableNode(second)) {
+            continue;
+        }
+        compares++;
+        fmt::print("---------------------------------------------------------------------\n");
+        auto separation = separation::checkSeparation(multi_path_solver,
+                                                      first,
+                                                      second);
+        separated = (bool)separation;
+        fmt::print("are the two well separate? {}\n", separated);
+        fmt::print("---------------------------------------------------------------------\n");
+        if(separated) {
+            fmt::print("compared {} random clusters\n", compares);
+            fmt::print("first center: {}\nsecond center: {}\ndistance: {}\n",
+                       separation.value().getFirstClusterCenter(),
+                       separation.value().getSecondClusterCenter(),
+                       separation.value().getCenterDistance());
+        }
+    }
 }

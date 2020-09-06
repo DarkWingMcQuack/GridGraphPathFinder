@@ -10,8 +10,8 @@
 using graph::Node;
 using graph::GridGraph;
 using pathfinding::SimpleDijkstra;
-using pathfinding::Distance;
-using pathfinding::UNREACHABLE;
+using graph::Distance;
+using graph::UNREACHABLE;
 
 SimpleDijkstra::SimpleDijkstra(const graph::GridGraph& graph) noexcept
     : graph_(graph),

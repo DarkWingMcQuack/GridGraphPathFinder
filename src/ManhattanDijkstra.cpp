@@ -1,3 +1,4 @@
+#include <Distance.hpp>
 #include <GridGraph.hpp>
 #include <ManhattanDijkstra.hpp>
 #include <SimpleDijkstra.hpp>
@@ -10,8 +11,8 @@
 using graph::Node;
 using graph::GridGraph;
 using pathfinding::ManhattanDijkstra;
-using pathfinding::Distance;
-using pathfinding::UNREACHABLE;
+using graph::Distance;
+using graph::UNREACHABLE;
 
 ManhattanDijkstra::ManhattanDijkstra(const graph::GridGraph& graph) noexcept
     : graph_(graph),

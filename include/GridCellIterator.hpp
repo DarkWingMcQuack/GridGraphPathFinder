@@ -39,9 +39,9 @@ public:
         -> GridCellIterator;
 
     auto operator+(const GridCellIterator& rhs) const noexcept
-        -> GridCellIterator;
+        -> difference_type;
     auto operator-(const GridCellIterator& rhs) const noexcept
-        -> GridCellIterator;
+        -> difference_type;
 
     auto operator+=(difference_type rhs) noexcept
         -> GridCellIterator&;

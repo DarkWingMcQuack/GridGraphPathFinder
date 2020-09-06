@@ -119,8 +119,8 @@ auto GridGraph::generateRandomCellOfSize(std::int64_t cell_size) const noexcept
 {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> width_dis(0, width - 1);
-    std::uniform_int_distribution<> heigth_dis(0, height - 1);
+    std::uniform_int_distribution<> width_dis(0, width - 1 - cell_size);
+    std::uniform_int_distribution<> heigth_dis(0, height - 1 - cell_size);
 
     grid::GridCorner top_left{heigth_dis(gen), width_dis(gen)};
     grid::GridCorner top_right{top_left.getRow(), top_left.getColumn() + cell_size};
@@ -132,6 +132,48 @@ auto GridGraph::generateRandomCellOfSize(std::int64_t cell_size) const noexcept
         top_right,
         bottom_left,
         bottom_right};
+}
+
+
+auto GridGraph::hasWalkableNode(const grid::GridCell& cell) const noexcept
+    -> bool
+{
+    return std::any_of(std::begin(cell),
+                       std::end(cell),
+                       [&](const auto& node) {
+                           return isWalkableNode(node);
+                       });
+}
+
+
+auto GridGraph::createManhattanPathfinder() const noexcept
+    -> pathfinding::MultiTargetManhattanDijkstra
+{
+    return pathfinding::MultiTargetManhattanDijkstra{*this};
+}
+
+auto GridGraph::createPathfinder() const noexcept
+    -> pathfinding::MultiTargetDijkstra
+{
+    return pathfinding::MultiTargetDijkstra{*this};
+}
+
+
+auto GridGraph::wrapGraphInCell() const noexcept
+    -> grid::GridCell
+{
+    auto right_border = static_cast<std::int64_t>(width - 1);
+    auto bottom_border = static_cast<std::int64_t>(height - 1);
+
+    grid::GridCorner top_left{0, 0};
+    grid::GridCorner top_right{0, right_border};
+    grid::GridCorner bottom_left{bottom_border, 0};
+    grid::GridCorner bottom_right{bottom_border, right_border};
+
+    return grid::GridCell{top_left,
+                          top_right,
+                          bottom_left,
+                          bottom_right};
 }
 
 auto graph::parseFileToGridGraph(std::string_view path) noexcept

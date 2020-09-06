@@ -55,15 +55,15 @@ auto GridCellIterator::operator-(difference_type rhs) const noexcept
 }
 
 auto GridCellIterator::operator+(const GridCellIterator& rhs) const noexcept
-    -> GridCellIterator
+    -> difference_type
 {
-    return GridCellIterator{cell_, idx_ + rhs.idx_};
+    return idx_ + rhs.idx_;
 }
 
 auto GridCellIterator::operator-(const GridCellIterator& rhs) const noexcept
-    -> GridCellIterator
+    -> difference_type 
 {
-    return GridCellIterator{cell_, idx_ - rhs.idx_};
+    return idx_ - rhs.idx_;
 }
 
 auto GridCellIterator::operator+=(difference_type rhs) noexcept

@@ -1,12 +1,16 @@
 #pragma once
 
-#include <GridGraph.hpp>
+#include <Distance.hpp>
 #include <Path.hpp>
 #include <functional>
 #include <optional>
 #include <queue>
 #include <string_view>
 #include <vector>
+
+namespace graph {
+class GridGraph;
+}
 
 namespace pathfinding {
 
@@ -24,11 +28,11 @@ public:
         -> std::vector<Path>;
 
     auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
-        -> Distance;
+        -> graph::Distance;
 
 protected:
     auto getDistanceTo(const graph::Node& n) const noexcept
-        -> Distance;
+        -> graph::Distance;
 
     auto setDistanceTo(const graph::Node& n, std::int64_t distance) noexcept
         -> void;
@@ -43,7 +47,7 @@ protected:
         -> void;
 
     auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
-        -> Distance;
+        -> graph::Distance;
 
     auto getWalkableManhattanNeigboursOf(const graph::Node& n) const noexcept
         -> std::vector<graph::Node>;
@@ -53,7 +57,7 @@ protected:
 
 private:
     const std::reference_wrapper<const graph::GridGraph> graph_;
-    std::vector<Distance> distances_;
+    std::vector<graph::Distance> distances_;
 };
 
 

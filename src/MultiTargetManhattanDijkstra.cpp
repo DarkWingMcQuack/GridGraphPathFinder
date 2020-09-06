@@ -11,7 +11,7 @@
 using graph::Node;
 using graph::GridGraph;
 using pathfinding::MultiTargetManhattanDijkstra;
-using pathfinding::Distance;
+using graph::Distance;
 
 MultiTargetManhattanDijkstra::MultiTargetManhattanDijkstra(const graph::GridGraph& graph)
     : ManhattanDijkstra::ManhattanDijkstra(graph),

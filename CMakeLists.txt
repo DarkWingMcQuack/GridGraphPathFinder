@@ -40,6 +40,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/GridGraph.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/Utils.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/GridCell.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/Separation.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/GridCorner.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/GridCellIterator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/Node.hpp
@@ -54,6 +55,7 @@ target_sources(GridGraphPathFinderSrc
   src/GridGraph.cpp
   src/GridCell.cpp
   src/GridCorner.cpp
+  src/Separation.cpp
   src/GridCellIterator.cpp
   src/Node.cpp
   src/ProgramOptions.cpp

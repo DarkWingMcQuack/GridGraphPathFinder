@@ -1,12 +1,18 @@
 #pragma once
 
-#include <GridGraph.hpp>
+#include <Distance.hpp>
+#include <Node.hpp>
 #include <Path.hpp>
 #include <functional>
 #include <optional>
 #include <queue>
 #include <string_view>
 #include <vector>
+
+
+namespace graph {
+class GridGraph;
+}
 
 namespace pathfinding {
 
@@ -15,8 +21,8 @@ constexpr auto DIJKSTRA_QUEUE_COMPERATOR = [](const auto& lhs,
     return lhs.second > rhs.second;
 };
 
-using DijkstraQueue = std::priority_queue<std::pair<graph::Node, Distance>,
-                                          std::vector<std::pair<graph::Node, Distance>>,
+using DijkstraQueue = std::priority_queue<std::pair<graph::Node, graph::Distance>,
+                                          std::vector<std::pair<graph::Node, graph::Distance>>,
                                           decltype(DIJKSTRA_QUEUE_COMPERATOR)>;
 
 class SimpleDijkstra
@@ -33,11 +39,11 @@ public:
         -> std::vector<Path>;
 
     [[nodiscard]] auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
-        -> Distance;
+        -> graph::Distance;
 
 protected:
     [[nodiscard]] auto getDistanceTo(const graph::Node& n) const noexcept
-        -> Distance;
+        -> graph::Distance;
 
     auto setDistanceTo(const graph::Node& n, std::int64_t distance) noexcept
         -> void;
@@ -52,7 +58,7 @@ protected:
         -> void;
 
     [[nodiscard]] auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
-        -> Distance;
+        -> graph::Distance;
 
     [[nodiscard]] auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
         -> std::vector<graph::Node>;
@@ -62,7 +68,7 @@ protected:
 
 private:
     const std::reference_wrapper<const graph::GridGraph> graph_;
-    std::vector<Distance> distances_;
+    std::vector<graph::Distance> distances_;
 };
 
 

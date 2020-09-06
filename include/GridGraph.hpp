@@ -2,6 +2,8 @@
 
 #include <GridCell.hpp>
 #include <GridGraphIterator.hpp>
+#include <MultiTargetDijkstra.hpp>
+#include <MultiTargetManhattanDijkstra.hpp>
 #include <Node.hpp>
 #include <optional>
 #include <string_view>
@@ -37,6 +39,18 @@ public:
         -> std::vector<Node>;
 
     [[nodiscard]] auto generateRandomCellOfSize(std::int64_t cell_size) const noexcept
+        -> grid::GridCell;
+
+    [[nodiscard]] auto hasWalkableNode(const grid::GridCell& cell) const noexcept
+        -> bool;
+
+    [[nodiscard]] auto createManhattanPathfinder() const noexcept
+        -> pathfinding::MultiTargetManhattanDijkstra;
+
+    [[nodiscard]] auto createPathfinder() const noexcept
+        -> pathfinding::MultiTargetDijkstra;
+
+    [[nodiscard]] auto wrapGraphInCell() const noexcept
         -> grid::GridCell;
 
     auto begin() const noexcept
