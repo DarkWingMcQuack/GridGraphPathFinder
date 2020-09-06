@@ -164,7 +164,7 @@ auto SimpleDijkstra::computeDistances(const graph::Node& source, const graph::No
     queue.emplace(source, 0l);
     setDistanceTo(source, 0);
 
-    std::vector<Node> touched;
+    std::vector<Node> touched{source};
 
     while(!queue.empty()) {
         auto [current_node, current_dist] = queue.top();

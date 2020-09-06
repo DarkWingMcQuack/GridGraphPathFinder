@@ -110,7 +110,7 @@ auto MultiTargetDijkstra::computeDistances(const graph::Node& source,
     queue.emplace(source, 0l);
     setDistanceTo(source, 0l);
 
-    std::vector<Node> touched;
+    std::vector<Node> touched{source};
     std::size_t settled_targets{0};
 
     while(!queue.empty()) {
