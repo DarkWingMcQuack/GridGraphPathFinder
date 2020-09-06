@@ -139,7 +139,7 @@ auto MultiTargetDijkstra::computeDistances(const graph::Node& source,
 
             auto neig_dist = getDistanceTo(neig);
 
-            if(neig_dist > current_dist + 1) {
+            if(neig_dist != current_dist and neig_dist > current_dist + 1) {
                 setDistanceTo(neig, current_dist + 1);
                 queue.emplace(neig, current_dist + 1);
             }
