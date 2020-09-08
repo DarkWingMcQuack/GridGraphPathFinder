@@ -21,7 +21,7 @@ auto main(int argc, char* argv[])
 
     auto graph_opt = graph::parseFileToGridGraph(graph_file);
 
-    PathQuerySystem<MultiTargetManhattanDijkstra> query_system{std::move(graph_opt.value()), 4};
+    PathQuerySystem<MultiTargetManhattanDijkstra> query_system{std::move(graph_opt.value()), 5};
 
     const auto& graph = query_system.getGraph();
 
@@ -32,8 +32,8 @@ auto main(int argc, char* argv[])
     bool separated{false};
     auto compares{0};
     while(!separated) {
-        first = graph.generateRandomCellOfSize(50);
-        second = graph.generateRandomCellOfSize(50);
+        first = graph.generateRandomCellOfSize(20);
+        second = graph.generateRandomCellOfSize(20);
         if(!graph.hasWalkableNode(first)) {
             continue;
         }

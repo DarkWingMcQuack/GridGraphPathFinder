@@ -57,29 +57,6 @@ public:
         return r; // return the future result of the task
     }
 
-    template<class Func>
-    auto queryAndThen(const graph::Node& source,
-                      const graph::Node& target,
-                      Func&& func) const noexcept
-        -> std::future<std::result_of_t<Func(graph::Distance)>>
-    {
-        // wrap the function object into a packaged task, splitting
-        // execution from the return value:
-        std::packaged_task<std::result_of_t<Func(graph::Distance)>(DijkstraSolver&)>
-            p([source, target, func = std::forward<Func>(func)](auto& solver) {
-                return func(solver.findDistance(source, target));
-            });
-
-        auto r = p.get_future(); // get the return value before we hand off the task
-        {
-            std::unique_lock lock(mtx_);
-            work_queue_.emplace_back(std::move(p)); // store the task<R()> as a task<void()>
-        }
-        condition_.notify_one(); // wake a thread to work on the task
-
-        return r; // return the future result of the task
-    }
-
     auto query(const graph::Node& source,
                const grid::GridCell& targets) const noexcept
         -> std::future<std::vector<graph::Distance>>
@@ -101,17 +78,37 @@ public:
         return r; // return the future result of the task
     }
 
-    template<class Func>
-    auto queryAndThen(const graph::Node& source,
-                      const grid::GridCell& targets,
-                      Func&& func) const noexcept
-        -> std::future<std::result_of_t<Func(std::vector<graph::Distance>)>>
+    auto query(const grid::GridCell& sources,
+               const grid::GridCell& targets) const noexcept
+        -> std::future<std::vector<std::vector<graph::Distance>>>
     {
+        using graph::Distance;
+
         // wrap the function object into a packaged task, splitting
         // execution from the return value:
-        std::packaged_task<std::result_of_t<Func(std::vector<graph::Distance>)>(DijkstraSolver&)>
-            p([source, targets, func = std::forward<Func>(func)](auto& solver) {
-                return func(solver.findDistances(source, targets));
+        std::packaged_task<std::vector<std::vector<graph::Distance>>(DijkstraSolver&)>
+            p([sources, targets, this]([[maybe_unused]] auto&& _) {
+
+                std::vector<std::future<std::vector<Distance>>> distance_futs;
+                distance_futs.reserve(sources.size());
+                std::transform(std::begin(sources),
+                               std::end(sources),
+                               std::back_inserter(distance_futs),
+                               [&](auto source) {
+                                   return query(source, targets);
+                               });
+
+
+                std::vector<std::vector<Distance>> distances;
+                distances.reserve(sources.size());
+                std::transform(std::make_move_iterator(std::begin(distance_futs)),
+                               std::make_move_iterator(std::end(distance_futs)),
+                               std::back_inserter(distances),
+                               [](auto fut) {
+                                   return fut.get();
+                               });
+
+                return distances;
             });
 
         auto r = p.get_future(); // get the return value before we hand off the task
@@ -123,6 +120,7 @@ public:
 
         return r; // return the future result of the task
     }
+
 
     auto getGraph() const noexcept
         -> const graph::GridGraph&
