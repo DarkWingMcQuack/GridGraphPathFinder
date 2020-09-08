@@ -32,8 +32,8 @@ auto main(int argc, char* argv[])
     bool separated{false};
     auto compares{0};
     while(!separated) {
-        first = graph.generateRandomCellOfSize(20);
-        second = graph.generateRandomCellOfSize(20);
+        first = graph.generateRandomCellOfSize(50);
+        second = graph.generateRandomCellOfSize(50);
         if(!graph.hasWalkableNode(first)) {
             continue;
         }

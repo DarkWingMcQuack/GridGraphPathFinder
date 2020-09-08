@@ -156,6 +156,8 @@ auto ManhattanDijkstra::getWalkableManhattanNeigboursOf(const graph::Node& n) co
 auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph::Node& target) noexcept
     -> std::vector<graph::Node>
 {
+    using graph::UNREACHABLE;
+
     DijkstraQueue queue(DIJKSTRA_QUEUE_COMPERATOR);
     queue.emplace(source, 0l);
     setDistanceTo(source, 0);
@@ -177,7 +179,7 @@ auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph:
 
             auto neig_dist = getDistanceTo(neig);
 
-            if(neig_dist != current_dist and neig_dist > current_dist + 1) {
+            if(UNREACHABLE != current_dist and neig_dist > current_dist + 1) {
                 setDistanceTo(neig, current_dist + 1);
                 queue.emplace(neig, current_dist + 1);
             }

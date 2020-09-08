@@ -18,52 +18,54 @@ namespace separation {
 
 template<class MultiTargetPathFinder>
 [[nodiscard]] auto findCenterCandidates(const pathfinding::PathQuerySystem<MultiTargetPathFinder>& multi_path_finder,
-                                        const grid::GridCell& from,
-                                        const grid::GridCell& to) noexcept
-    -> std::optional<graph::Node>
+                                        const grid::GridCell& first,
+                                        const grid::GridCell& second) noexcept
+    -> std::optional<std::tuple<graph::Node, graph::Node, graph::Distance>>
 {
     using graph::Distance;
     using graph::UNREACHABLE;
 
-    std::vector<std::future<Distance>> min_distances;
-    std::transform(std::begin(from),
-                   std::end(from),
-                   std::back_inserter(min_distances),
+    std::vector<std::future<std::vector<Distance>>> distance_futs;
+    distance_futs.reserve(first.size());
+    std::transform(std::begin(first),
+                   std::end(first),
+                   std::back_inserter(distance_futs),
                    [&](auto source) {
-                       return multi_path_finder.queryAndThen(
+                       return multi_path_finder.query(
                            source,
-                           to,
-                           [](const auto& distances) {
-                               //find the minimum of all distances
-                               return std::accumulate(std::cbegin(distances),
-                                                      std::cend(distances),
-                                                      UNREACHABLE,
-                                                      [](auto acc, auto current) {
-                                                          return std::min(acc, current);
-                                                      });
-                           });
-                   });
-    std::vector<Distance> collected_distances;
-    collected_distances.reserve(min_distances.size());
-    std::transform(std::make_move_iterator(std::begin(min_distances)),
-                   std::make_move_iterator(std::end(min_distances)),
-                   std::back_inserter(collected_distances),
-                   [](auto fut) {
-                       auto bla = fut.get();
-                       return bla;
+                           second);
                    });
 
-    auto min_iter = std::min_element(std::begin(collected_distances),
-                                     std::end(collected_distances));
-
-    if(min_iter == std::end(collected_distances)) {
+    if(distance_futs.empty()) {
         return std::nullopt;
     }
 
-    auto min_idx = std::distance(std::begin(collected_distances),
-                                 min_iter);
+    std::vector<std::vector<Distance>> distances;
+    distances.reserve(first.size());
+    std::transform(std::make_move_iterator(std::begin(distance_futs)),
+                   std::make_move_iterator(std::end(distance_futs)),
+                   std::back_inserter(distances),
+                   [](auto fut) {
+                       return fut.get();
+                   });
 
-    return from[min_idx];
+    std::size_t first_index{0};
+    std::size_t second_index{0};
+    auto min_distance = UNREACHABLE;
+
+    for(std::size_t i{0}; i < first.size(); i++) {
+        for(std::size_t j{0}; j < second.size(); j++) {
+            if(distances[i][j] < min_distance) {
+                first_index = i;
+                second_index = j;
+                min_distance = distances[i][j];
+            }
+        }
+    }
+
+    return std::tuple{second[first_index],
+                      second[second_index],
+                      min_distance};
 }
 
 template<class MultiTargetPathFinder>
@@ -75,28 +77,18 @@ template<class MultiTargetPathFinder>
     using graph::UNREACHABLE;
 
     //find first center
-    fmt::print("searching for first cluster center...\n");
-    auto first_center_opt = findCenterCandidates(multi_path_finder, first, second);
-    if(!first_center_opt) {
-        return std::nullopt;
-    }
-    auto first_center = first_center_opt.value();
-    fmt::print("found center {}\n", first_center);
-
-    //find second center
-    fmt::print("searching for second cluster center...\n");
-    auto second_center_opt = findCenterCandidates(multi_path_finder, second, first);
-    if(!second_center_opt) {
+    fmt::print("searching for cluster centers...\n");
+    auto center_opt = findCenterCandidates(multi_path_finder, first, second);
+    if(!center_opt) {
         return std::nullopt;
     }
 
-    auto second_center = second_center_opt.value();
-    fmt::print("found center {}\n", second_center);
+    auto [first_center,
+          second_center,
+          center_to_center_distance] = center_opt.value();
 
-    //calculate the center to center distance
-    auto center_to_center_distance = multi_path_finder
-                                         .query(first_center, second_center)
-                                         .get();
+	fmt::print("first center {}\n", first_center);
+	fmt::print("second center {}\n", second_center);
     fmt::print("center to center distance: {}\n", center_to_center_distance);
 
     if(center_to_center_distance == UNREACHABLE) {
