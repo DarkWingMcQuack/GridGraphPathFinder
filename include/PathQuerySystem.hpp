@@ -88,7 +88,6 @@ public:
         // execution from the return value:
         std::packaged_task<std::vector<std::vector<graph::Distance>>(DijkstraSolver&)>
             p([sources, targets, this]([[maybe_unused]] auto&& _) {
-
                 std::vector<std::future<std::vector<Distance>>> distance_futs;
                 distance_futs.reserve(sources.size());
                 std::transform(std::begin(sources),
@@ -132,7 +131,7 @@ public:
     {
         {
             std::unique_lock<std::mutex> lock{mtx_};
-            for(auto&& _ : thread_futures_) {
+            for(int i{0}; i < thread_futures_.size(); i++) {
                 work_queue_.push_back({});
             }
         }
