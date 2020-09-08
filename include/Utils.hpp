@@ -5,7 +5,7 @@
 namespace util {
 
 template<class Head0, class Head1, class... Tail>
-constexpr auto min(Head0&& head0, Head1&& head1, Tail&&... tail)
+constexpr auto min(Head0&& head0, Head1&& head1, Tail&&... tail) noexcept
 {
     if constexpr(sizeof...(tail) == 0) {
         return head0 < head1 ? head0 : head1;
@@ -18,7 +18,7 @@ constexpr auto min(Head0&& head0, Head1&& head1, Tail&&... tail)
 }
 
 template<class Head0, class Head1, class... Tail>
-constexpr auto max(Head0&& head0, Head1&& head1, Tail&&... tail) 
+constexpr auto max(Head0&& head0, Head1&& head1, Tail&&... tail) noexcept
 {
     if constexpr(sizeof...(tail) == 0) {
         return head0 > head1 ? head0 : head1;
@@ -29,5 +29,22 @@ constexpr auto max(Head0&& head0, Head1&& head1, Tail&&... tail)
             std::forward<Tail>(tail)...);
     }
 }
+
+template<class Head0, class Head1, class... Tail>
+constexpr auto concat(Head0&& head0, Head1&& head1, Tail&&... tail) noexcept
+{
+    if constexpr(sizeof...(tail) == 0) {
+        head0.insert(std::end(head0),
+                     std::begin(head1),
+                     std::end(head1));
+        return head0;
+    } else {
+        return concat(
+            concat(std::forward<Head0>(head0),
+                   std::forward<Head1>(head1)),
+            std::forward<Tail>(tail)...);
+    }
+}
+
 
 } // namespace util
