@@ -147,16 +147,15 @@ private:
         DijkstraSolver solver{graph_};
         while(true) {
             // pop a task off the queue:
-            ThreadWork f;
-            {
-                // usual thread-safe queue code:
-                std::unique_lock lock{mtx_};
-                if(work_queue_.empty()) {
-                    condition_.wait(lock, [&] { return !work_queue_.empty(); });
-                }
-                f = std::move(work_queue_.front());
-                work_queue_.pop_front();
+            // usual thread-safe queue code:
+            std::unique_lock lock{mtx_};
+            if(work_queue_.empty()) {
+                condition_.wait(lock, [&] { return !work_queue_.empty(); });
             }
+            auto f = std::move(work_queue_.front());
+            work_queue_.pop_front();
+            lock.unlock();
+
             // otherwise, run the task:
             if(!f.valid()) {
                 return;
