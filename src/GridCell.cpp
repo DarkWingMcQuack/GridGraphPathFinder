@@ -207,9 +207,10 @@ auto GridCell::isSubSetOf(const GridCell& other) const noexcept
 auto GridCell::hasCommonNodeWith(const GridCell& other) const noexcept
     -> bool
 {
+    //TODO: make this in O(1)
     return std::any_of(std::begin(other),
                        std::end(other),
-                       [](auto node) {
+                       [&](auto node) {
                            return isInCell(node);
                        });
 }
