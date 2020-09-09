@@ -78,6 +78,29 @@ public:
         return r; // return the future result of the task
     }
 
+    template<class Func>
+    auto queryAndThen(const graph::Node& source,
+                      const grid::GridCell& targets,
+                      Func&& func) const noexcept
+        -> std::future<std::result_of_t<Func(std::vector<graph::Distance>)>>
+    {
+        // wrap the function object into a packaged task, splitting
+        // execution from the return value:
+        std::packaged_task<std::result_of_t<Func(std::vector<graph::Distance>)>(DijkstraSolver&)>
+            p([source, targets, func = std::forward<Func>(func)](auto& solver) {
+                return func(solver.findDistances(source, targets));
+            });
+
+        auto r = p.get_future(); // get the return value before we hand off the task
+        {
+            std::unique_lock lock(mtx_);
+            work_queue_.emplace_back(std::move(p)); // store the task<R()> as a task<void()>
+        }
+        condition_.notify_one(); // wake a thread to work on the task
+
+        return r; // return the future result of the task
+    }
+
     auto query(const grid::GridCell& sources,
                const grid::GridCell& targets) const noexcept
         -> std::future<std::vector<std::vector<graph::Distance>>>

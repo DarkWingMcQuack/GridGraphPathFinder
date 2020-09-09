@@ -71,6 +71,34 @@ TEST(GridCellTest, AnotherSimpleSplitTest)
     EXPECT_TRUE(bottom_r.isSplitable());
 }
 
+TEST(GridCellTest, SimpleSubSetSuperSetTest)
+{
+    GridCorner tl{0, 0};
+    GridCorner tr{0, 3};
+    GridCorner bl{3, 0};
+    GridCorner br{3, 3};
+
+    GridCell cell{tl, tr, bl, br};
+
+    ASSERT_TRUE(cell.isValid());
+    ASSERT_TRUE(cell.isSplitable());
+    ASSERT_FALSE(cell.isAtomic());
+    ASSERT_TRUE(cell.isSubSetOf(cell));
+    ASSERT_TRUE(cell.isSuperSetOf(cell));
+
+    auto [top_l, top_r, bottom_l, bottom_r] = cell.split();
+
+    EXPECT_TRUE(top_l.isSubSetOf(cell));
+    EXPECT_TRUE(top_r.isSubSetOf(cell));
+    EXPECT_TRUE(bottom_l.isSubSetOf(cell));
+    EXPECT_TRUE(bottom_r.isSubSetOf(cell));
+
+    EXPECT_TRUE(cell.isSuperSetOf(top_l));
+    EXPECT_TRUE(cell.isSuperSetOf(top_r));
+    EXPECT_TRUE(cell.isSuperSetOf(bottom_l));
+    EXPECT_TRUE(cell.isSuperSetOf(bottom_r));
+}
+
 TEST(GridCellTest, IndexTest)
 {
     GridCorner tl{0, 0};
@@ -153,5 +181,5 @@ TEST(GridCellTest, IndexTest)
     EXPECT_EQ(n.row, 4);
     EXPECT_EQ(n.column, 0);
 
-	EXPECT_FALSE(cell.isInCell(n));
+    EXPECT_FALSE(cell.isInCell(n));
 }

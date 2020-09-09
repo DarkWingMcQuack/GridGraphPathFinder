@@ -1,6 +1,9 @@
 #pragma once
 
+#include <algorithm>
+#include <future>
 #include <utility>
+#include <vector>
 
 namespace util {
 
@@ -37,7 +40,7 @@ constexpr auto concat(Head0&& head0, Head1&& head1, Tail&&... tail) noexcept
         head0.insert(std::end(head0),
                      std::begin(head1),
                      std::end(head1));
-        return head0;
+        return std::forward<Head0>(head0);
     } else {
         return concat(
             concat(std::forward<Head0>(head0),
@@ -45,6 +48,35 @@ constexpr auto concat(Head0&& head0, Head1&& head1, Tail&&... tail) noexcept
             std::forward<Tail>(tail)...);
     }
 }
+
+template<class T>
+auto collectFutures(std::vector<std::future<T>>&& futures) noexcept
+    -> std::vector<T>
+{
+    std::vector<T> collected;
+    collected.reserve(futures.size());
+
+    std::transform(std::make_move_iterator(std::begin(futures)),
+                   std::make_move_iterator(std::end(futures)),
+                   std::back_inserter(collected),
+                   [](auto future) {
+                       return future.get();
+                   });
+
+    return collected;
+}
+
+
+template<class Head0, class Head1, class... Tail>
+auto await(std::future<Head0>&& head0, std::future<Head1>&& head1, std::future<Tail>&&... tail) noexcept
+    -> std::tuple<Head0, Head1, Tail...>
+{
+    return std::tuple{head0.get(),
+                      head1.get(),
+                      tail.get()...};
+}
+
+
 
 
 } // namespace util

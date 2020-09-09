@@ -14,6 +14,11 @@ public:
                graph::Node first_center,
                graph::Node second_center,
                graph::Distance center_distance);
+    Separation(const Separation&) = default;
+    Separation(Separation&&) = default;
+
+    auto operator=(const Separation&) noexcept -> Separation& = default;
+    auto operator=(Separation&&) noexcept -> Separation& = default;
 
     auto getCenterDistance() const
         -> graph::Distance;
@@ -31,11 +36,11 @@ public:
         -> graph::Node;
 
 private:
-    const grid::GridCell first_;
-    const grid::GridCell second_;
-    const graph::Node first_center_;
-    const graph::Node second_center_;
-    const graph::Distance center_distance_;
+    grid::GridCell first_;
+    grid::GridCell second_;
+    graph::Node first_center_;
+    graph::Node second_center_;
+    graph::Distance center_distance_;
 };
 
 } // namespace separation

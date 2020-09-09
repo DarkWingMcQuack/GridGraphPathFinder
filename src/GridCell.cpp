@@ -177,6 +177,45 @@ auto GridCell::size() const noexcept
     return getHeight() * getWidth();
 }
 
+auto GridCell::isSuperSetOf(const GridCell& other) const noexcept
+    -> bool
+{
+    return top_left_.row_ <= other.top_left_.row_
+        && top_left_.column_ <= other.top_left_.column_
+        && bottom_left_.row_ >= other.bottom_left_.row_
+        && bottom_left_.column_ <= other.bottom_left_.column_
+        && bottom_right_.row_ >= other.bottom_right_.row_
+        && bottom_right_.column_ >= other.bottom_right_.column_
+        && top_right_.row_ <= other.top_right_.row_
+        && top_right_.column_ >= other.top_right_.column_;
+}
+
+auto GridCell::isSubSetOf(const GridCell& other) const noexcept
+    -> bool
+{
+    return top_left_.row_ >= other.top_left_.row_
+        && top_left_.column_ >= other.top_left_.column_
+        && bottom_left_.row_ <= other.bottom_left_.row_
+        && bottom_left_.column_ >= other.bottom_left_.column_
+        && bottom_right_.row_ <= other.bottom_right_.row_
+        && bottom_right_.column_ <= other.bottom_right_.column_
+        && top_right_.row_ >= other.top_right_.row_
+        && top_right_.column_ <= other.top_right_.column_;
+}
+
+
+auto GridCell::hasCommonNodeWith(const GridCell& other) const noexcept
+    -> bool
+{
+    return std::any_of(std::begin(other),
+                       std::end(other),
+                       [](auto node) {
+                           return isInCell(node);
+                       });
+}
+
+
+
 
 auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
     -> std::ostream&
@@ -191,6 +230,7 @@ auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
               << c.bottom_right_
               << "}";
 }
+
 
 auto grid::merge(const GridCell& first,
                  const GridCell& second,

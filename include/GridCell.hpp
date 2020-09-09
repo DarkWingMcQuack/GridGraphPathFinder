@@ -65,6 +65,15 @@ public:
     auto end() const noexcept
         -> GridCellIterator;
 
+    [[nodiscard]] auto isSuperSetOf(const GridCell& other) const noexcept
+        -> bool;
+
+    [[nodiscard]] auto isSubSetOf(const GridCell& other) const noexcept
+        -> bool;
+
+    [[nodiscard]] auto hasCommonNodeWith(const GridCell& other) const noexcept
+        -> bool;
+
 private:
     friend auto operator<<(std::ostream& os, const GridCell& c) noexcept
         -> std::ostream&;
