@@ -5,7 +5,10 @@
 #include <Utils.hpp>
 #include <array>
 #include <cmath>
+#include <fmt/core.h>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 using grid::GridCell;
 using grid::GridCorner;
@@ -52,7 +55,7 @@ auto GridCell::operator[](std::size_t idx) const noexcept
                        column + top_left_.column_};
 }
 
-[[nodiscard]] auto GridCell::isInCell(const graph::Node& node) const noexcept
+auto GridCell::isInCell(const graph::Node& node) const noexcept
     -> bool
 {
     return node.row >= top_left_.row_
@@ -61,7 +64,7 @@ auto GridCell::operator[](std::size_t idx) const noexcept
         && node.column <= top_right_.column_;
 }
 
-[[nodiscard]] auto GridCell::isSplitable() const noexcept
+auto GridCell::isSplitable() const noexcept
     -> bool
 {
     const auto width = getWidth();
@@ -73,7 +76,7 @@ auto GridCell::operator[](std::size_t idx) const noexcept
         && height % 2 == 0;
 }
 
-[[nodiscard]] auto GridCell::isAtomic() const noexcept
+auto GridCell::isAtomic() const noexcept
     -> bool
 {
     const auto width = getWidth();
@@ -82,7 +85,7 @@ auto GridCell::operator[](std::size_t idx) const noexcept
     return width == 1 && height == 1;
 }
 
-[[nodiscard]] auto GridCell::isValid() const noexcept
+auto GridCell::isValid() const noexcept
     -> bool
 {
     return top_right_.row_ == top_left_.row_
@@ -96,34 +99,52 @@ auto GridCell::operator[](std::size_t idx) const noexcept
         && bottom_right_.row_ >= 0 && bottom_right_.column_ >= 0;
 }
 
-[[nodiscard]] auto GridCell::split() const noexcept
+
+auto GridCell::to_string() const noexcept
+    -> std::string
+{
+    std::stringstream ss;
+    ss << "GridCell{"
+       << top_left_
+       << ", "
+       << top_right_
+       << ", "
+       << bottom_left_
+       << ", "
+       << bottom_right_
+       << "}";
+
+    return ss.str();
+}
+
+auto GridCell::split() const noexcept
     -> std::array<GridCell, 4>
 {
-    const std::int64_t half_width = std::floor(top_right_.column_ / 2.);
-    const std::int64_t half_hight = std::floor(bottom_left_.row_ / 2.);
+    const std::int64_t half_width = std::floor(static_cast<double>(top_right_.column_ - top_left_.column_) / 2.);
+    const std::int64_t half_hight = std::floor(static_cast<double>(bottom_left_.row_ - top_left_.row_) / 2.);
 
     const auto top_left = GridCell{
         GridCorner{top_left_.row_, top_left_.column_},
-        GridCorner{top_left_.row_, top_right_.column_ / 2},
-        GridCorner{half_hight, top_left_.column_},
-        GridCorner{half_hight, half_width}};
+        GridCorner{top_right_.row_, top_left_.column_ + half_width},
+        GridCorner{top_left_.row_ + half_hight, top_left_.column_},
+        GridCorner{top_left_.row_ + half_hight, bottom_left_.column_ + half_width}};
 
     const auto top_right = GridCell{
-        GridCorner{top_left_.row_, half_width + 1},
+        GridCorner{top_left_.row_, top_left_.column_ + half_width + 1},
         GridCorner{top_right_.row_, top_right_.column_},
-        GridCorner{half_hight, half_width + 1},
-        GridCorner{half_hight, top_right_.column_}};
+        GridCorner{top_left_.row_ + half_hight, top_left_.column_ + half_width + 1},
+        GridCorner{top_left_.row_ + half_hight, top_right_.column_}};
 
     const auto bottom_left = GridCell{
-        GridCorner{half_hight + 1, bottom_left_.column_},
-        GridCorner{half_hight + 1, half_width},
+        GridCorner{top_left_.row_ + half_hight + 1, bottom_left_.column_},
+        GridCorner{top_left_.row_ + half_hight + 1, top_left_.column_ + half_width},
         GridCorner{bottom_left_.row_, bottom_left_.column_},
-        GridCorner{bottom_right_.row_, half_width}};
+        GridCorner{bottom_right_.row_, top_left_.column_ + half_width}};
 
     const auto bottom_right = GridCell{
-        GridCorner{half_hight + 1, half_width + 1},
-        GridCorner{half_hight + 1, bottom_right_.column_},
-        GridCorner{bottom_left_.row_, half_width + 1},
+        GridCorner{top_left_.row_ + half_hight + 1, top_left_.column_ + half_width + 1},
+        GridCorner{top_left_.row_ + half_hight + 1, bottom_right_.column_},
+        GridCorner{bottom_left_.row_, top_left_.column_ + half_width + 1},
         GridCorner{bottom_right_.row_, bottom_right_.column_}};
 
     return std::array{top_left,
@@ -132,13 +153,13 @@ auto GridCell::operator[](std::size_t idx) const noexcept
                       bottom_right};
 }
 
-[[nodiscard]] auto GridCell::getWidth() const noexcept
+auto GridCell::getWidth() const noexcept
     -> std::size_t
 {
     return top_right_.column_ - top_left_.column_ + 1;
 }
 
-[[nodiscard]] auto GridCell::getHeight() const noexcept
+auto GridCell::getHeight() const noexcept
     -> std::size_t
 {
     return bottom_left_.row_ - top_left_.row_ + 1;

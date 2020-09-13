@@ -2,6 +2,7 @@
 
 #include <Distance.hpp>
 #include <GridCell.hpp>
+#include <GridGraph.hpp>
 #include <Path.hpp>
 
 namespace separation {
@@ -17,23 +18,29 @@ public:
     Separation(const Separation&) = default;
     Separation(Separation&&) = default;
 
-    auto operator=(const Separation&) noexcept -> Separation& = default;
-    auto operator=(Separation&&) noexcept -> Separation& = default;
+    auto operator=(const Separation&) noexcept
+        -> Separation& = default;
+    auto operator=(Separation&&) noexcept
+        -> Separation& = default;
 
-    auto getCenterDistance() const
+    [[nodiscard]] auto getCenterDistance() const noexcept
         -> graph::Distance;
 
-    auto getFirstCluster() const
+    [[nodiscard]] auto getFirstCluster() const noexcept
         -> grid::GridCell;
 
-    auto getSecondCluster() const
+    [[nodiscard]] auto getSecondCluster() const noexcept
         -> grid::GridCell;
 
-    auto getFirstClusterCenter() const
+    [[nodiscard]] auto getFirstClusterCenter() const noexcept
         -> graph::Node;
 
-    auto getSecondClusterCenter() const
+    [[nodiscard]] auto getSecondClusterCenter() const noexcept
         -> graph::Node;
+
+    auto toFile(const graph::GridGraph& graph,
+                std::string_view path) const noexcept
+        -> void;
 
 private:
     grid::GridCell first_;

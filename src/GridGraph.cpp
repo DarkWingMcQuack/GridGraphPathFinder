@@ -145,20 +145,6 @@ auto GridGraph::hasWalkableNode(const grid::GridCell& cell) const noexcept
                        });
 }
 
-
-auto GridGraph::createManhattanPathfinder() const noexcept
-    -> pathfinding::MultiTargetManhattanDijkstra
-{
-    return pathfinding::MultiTargetManhattanDijkstra{*this};
-}
-
-auto GridGraph::createPathfinder() const noexcept
-    -> pathfinding::MultiTargetDijkstra
-{
-    return pathfinding::MultiTargetDijkstra{*this};
-}
-
-
 auto GridGraph::wrapGraphInCell() const noexcept
     -> grid::GridCell
 {

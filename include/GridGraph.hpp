@@ -2,8 +2,6 @@
 
 #include <GridCell.hpp>
 #include <GridGraphIterator.hpp>
-#include <MultiTargetDijkstra.hpp>
-#include <MultiTargetManhattanDijkstra.hpp>
 #include <Node.hpp>
 #include <optional>
 #include <string_view>
@@ -43,12 +41,6 @@ public:
 
     [[nodiscard]] auto hasWalkableNode(const grid::GridCell& cell) const noexcept
         -> bool;
-
-    [[nodiscard]] auto createManhattanPathfinder() const noexcept
-        -> pathfinding::MultiTargetManhattanDijkstra;
-
-    [[nodiscard]] auto createPathfinder() const noexcept
-        -> pathfinding::MultiTargetDijkstra;
 
     [[nodiscard]] auto wrapGraphInCell() const noexcept
         -> grid::GridCell;

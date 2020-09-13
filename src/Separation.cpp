@@ -19,31 +19,31 @@ Separation::Separation(GridCell first,
       center_distance_(center_distance) {}
 
 
-auto Separation::getCenterDistance() const
+auto Separation::getCenterDistance() const noexcept
     -> Distance
 {
     return center_distance_;
 }
 
-auto Separation::getFirstCluster() const
+auto Separation::getFirstCluster() const noexcept
     -> GridCell
 {
     return first_;
 }
 
-auto Separation::getSecondCluster() const
+auto Separation::getSecondCluster() const noexcept
     -> GridCell
 {
     return second_;
 }
 
-auto Separation::getFirstClusterCenter() const
+auto Separation::getFirstClusterCenter() const noexcept
     -> Node
 {
     return first_center_;
 }
 
-auto Separation::getSecondClusterCenter() const
+auto Separation::getSecondClusterCenter() const noexcept
     -> Node
 {
     return second_center_;

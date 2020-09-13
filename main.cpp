@@ -1,18 +1,14 @@
+#include <Dijkstra.hpp>
 #include <GridGraph.hpp>
-#include <ManhattanDijkstra.hpp>
-#include <MultiTargetManhattanDijkstra.hpp>
-#include <WellSeparationCalculator.hpp>
 #include <PathQuerySystem.hpp>
 #include <ProgramOptions.hpp>
-#include <SimpleDijkstra.hpp>
+#include <WellSeparationCalculator.hpp>
 #include <WellSeparationChecker.hpp>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 
-using pathfinding::MultiTargetManhattanDijkstra;
-using pathfinding::ManhattanDijkstra;
-using pathfinding::PathQuerySystem;
+using pathfinding::Dijkstra;
 
 auto main(int argc, char* argv[])
     -> int
@@ -21,44 +17,9 @@ auto main(int argc, char* argv[])
     auto graph_file = options.getGraphFile();
 
     auto graph_opt = graph::parseFileToGridGraph(graph_file);
+    Dijkstra path_finder{graph_opt.value()};
 
-    PathQuerySystem<MultiTargetManhattanDijkstra> query_system{std::move(graph_opt.value()), 5};
+    auto separations = separation::calculateSeparation(std::move(path_finder));
 
-    // const auto& graph = query_system.getGraph();
-
-    // auto first = graph.generateRandomCellOfSize(100);
-    // auto second = graph.generateRandomCellOfSize(100);
-    auto separation = separation::calculateSeparation(query_system);
-
-    fmt::print("separation size: {}", separation.size());
-
-
-    // bool separated{false};
-    // auto compares{0};
-    // while(!separated) {
-    //     first = graph.generateRandomCellOfSize(20);
-    //     second = graph.generateRandomCellOfSize(20);
-    //     if(!graph.hasWalkableNode(first)) {
-    //         continue;
-    //     }
-
-    //     if(!graph.hasWalkableNode(second)) {
-    //         continue;
-    //     }
-    //     compares++;
-    //     fmt::print("---------------------------------------------------------------------\n");
-    //     auto separation = separation::checkSeparation(query_system,
-    //                                                   first,
-    //                                                   second);
-    //     separated = (bool)separation;
-    //     fmt::print("are the two well separate? {}\n", separated);
-    //     fmt::print("---------------------------------------------------------------------\n");
-    //     if(separated) {
-    //         fmt::print("compared {} random clusters\n", compares);
-    //         fmt::print("first center: {}\nsecond center: {}\ndistance: {}\n",
-    //                    separation.value().getFirstClusterCenter(),
-    //                    separation.value().getSecondClusterCenter(),
-    //                    separation.value().getCenterDistance());
-    //     }
-    // }
+    fmt::print("number of separations: {}\n", separations.size());
 }

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <future>
+#include <fmt/core.h>
 #include <utility>
 #include <vector>
 
@@ -68,12 +69,37 @@ auto collectFutures(std::vector<std::future<T>>&& futures) noexcept
 
 
 template<class Head0, class Head1, class... Tail>
-auto await(std::future<Head0>&& head0, std::future<Head1>&& head1, std::future<Tail>&&... tail) noexcept
+auto await(std::future<Head0>&& head0,
+           std::future<Head1>&& head1,
+           std::future<Tail>&&... tail) noexcept
     -> std::tuple<Head0, Head1, Tail...>
 {
     return std::tuple{head0.get(),
                       head1.get(),
                       tail.get()...};
+}
+
+template<class T, class... Tail>
+auto intersect(std::vector<T>&& head0,
+               std::vector<T>&& head1,
+               Tail&&... tail) noexcept
+    -> std::vector<T>
+{
+    fmt::print("first: {} second: {}\n", head0.size(), head1.size());
+    if constexpr(sizeof...(tail) == 0) {
+        std::vector<T> intersection;
+        std::set_intersection(std::make_move_iterator(std::begin(head0)),
+                              std::make_move_iterator(std::end(head0)),
+                              std::make_move_iterator(std::begin(head1)),
+                              std::make_move_iterator(std::end(head1)),
+                              std::back_inserter(intersection));
+        return intersection;
+    } else {
+        return intersect(
+            intersect(std::move(head0),
+                      std::move(head1)),
+            std::forward<Tail>(tail)...);
+    }
 }
 
 

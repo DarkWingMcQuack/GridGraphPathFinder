@@ -99,6 +99,38 @@ TEST(GridCellTest, SimpleSubSetSuperSetTest)
     EXPECT_TRUE(cell.isSuperSetOf(bottom_r));
 }
 
+TEST(GridCellTest, SimpleSizeTest)
+{
+    GridCorner tl{0, 0};
+    GridCorner tr{0, 3};
+    GridCorner bl{3, 0};
+    GridCorner br{3, 3};
+
+    GridCell cell{tl, tr, bl, br};
+
+    ASSERT_TRUE(cell.isValid());
+    ASSERT_TRUE(cell.isSplitable());
+    ASSERT_FALSE(cell.isAtomic());
+    ASSERT_TRUE(cell.isSubSetOf(cell));
+    ASSERT_TRUE(cell.isSuperSetOf(cell));
+    ASSERT_EQ(cell.size(), 16);
+
+    auto [top_l, top_r, bottom_l, bottom_r] = cell.split();
+
+    EXPECT_EQ(top_l.size(), 4);
+    EXPECT_EQ(top_r.size(), 4);
+    EXPECT_EQ(bottom_l.size(), 4);
+    EXPECT_EQ(bottom_r.size(), 4);
+
+    auto [small_top_l, small_top_r, small_bottom_l, small_bottom_r] = top_l.split();
+
+    EXPECT_EQ(small_top_l.size(), 1);
+    EXPECT_EQ(small_top_r.size(), 1);
+    EXPECT_EQ(small_bottom_l.size(), 1);
+    EXPECT_EQ(small_bottom_r.size(), 1);
+
+}
+
 TEST(GridCellTest, IndexTest)
 {
     GridCorner tl{0, 0};

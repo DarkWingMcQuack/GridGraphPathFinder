@@ -74,6 +74,9 @@ public:
     [[nodiscard]] auto hasCommonNodeWith(const GridCell& other) const noexcept
         -> bool;
 
+    [[nodiscard]] auto to_string() const noexcept
+        -> std::string;
+
 private:
     friend auto operator<<(std::ostream& os, const GridCell& c) noexcept
         -> std::ostream&;
