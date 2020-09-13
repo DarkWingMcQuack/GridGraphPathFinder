@@ -172,6 +172,26 @@ auto GridGraph::wrapGraphInCell() const noexcept
                            bottom_right};
 }
 
+
+auto GridGraph::getRandomWalkableNode() const noexcept
+    -> Node
+{
+
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<std::size_t> width_dis(0, width - 1);
+    std::uniform_int_distribution<std::size_t> heigth_dis(0, height - 1);
+
+    Node random_node{heigth_dis(gen), width_dis(gen)};
+
+    while(isBarrier(random_node)) {
+        random_node = Node{heigth_dis(gen),
+                           width_dis(gen)};
+    }
+
+    return random_node;
+}
+
 auto graph::parseFileToGridGraph(std::string_view path) noexcept
     -> std::optional<GridGraph>
 {

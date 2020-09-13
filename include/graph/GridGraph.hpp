@@ -48,6 +48,9 @@ public:
     [[nodiscard]] auto countNumberOfWalkableNodes(const graph::GridCell& cell) const noexcept
         -> std::size_t;
 
+    [[nodiscard]] auto getRandomWalkableNode() const noexcept
+        -> Node;
+
     auto begin() const noexcept
         -> GridGraphIterator;
 
