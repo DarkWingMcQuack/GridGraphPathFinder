@@ -30,11 +30,11 @@ class NodeSelection:
         with open(path, 'r') as path_file:
             for line in path_file:
                 if line.startswith("0: "):
-                    row, column = line.replace(' ', '')[3:-1].split(',')
+                    row, column = line.replace(' ', '')[3:-2].split(',')
                     self.left_nodes.append((int(row), int(column)))
                 if line.startswith("1: "):
-                    row, column= line.replace(' ', '')[3:-1].split(',')
+                    row, column= line.replace(' ', '')[3:-2].split(',')
                     self.right_nodes.append((int(row), int(column)))
                 if line.startswith("center: "):
-                    row, column= line.replace(' ', '')[8:-1].split(',')
+                    row, column= line.replace(' ', '')[8:-2].split(',')
                     self.centers.append((int(row), int(column)))

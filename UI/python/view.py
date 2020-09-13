@@ -22,6 +22,7 @@ class View:
     def draw_model(self, model):
         self.canvas.delete("all")
         self.draw_graph(model.graph)
+        self.draw_selection(model.selection)
 
         self.vbar.config(command=self.canvas.yview)
         self.hbar.config(command=self.canvas.xview)
