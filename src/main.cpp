@@ -1,14 +1,16 @@
-#include <pathfinding/ManhattanDijkstra.hpp>
-#include <graph/GridGraph.hpp>
-#include <utils/ProgramOptions.hpp>
-#include <utils/Timer.hpp>
-#include <separation/WellSeparationChecker.hpp>
-#include <separation/WellSeparationCalculator.hpp>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
+#include <graph/GridGraph.hpp>
+#include <pathfinding/ManhattanDijkstra.hpp>
+#include <pathfinding/NormalDijkstra.hpp>
+#include <separation/WellSeparationCalculator.hpp>
+#include <separation/WellSeparationChecker.hpp>
+#include <utils/ProgramOptions.hpp>
+#include <utils/Timer.hpp>
 
 using pathfinding::ManhattanDijkstra;
+using pathfinding::NormalDijkstra;
 
 auto main(int argc, char* argv[])
     -> int
@@ -18,10 +20,10 @@ auto main(int argc, char* argv[])
 
     auto graph_opt = graph::parseFileToGridGraph(graph_file);
     const auto& graph = graph_opt.value();
-    ManhattanDijkstra path_finder{graph_opt.value()};
+    NormalDijkstra path_finder{graph_opt.value()};
 
 
-	utils::Timer t;
+    utils::Timer t;
     auto separations = separation::calculateSeparation(std::move(path_finder));
     fmt::print("runtime: {}\n", t.elapsed());
     fmt::print("number of nodes: {}\n",

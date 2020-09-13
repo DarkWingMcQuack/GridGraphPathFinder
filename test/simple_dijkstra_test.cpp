@@ -2,17 +2,17 @@
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
-#include <pathfinding/ManhattanDijkstra.hpp>
+#include <pathfinding/NormalDijkstra.hpp>
 
 #include <gtest/gtest.h>
 
 using graph::Node;
 using graph::GridGraph;
-using pathfinding::ManhattanDijkstra;
+using pathfinding::NormalDijkstra;
 using pathfinding::Path;
 
 
-TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithoutBarriersTest)
+TEST(StraightNormalDijkstraTest, NormalDijkstraWithoutBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, true, true, true},
@@ -26,7 +26,7 @@ TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithoutBarriersTest)
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    NormalDijkstra d{graph_test1};
 
     auto paths = d.findRoutes({0, 0}, {0, 4});
 
@@ -37,7 +37,7 @@ TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithoutBarriersTest)
     EXPECT_EQ(paths.size(), 9);
 }
 
-TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithOneBarrierTest)
+TEST(StraightNormalDijkstraTest, NormalDijkstraWithOneBarrierTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -51,7 +51,7 @@ TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithOneBarrierTest)
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    NormalDijkstra d{graph_test1};
 
     auto paths = d.findRoutes({0, 0}, {0, 4});
 
@@ -62,7 +62,7 @@ TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithOneBarrierTest)
     EXPECT_EQ(paths.size(), 5);
 }
 
-TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithMoreBarriersTest)
+TEST(StraightNormalDijkstraTest, NormalDijkstraWithMoreBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -76,7 +76,7 @@ TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithMoreBarriersTest)
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    NormalDijkstra d{graph_test1};
 
     auto paths = d.findRoutes({0, 0}, {0, 4});
 
