@@ -21,7 +21,7 @@ public:
     ManhattanDijkstra(const graph::GridGraph& graph) noexcept;
     ManhattanDijkstra() = delete;
     ManhattanDijkstra(ManhattanDijkstra&&) = default;
-    ManhattanDijkstra(const ManhattanDijkstra&) = delete;
+    ManhattanDijkstra(const ManhattanDijkstra&) = default;
     auto operator=(const ManhattanDijkstra&) -> ManhattanDijkstra& = delete;
     auto operator=(ManhattanDijkstra &&) -> ManhattanDijkstra& = delete;
 
@@ -37,6 +37,8 @@ public:
     [[nodiscard]] auto getGraph() const noexcept
         -> const graph::GridGraph&;
 
+    [[nodiscard]] auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
+        -> std::vector<graph::Node>;
 
 protected:
     auto getDistanceTo(const graph::Node& n) const noexcept
@@ -53,9 +55,6 @@ protected:
 
     auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
         -> graph::Distance;
-
-    auto getWalkableManhattanNeigboursOf(const graph::Node& n) const noexcept
-        -> std::vector<graph::Node>;
 
     auto getIndex(const graph::Node& n) const noexcept
         -> std::optional<std::size_t>;

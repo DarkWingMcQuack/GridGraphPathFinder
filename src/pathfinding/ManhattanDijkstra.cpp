@@ -108,7 +108,7 @@ auto ManhattanDijkstra::extractShortestPaths(const graph::Node& source, const gr
         }
 
         const auto& last_inserted = path.getSource();
-        auto neigbours = getWalkableManhattanNeigboursOf(last_inserted);
+        auto neigbours = getWalkableNeigboursOf(last_inserted);
         auto smallest_distance = findSmallestDistance(neigbours);
 
         if(smallest_distance == UNREACHABLE) {
@@ -138,7 +138,7 @@ auto ManhattanDijkstra::extractShortestPaths(const graph::Node& source, const gr
 }
 
 
-auto ManhattanDijkstra::getWalkableManhattanNeigboursOf(const graph::Node& n) const noexcept
+auto ManhattanDijkstra::getWalkableNeigboursOf(const graph::Node& n) const noexcept
     -> std::vector<graph::Node>
 {
     return graph_.get().getWalkableManhattanNeigbours(n);
