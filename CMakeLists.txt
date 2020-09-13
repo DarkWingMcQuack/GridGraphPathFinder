@@ -37,27 +37,38 @@ add_library(GridGraphPathFinderSrc "")
 
 target_sources(GridGraphPathFinderSrc
   PUBLIC
-  ${CMAKE_CURRENT_LIST_DIR}/include/GridGraph.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/Utils.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/GridCell.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/Separation.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/GridCorner.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/GridCellIterator.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/Node.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/ProgramOptions.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/Path.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/Dijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridGraph.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCorner.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCellIterator.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCell.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/Node.hpp
+
+  ${CMAKE_CURRENT_LIST_DIR}/include/utils/Utils.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/utils/Timer.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/utils/ProgramOptions.hpp
+
+  ${CMAKE_CURRENT_LIST_DIR}/include/separation/Separation.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationChecker.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationCalculator.hpp
+
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Path.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Dijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/DijkstraQueue.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Distance.hpp
 
   PRIVATE
-  src/GridGraph.cpp
-  src/GridCell.cpp
-  src/GridCorner.cpp
-  src/Separation.cpp
-  src/GridCellIterator.cpp
-  src/Node.cpp
-  src/ProgramOptions.cpp
-  src/Path.cpp
-  src/Dijkstra.cpp
+  src/graph/GridGraph.cpp
+  src/graph/GridCell.cpp
+  src/graph/GridCorner.cpp
+  src/graph/GridCellIterator.cpp
+  src/graph/Node.cpp
+
+  src/separation/Separation.cpp
+
+  src/utils/ProgramOptions.cpp
+
+  src/pathfinding/Path.cpp
+  src/pathfinding/Dijkstra.cpp
   )
 
 # add the dependencies of the target to enforce
@@ -88,7 +99,7 @@ target_link_libraries(GridGraphPathFinderSrc PRIVATE
 ###############################
 ## THE ACTUAL BINARY
 ###############################
-add_executable(GridGraphPathFinder main.cpp)
+add_executable(GridGraphPathFinder src/main.cpp)
 
 # make headers available
 target_include_directories(GridGraphPathFinder PUBLIC

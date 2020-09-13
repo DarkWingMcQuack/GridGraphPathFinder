@@ -1,12 +1,12 @@
-#include <GridCell.hpp>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
+#include <graph/GridCell.hpp>
 
 #include <gtest/gtest.h>
 
-using grid::GridCell;
-using grid::GridCorner;
+using graph::GridCell;
+using graph::GridCorner;
 
 
 TEST(GridCellTest, SimpleSplitTest)
@@ -128,7 +128,6 @@ TEST(GridCellTest, SimpleSizeTest)
     EXPECT_EQ(small_top_r.size(), 1);
     EXPECT_EQ(small_bottom_l.size(), 1);
     EXPECT_EQ(small_bottom_r.size(), 1);
-
 }
 
 TEST(GridCellTest, IndexTest)

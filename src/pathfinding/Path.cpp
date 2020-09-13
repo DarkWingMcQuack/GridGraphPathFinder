@@ -1,12 +1,12 @@
-#include <Node.hpp>
-#include <Path.hpp>
 #include <execution>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <functional>
+#include <graph/Node.hpp>
 #include <numeric>
 #include <optional>
+#include <pathfinding/Path.hpp>
 #include <string_view>
 #include <vector>
 
@@ -68,7 +68,7 @@ auto Path::getNodes() noexcept
 }
 
 
-auto Path::getNodesIn(const grid::GridCell& cell) const noexcept
+auto Path::getNodesIn(const graph::GridCell& cell) const noexcept
     -> std::vector<graph::Node>
 {
     std::vector<Node> found;

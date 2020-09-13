@@ -1,12 +1,12 @@
 #pragma once
 
-#include <GridCellIterator.hpp>
-#include <GridCorner.hpp>
-#include <Node.hpp>
 #include <array>
+#include <graph/GridCellIterator.hpp>
+#include <graph/GridCorner.hpp>
+#include <graph/Node.hpp>
 #include <iostream>
 
-namespace grid {
+namespace graph {
 
 class GridCell
 {
@@ -103,4 +103,4 @@ private:
 auto operator<<(std::ostream& os, const GridCell& c) noexcept
     -> std::ostream&;
 
-} // namespace grid
+} // namespace graph

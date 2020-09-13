@@ -1,7 +1,7 @@
-#include <Node.hpp>
 #include <algorithm>
 #include <fmt/core.h>
 #include <fstream>
+#include <graph/Node.hpp>
 #include <vector>
 
 using graph::Node;

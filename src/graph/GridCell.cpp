@@ -1,18 +1,18 @@
-#include <GridCell.hpp>
-#include <GridCellIterator.hpp>
-#include <GridCorner.hpp>
-#include <Node.hpp>
-#include <Utils.hpp>
 #include <array>
 #include <cmath>
 #include <fmt/core.h>
+#include <graph/GridCell.hpp>
+#include <graph/GridCellIterator.hpp>
+#include <graph/GridCorner.hpp>
+#include <graph/Node.hpp>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utils/Utils.hpp>
 
-using grid::GridCell;
-using grid::GridCorner;
-using grid::GridCellIterator;
+using graph::GridCell;
+using graph::GridCorner;
+using graph::GridCellIterator;
 using graph::Node;
 using util::min;
 using util::max;
@@ -239,7 +239,7 @@ auto GridCell::hasCommonNodeWith(const GridCell& other) const noexcept
 
 
 
-auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
+auto graph::operator<<(std::ostream& os, const GridCell& c) noexcept
     -> std::ostream&
 {
     return os << "GridCell{"
@@ -254,10 +254,10 @@ auto grid::operator<<(std::ostream& os, const GridCell& c) noexcept
 }
 
 
-auto grid::merge(const GridCell& first,
-                 const GridCell& second,
-                 const GridCell& third,
-                 const GridCell& fourth) noexcept
+auto graph::merge(const GridCell& first,
+                  const GridCell& second,
+                  const GridCell& third,
+                  const GridCell& fourth) noexcept
     -> GridCell
 {
     GridCorner top_left{

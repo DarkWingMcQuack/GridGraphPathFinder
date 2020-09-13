@@ -1,11 +1,12 @@
-#include <Distance.hpp>
-#include <Path.hpp>
-#include <Separation.hpp>
+#include <fstream>
+#include <pathfinding/Distance.hpp>
+#include <pathfinding/Path.hpp>
+#include <separation/Separation.hpp>
 
 using separation::Separation;
 using graph::Distance;
 using graph::Node;
-using grid::GridCell;
+using graph::GridCell;
 
 Separation::Separation(GridCell first,
                        GridCell second,
@@ -18,6 +19,13 @@ Separation::Separation(GridCell first,
       second_center_(second_center),
       center_distance_(center_distance) {}
 
+
+auto Separation::operator<(const Separation& other) const noexcept
+    -> bool
+{
+    return first_.size() * second_.size()
+        < other.first_.size() * other.second_.size();
+}
 
 auto Separation::getCenterDistance() const noexcept
     -> Distance
@@ -47,4 +55,20 @@ auto Separation::getSecondClusterCenter() const noexcept
     -> Node
 {
     return second_center_;
+}
+
+
+auto Separation::toFile(std::string_view path) const noexcept
+    -> void
+{
+    std::ofstream file{path.data()};
+    for(auto node : first_) {
+        file << "0: (" << node.row << ", " << node.column << ")\n";
+    }
+    for(auto node : second_) {
+        file << "1: (" << node.row << ", " << node.column << ")\n";
+    }
+
+    file << "center: (" << first_center_.row << ", " << first_center_.column << ")\n";
+    file << "center: (" << second_center_.row << ", " << second_center_.column << ")\n";
 }

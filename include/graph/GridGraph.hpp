@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GridCell.hpp>
-#include <GridGraphIterator.hpp>
-#include <Node.hpp>
+#include <graph/GridCell.hpp>
+#include <graph/GridGraphIterator.hpp>
+#include <graph/Node.hpp>
 #include <optional>
 #include <string_view>
 #include <vector>
@@ -33,17 +33,20 @@ public:
     [[nodiscard]] auto getWalkableManhattanNeigbours(const Node& n) const noexcept
         -> std::vector<Node>;
 
-    [[nodiscard]] auto getAllWalkableNodesOfCell(const grid::GridCell& cell) const noexcept
+    [[nodiscard]] auto getAllWalkableNodesOfCell(const graph::GridCell& cell) const noexcept
         -> std::vector<Node>;
 
     [[nodiscard]] auto generateRandomCellOfSize(std::int64_t cell_size) const noexcept
-        -> grid::GridCell;
+        -> graph::GridCell;
 
-    [[nodiscard]] auto hasWalkableNode(const grid::GridCell& cell) const noexcept
+    [[nodiscard]] auto hasWalkableNode(const graph::GridCell& cell) const noexcept
         -> bool;
 
     [[nodiscard]] auto wrapGraphInCell() const noexcept
-        -> grid::GridCell;
+        -> graph::GridCell;
+
+    [[nodiscard]] auto countNumberOfWalkableNodes(const graph::GridCell& cell) const noexcept
+        -> std::size_t;
 
     auto begin() const noexcept
         -> GridGraphIterator;

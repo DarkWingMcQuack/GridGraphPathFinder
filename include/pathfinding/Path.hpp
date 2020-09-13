@@ -1,14 +1,13 @@
 #pragma once
 
-#include <GridCell.hpp>
-#include <Node.hpp>
 #include <functional>
+#include <graph/GridCell.hpp>
+#include <graph/Node.hpp>
 #include <optional>
 #include <string_view>
 #include <vector>
 
 namespace pathfinding {
-
 
 class Path
 {
@@ -36,7 +35,7 @@ public:
     auto getNodes() noexcept
         -> std::vector<graph::Node>&;
 
-    auto getNodesIn(const grid::GridCell&) const noexcept
+    auto getNodesIn(const graph::GridCell&) const noexcept
         -> std::vector<graph::Node>;
 
     auto contains(const graph::Node&) const noexcept

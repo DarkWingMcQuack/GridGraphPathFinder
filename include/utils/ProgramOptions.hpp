@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-namespace util {
+namespace utils {
 
 class ProgramOptions
 {

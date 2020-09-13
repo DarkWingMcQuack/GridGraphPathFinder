@@ -1,10 +1,10 @@
-#include <GridCell.hpp>
-#include <GridCellIterator.hpp>
-#include <Node.hpp>
 #include <cmath>
+#include <graph/GridCell.hpp>
+#include <graph/GridCellIterator.hpp>
+#include <graph/Node.hpp>
 
-using grid::GridCell;
-using grid::GridCellIterator;
+using graph::GridCell;
+using graph::GridCellIterator;
 using graph::Node;
 
 GridCellIterator::GridCellIterator(const GridCell& cell,
@@ -61,7 +61,7 @@ auto GridCellIterator::operator+(const GridCellIterator& rhs) const noexcept
 }
 
 auto GridCellIterator::operator-(const GridCellIterator& rhs) const noexcept
-    -> difference_type 
+    -> difference_type
 {
     return idx_ - rhs.idx_;
 }

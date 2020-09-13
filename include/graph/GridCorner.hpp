@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cstdint>
 
-namespace grid {
+namespace graph {
 
 struct GridCorner
 {

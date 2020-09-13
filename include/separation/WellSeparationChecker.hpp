@@ -1,22 +1,22 @@
 #pragma once
 
 
-#include <Distance.hpp>
-#include <GridCell.hpp>
-#include <GridGraph.hpp>
-#include <Separation.hpp>
-#include <Utils.hpp>
 #include <future>
+#include <graph/GridCell.hpp>
+#include <graph/GridGraph.hpp>
 #include <iterator>
 #include <numeric>
+#include <pathfinding/Distance.hpp>
+#include <separation/Separation.hpp>
+#include <utils/Utils.hpp>
 #include <vector>
 
 namespace separation {
 
 template<class PathFinder>
 [[nodiscard]] auto findCenterCandidates(PathFinder& path_finder,
-                                        const grid::GridCell& first,
-                                        const grid::GridCell& second) noexcept
+                                        const graph::GridCell& first,
+                                        const graph::GridCell& second) noexcept
     -> std::optional<std::tuple<graph::Node,
                                 graph::Node,
                                 graph::Distance>>
@@ -30,27 +30,13 @@ template<class PathFinder>
     auto is_first_run = true;
     std::vector<graph::Node> min_node_candidates;
 
-    for(auto from : first) {
+    for(std::size_t i{0}; i < first.size(); i++) {
+        auto idx = i % 2 == 0 ? i : first.size() - 1 - i;
+        auto from = first[idx];
+
         for(auto to : second) {
             auto distance = path_finder.findDistance(from, to);
 
-            /////////////////////////////////////////////////////////////////////////////////////
-            //// check if the nodes which can be used as centers for cluster second
-            //// are distinct from the candidates which were found until now
-            //// if this is not the case, this allows an early return since
-            //// it is not possible to route all paths from first to second over
-            //// a common node in second
-            // if(is_first_run) {
-            //     min_node_candidates = path_finder.getNodesWithMinDistanceIn(second);
-            //     is_first_run = false;
-            // }
-
-            // min_node_candidates = util::intersect(std::move(min_node_candidates),
-            //                                       path_finder.getNodesWithMinDistanceIn(second));
-            // if(min_node_candidates.empty()) {
-            //     return std::nullopt;
-            // }
-            /////////////////////////////////////////////////////////////////////////////////////
 
             if(distance < min_distance) {
                 min_distance = distance;
@@ -58,9 +44,26 @@ template<class PathFinder>
                 second_center = to;
             }
         }
+        /////////////////////////////////////////////////////////////////////////////////////
+        //// check if the nodes which can be used as centers for cluster second
+        //// are distinct from the candidates which were found until now
+        //// if this is not the case, this allows an early return since
+        //// it is not possible to route all paths from first to second over
+        //// a common node in second
+        if(is_first_run) {
+            min_node_candidates = path_finder.getNodesWithMinDistanceIn(second);
+            is_first_run = false;
+        }
+
+        min_node_candidates = util::intersect(std::move(min_node_candidates),
+                                              path_finder.getNodesWithMinDistanceIn(second));
+        if(min_node_candidates.empty()) {
+            return std::nullopt;
+        }
+        /////////////////////////////////////////////////////////////////////////////////////
     }
 
-    if(!first_center or !second_center) {
+    if(!first_center or !second_center or min_distance == UNREACHABLE) {
         return std::nullopt;
     }
 
@@ -71,16 +74,16 @@ template<class PathFinder>
 
 template<class PathFinder>
 [[nodiscard]] auto checkSeparation(PathFinder& path_finder,
-                                   const grid::GridCell& first,
-                                   const grid::GridCell& second) noexcept
+                                   const graph::GridCell& first,
+                                   const graph::GridCell& second) noexcept
     -> std::optional<separation::Separation>
 {
     using graph::UNREACHABLE;
     using graph::Distance;
 
-	if(first.isSubSetOf(second) or first.isSuperSetOf(second)){
+    if(first.isSubSetOf(second) or first.isSuperSetOf(second)) {
         return std::nullopt;
-	}
+    }
 
     //find first center
     auto center_opt = findCenterCandidates(path_finder, first, second);

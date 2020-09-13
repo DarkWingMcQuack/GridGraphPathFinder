@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Node.hpp>
+#include <graph/Node.hpp>
 #include <optional>
 
-namespace grid {
+namespace graph {
 
 //forward declaration to avoid cyclic header includes
 class GridCell;
@@ -75,4 +75,4 @@ private:
     difference_type idx_;
 };
 
-} // namespace grid
+} // namespace graph

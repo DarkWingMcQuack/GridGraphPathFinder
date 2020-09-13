@@ -1,8 +1,8 @@
-#include <GridGraph.hpp>
-#include <Dijkstra.hpp>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
+#include <graph/GridGraph.hpp>
+#include <pathfinding/Dijkstra.hpp>
 
 #include <gtest/gtest.h>
 

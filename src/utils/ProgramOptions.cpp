@@ -1,10 +1,10 @@
 #include <CLI/CLI.hpp>
-#include <ProgramOptions.hpp>
 #include <optional>
 #include <string>
 #include <string_view>
+#include <utils/ProgramOptions.hpp>
 
-using util::ProgramOptions;
+using utils::ProgramOptions;
 
 
 ProgramOptions::ProgramOptions(std::string graph_file)
@@ -18,7 +18,7 @@ auto ProgramOptions::getGraphFile() const
 
 
 
-auto util::parseArguments(int argc, char* argv[])
+auto utils::parseArguments(int argc, char* argv[])
     -> ProgramOptions
 {
     CLI::App app{"Grid-Graph Path Finder"};

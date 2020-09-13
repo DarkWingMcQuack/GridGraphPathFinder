@@ -85,7 +85,6 @@ auto intersect(std::vector<T>&& head0,
                Tail&&... tail) noexcept
     -> std::vector<T>
 {
-    fmt::print("first: {} second: {}\n", head0.size(), head1.size());
     if constexpr(sizeof...(tail) == 0) {
         std::vector<T> intersection;
         std::set_intersection(std::make_move_iterator(std::begin(head0)),

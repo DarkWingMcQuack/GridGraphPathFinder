@@ -1,10 +1,10 @@
 #pragma once
 
-#include <DijkstraQueue.hpp>
-#include <Distance.hpp>
-#include <Path.hpp>
 #include <functional>
 #include <optional>
+#include <pathfinding/DijkstraQueue.hpp>
+#include <pathfinding/Distance.hpp>
+#include <pathfinding/Path.hpp>
 #include <queue>
 #include <string_view>
 #include <vector>
@@ -31,7 +31,7 @@ public:
     [[nodiscard]] auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
         -> graph::Distance;
 
-    [[nodiscard]] auto getNodesWithMinDistanceIn(const grid::GridCell& cell) noexcept
+    [[nodiscard]] auto getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
         -> std::vector<graph::Node>;
 
     [[nodiscard]] auto getGraph() const noexcept

@@ -1,10 +1,10 @@
-#include <Dijkstra.hpp>
-#include <Distance.hpp>
 #include <fmt/core.h>
-#include <GridGraph.hpp>
 #include <functional>
+#include <graph/GridGraph.hpp>
 #include <numeric>
 #include <optional>
+#include <pathfinding/Dijkstra.hpp>
+#include <pathfinding/Distance.hpp>
 #include <queue>
 #include <string_view>
 #include <vector>
@@ -188,7 +188,7 @@ auto Dijkstra::isSettled(const graph::Node& n)
     return std::nullopt;
 }
 
-auto Dijkstra::getNodesWithMinDistanceIn(const grid::GridCell& cell) noexcept
+auto Dijkstra::getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
     -> std::vector<graph::Node>
 {
     auto min_dist = std::accumulate(std::begin(cell),
@@ -226,7 +226,7 @@ auto Dijkstra::computeDistances(const graph::Node& source, const graph::Node& ta
         reset();
         pq_.emplace(source, 0l);
         setDistanceTo(source, 0);
-		touched_.emplace_back(source);
+        touched_.emplace_back(source);
     }
 
 

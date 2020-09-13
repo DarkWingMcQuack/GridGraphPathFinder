@@ -1,13 +1,12 @@
 #pragma once
 
 
-#include <Distance.hpp>
-#include <GridCell.hpp>
-#include <PathQuerySystem.hpp>
-#include <Separation.hpp>
-#include <Utils.hpp>
-#include <WellSeparationChecker.hpp>
 #include <fmt/core.h>
+#include <graph/GridCell.hpp>
+#include <pathfinding/Distance.hpp>
+#include <separation/Separation.hpp>
+#include <separation/WellSeparationChecker.hpp>
+#include <utils/Utils.hpp>
 #include <vector>
 
 namespace separation {
@@ -16,8 +15,8 @@ namespace impl {
 
 template<class PathFinder>
 [[nodiscard]] auto calculateSeparation(PathFinder& path_finder,
-                                       const grid::GridCell& first,
-                                       const grid::GridCell& second) noexcept
+                                       const graph::GridCell& first,
+                                       const graph::GridCell& second) noexcept
     -> std::vector<Separation>
 {
     if(first == second and first.size() == 1) {
@@ -32,10 +31,20 @@ template<class PathFinder>
     auto separation_opt = checkSeparation(path_finder, first, second);
 
     if(separation_opt) {
-        fmt::print("found well separated pair with sizes {} and {}\n",
-                   first.size(),
-                   second.size());
+        // fmt::print("found well separated pair with sizes {} and {}\n",
+        //            graph.countNumberOfWalkableNodes(first),
+        //            graph.countNumberOfWalkableNodes(second));
         return std::vector{std::move(separation_opt.value())};
+    }
+
+    //TODO: what to do with two nodes with no path between them?
+    if(first.size() == second.size() and first.size() == 1) {
+        return {
+            Separation{first,
+                       second,
+                       first[0],
+                       second[0],
+                       graph::UNREACHABLE}};
     }
 
     if(first.size() < second.size()) {

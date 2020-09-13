@@ -1,5 +1,5 @@
-#include <Distance.hpp>
-#include <Node.hpp>
+#include <graph/Node.hpp>
+#include <pathfinding/Distance.hpp>
 #include <queue>
 #include <string_view>
 #include <vector>

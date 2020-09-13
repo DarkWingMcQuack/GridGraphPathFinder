@@ -1,7 +1,8 @@
 
 #pragma once
 
-#include <GridCell.hpp>
+#include <graph/GridCell.hpp>
+#include <graph/Node.hpp>
 #include <functional>
 
 namespace graph {
@@ -37,9 +38,9 @@ public:
 
     // GridGraphIterator traits
     using difference_type = std::size_t;
-    using value_type = grid::GridCell;
-    using pointer = const grid::GridCell*;
-    using reference = const grid::GridCell&;
+    using value_type = graph::GridCell;
+    using pointer = const graph::GridCell*;
+    using reference = const graph::GridCell&;
     using GridGraphIterator_category = std::bidirectional_iterator_tag;
 
 private:

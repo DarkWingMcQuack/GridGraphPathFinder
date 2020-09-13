@@ -1,8 +1,8 @@
-#include <GridCorner.hpp>
-#include <iostream>
 #include <cstdint>
+#include <iostream>
+#include <graph/GridCorner.hpp>
 
-using grid::GridCorner;
+using graph::GridCorner;
 
 
 GridCorner::GridCorner(std::int64_t row,
@@ -35,7 +35,7 @@ auto GridCorner::getColumn() const noexcept
     return column_;
 }
 
-auto grid::operator<<(std::ostream& os, const GridCorner& c) noexcept
+auto graph::operator<<(std::ostream& os, const GridCorner& c) noexcept
     -> std::ostream&
 {
     return os << "("
