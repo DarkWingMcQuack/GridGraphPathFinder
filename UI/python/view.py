@@ -22,7 +22,7 @@ class View:
     def draw_model(self, model):
         self.canvas.delete("all")
         self.draw_graph(model.graph)
-        self.draw_selection(model.selection)
+        self.draw_selection(model.selection, model.graph)
 
         self.vbar.config(command=self.canvas.yview)
         self.hbar.config(command=self.canvas.xview)
@@ -47,10 +47,16 @@ class View:
                 else:
                     self.draw_node(node, 'gray')
 
-    def draw_selection(self, selection: NodeSelection):
+    def draw_selection(self, selection: NodeSelection, graph: Graph):
         for node in selection.left_nodes:
-            self.draw_node(node, 'green')
+            if graph.is_walkable(node):
+                self.draw_node(node, 'springgreen')
+            else:
+                self.draw_node(node, 'darkgreen')
         for node in selection.right_nodes:
-            self.draw_node(node, 'blue')
+            if graph.is_walkable(node):
+                self.draw_node(node, 'deepskyblue')
+            else:
+                self.draw_node(node, 'navy')
         for node in selection.centers:
             self.draw_node(node, 'red')
