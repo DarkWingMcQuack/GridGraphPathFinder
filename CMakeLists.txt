@@ -52,7 +52,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationCalculator.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Path.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Dijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/ManhattanDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/DijkstraQueue.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Distance.hpp
 
@@ -68,7 +68,7 @@ target_sources(GridGraphPathFinderSrc
   src/utils/ProgramOptions.cpp
 
   src/pathfinding/Path.cpp
-  src/pathfinding/Dijkstra.cpp
+  src/pathfinding/ManhattanDijkstra.cpp
   )
 
 # add the dependencies of the target to enforce

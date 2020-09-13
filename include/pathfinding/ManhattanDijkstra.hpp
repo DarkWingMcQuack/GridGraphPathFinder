@@ -15,15 +15,15 @@ class GridGraph;
 
 namespace pathfinding {
 
-class Dijkstra
+class ManhattanDijkstra
 {
 public:
-    Dijkstra(const graph::GridGraph& graph) noexcept;
-    Dijkstra() = delete;
-    Dijkstra(Dijkstra&&) = default;
-    Dijkstra(const Dijkstra&) = delete;
-    auto operator=(const Dijkstra&) -> Dijkstra& = delete;
-    auto operator=(Dijkstra &&) -> Dijkstra& = delete;
+    ManhattanDijkstra(const graph::GridGraph& graph) noexcept;
+    ManhattanDijkstra() = delete;
+    ManhattanDijkstra(ManhattanDijkstra&&) = default;
+    ManhattanDijkstra(const ManhattanDijkstra&) = delete;
+    auto operator=(const ManhattanDijkstra&) -> ManhattanDijkstra& = delete;
+    auto operator=(ManhattanDijkstra &&) -> ManhattanDijkstra& = delete;
 
     [[nodiscard]] auto findRoutes(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<Path>;

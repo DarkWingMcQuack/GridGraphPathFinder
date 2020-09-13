@@ -1,4 +1,4 @@
-#include <pathfinding/Dijkstra.hpp>
+#include <pathfinding/ManhattanDijkstra.hpp>
 #include <graph/GridGraph.hpp>
 #include <utils/ProgramOptions.hpp>
 #include <utils/Timer.hpp>
@@ -8,7 +8,7 @@
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 
-using pathfinding::Dijkstra;
+using pathfinding::ManhattanDijkstra;
 
 auto main(int argc, char* argv[])
     -> int
@@ -18,7 +18,7 @@ auto main(int argc, char* argv[])
 
     auto graph_opt = graph::parseFileToGridGraph(graph_file);
     const auto& graph = graph_opt.value();
-    Dijkstra path_finder{graph_opt.value()};
+    ManhattanDijkstra path_finder{graph_opt.value()};
 
 
 	utils::Timer t;

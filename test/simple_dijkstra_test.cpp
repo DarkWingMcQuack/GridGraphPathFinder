@@ -2,17 +2,17 @@
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
-#include <pathfinding/Dijkstra.hpp>
+#include <pathfinding/ManhattanDijkstra.hpp>
 
 #include <gtest/gtest.h>
 
 using graph::Node;
 using graph::GridGraph;
-using pathfinding::Dijkstra;
+using pathfinding::ManhattanDijkstra;
 using pathfinding::Path;
 
 
-TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
+TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithoutBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, true, true, true},
@@ -26,7 +26,7 @@ TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    Dijkstra d{graph_test1};
+    ManhattanDijkstra d{graph_test1};
 
     auto paths = d.findRoutes({0, 0}, {0, 4});
 
@@ -37,7 +37,7 @@ TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
     EXPECT_EQ(paths.size(), 9);
 }
 
-TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
+TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithOneBarrierTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -51,7 +51,7 @@ TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    Dijkstra d{graph_test1};
+    ManhattanDijkstra d{graph_test1};
 
     auto paths = d.findRoutes({0, 0}, {0, 4});
 
@@ -62,7 +62,7 @@ TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
     EXPECT_EQ(paths.size(), 5);
 }
 
-TEST(StraightDijkstraTest, DijkstraWithMoreBarriersTest)
+TEST(StraightManhattanDijkstraTest, ManhattanDijkstraWithMoreBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -76,7 +76,7 @@ TEST(StraightDijkstraTest, DijkstraWithMoreBarriersTest)
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    Dijkstra d{graph_test1};
+    ManhattanDijkstra d{graph_test1};
 
     auto paths = d.findRoutes({0, 0}, {0, 4});
 
