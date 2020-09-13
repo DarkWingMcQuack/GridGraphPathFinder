@@ -1,3 +1,5 @@
+#pragma once
+
 #include <graph/Node.hpp>
 #include <pathfinding/Distance.hpp>
 #include <queue>
