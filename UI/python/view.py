@@ -3,6 +3,7 @@ from graph import Graph, NodeSelection
 
 class View:
     def __init__(self, graph_width, graph_height, title):
+        self.scale_factor = max(650 // max(graph_width, graph_height), 3)
         self.root = Tk()
         self.root.title(title)
         self.hbar = Scrollbar(self.root, orient=HORIZONTAL)
@@ -10,12 +11,12 @@ class View:
         self.vbar = Scrollbar(self.root, orient=VERTICAL)
         self.vbar.pack(side=RIGHT, fill=Y)
         self.canvas = Canvas(self.root,
-                             width=min(900, graph_width*2),
-                             height=min(650, graph_height*2),
+                             width=min(900, max(graph_height, graph_width) * self.scale_factor),
+                             height=650,
                              scrollregion=(0,
                                            0,
-                                           graph_width*2.1,
-                                           graph_height*2.1))
+                                           graph_width*(self.scale_factor + 0.1),
+                                           graph_height*(self.scale_factor + 0.1)))
 
 
     def draw_model(self, model):
@@ -30,10 +31,10 @@ class View:
 
     def draw_node(self, node: (int, int), color: str):
         x, y = node
-        self.canvas.create_rectangle(2*x,
-                                     2*y,
-                                     2*x + 2,
-                                     2*y + 2,
+        self.canvas.create_rectangle(self.scale_factor*x,
+                                     self.scale_factor*y,
+                                     self.scale_factor*x + self.scale_factor,
+                                     self.scale_factor*y + self.scale_factor,
                                      fill=color)
 
     def draw_graph(self, graph: Graph):
