@@ -41,6 +41,9 @@ public:
     auto contains(const graph::Node&) const noexcept
         -> bool;
 
+    auto getMiddleNode() const noexcept
+        -> std::optional<graph::Node>;
+
 private:
     friend auto operator<<(std::ostream& os, const Path& p) noexcept
         -> std::ostream&;

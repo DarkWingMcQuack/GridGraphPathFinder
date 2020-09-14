@@ -92,6 +92,19 @@ auto Path::contains(const graph::Node& node) const noexcept
 }
 
 
+auto Path::getMiddleNode() const noexcept
+    -> std::optional<graph::Node>
+{
+    if(path_.empty()) {
+        return std::nullopt;
+    }
+
+    auto middle_index = static_cast<std::size_t>(std::floor(path_.size() / 2.));
+
+    return path_[middle_index];
+}
+
+
 auto pathfinding::operator<<(std::ostream& os, const Path& p) noexcept
     -> std::ostream&
 {
