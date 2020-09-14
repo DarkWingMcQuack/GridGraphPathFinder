@@ -25,8 +25,11 @@ public:
     auto operator=(const ManhattanDijkstra&) -> ManhattanDijkstra& = delete;
     auto operator=(ManhattanDijkstra &&) -> ManhattanDijkstra& = delete;
 
-    [[nodiscard]] auto findRoutes(const graph::Node& source, const graph::Node& target) noexcept
+    [[nodiscard]] auto findAllRoutes(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<Path>;
+
+    [[nodiscard]] auto findRoute(const graph::Node& source, const graph::Node& target) noexcept
+        -> std::optional<Path>;
 
     [[nodiscard]] auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
         -> graph::Distance;
@@ -37,10 +40,10 @@ public:
     [[nodiscard]] auto getGraph() const noexcept
         -> const graph::GridGraph&;
 
+protected:
     [[nodiscard]] auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
         -> std::vector<graph::Node>;
 
-protected:
     auto getDistanceTo(const graph::Node& n) const noexcept
         -> graph::Distance;
 
@@ -50,8 +53,11 @@ protected:
     auto computeDistances(const graph::Node& source, const graph::Node& target) noexcept
         -> void;
 
-    auto extractShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
+    auto extractAllShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
         -> std::vector<Path>;
+
+    auto extractShortestPath(const graph::Node& source, const graph::Node& target) const noexcept
+        -> std::optional<Path>;
 
     auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
         -> graph::Distance;
