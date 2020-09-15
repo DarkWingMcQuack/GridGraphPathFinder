@@ -37,6 +37,9 @@ public:
     [[nodiscard]] auto getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
         -> std::vector<graph::Node>;
 
+    [[nodiscard]] auto getMinDistanceIn(const graph::GridCell& cell) noexcept
+        -> graph::Distance;
+
     [[nodiscard]] auto getGraph() const noexcept
         -> const graph::GridGraph&;
 
@@ -72,7 +75,7 @@ protected:
         -> void;
 
     auto isSettled(const graph::Node& n)
-        -> std::optional<bool>;
+        -> bool;
 
     auto reset() noexcept
         -> void;

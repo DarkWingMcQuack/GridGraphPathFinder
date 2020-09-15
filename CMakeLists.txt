@@ -24,9 +24,9 @@ include(cmake/gtest.cmake)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-include(CheckIPOSupported)
-check_ipo_supported(RESULT IPOsupported OUTPUT error)
-
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 
 # needed for multithreading
 find_package(Threads REQUIRED)
@@ -80,13 +80,6 @@ target_sources(GridGraphPathFinderSrc
   src/pathfinding/NormalDijkstra.cpp
   )
 
-if(IPOsupported)
-    message(STATUS "IPO / LTO enabled for target GridPathFinderSrc")
-    set_property(TARGET GridGraphPathFinderSrc PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-else()
-    message(STATUS "IPO / LTO not supported: <${error}>")
-endif()
-
 # add the dependencies of the target to enforce
 # the right order of compiling
 add_dependencies(GridGraphPathFinderSrc fmt-project)
@@ -116,13 +109,6 @@ target_link_libraries(GridGraphPathFinderSrc PRIVATE
 ## THE ACTUAL BINARY
 ###############################
 add_executable(GridGraphPathFinder src/main.cpp)
-
-if(IPOsupported)
-    message(STATUS "IPO / LTO enabled for target GridPathFinder")
-    set_property(TARGET GridGraphPathFinder PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
-else()
-    message(STATUS "IPO / LTO not supported: <${error}>")
-endif()
 
 # make headers available
 target_include_directories(GridGraphPathFinder PUBLIC

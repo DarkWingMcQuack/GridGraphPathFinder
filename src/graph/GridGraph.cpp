@@ -176,7 +176,6 @@ auto GridGraph::wrapGraphInCell() const noexcept
 auto GridGraph::getRandomWalkableNode() const noexcept
     -> Node
 {
-
     static std::random_device rd;
     static std::mt19937 gen(rd());
     std::uniform_int_distribution<std::size_t> width_dis(0, width - 1);

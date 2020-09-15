@@ -220,7 +220,7 @@ auto ManhattanDijkstra::settle(const graph::Node& n) noexcept
 }
 
 auto ManhattanDijkstra::isSettled(const graph::Node& n)
-    -> std::optional<bool>
+    -> bool
 {
     auto index_opt = getIndex(n);
 
@@ -228,7 +228,7 @@ auto ManhattanDijkstra::isSettled(const graph::Node& n)
         return settled_[index_opt.value()];
     }
 
-    return std::nullopt;
+    return false;
 }
 
 auto ManhattanDijkstra::getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
@@ -253,14 +253,25 @@ auto ManhattanDijkstra::getNodesWithMinDistanceIn(const graph::GridCell& cell) n
     return nodes;
 }
 
+
+auto ManhattanDijkstra::getMinDistanceIn(const graph::GridCell& cell) noexcept
+    -> graph::Distance
+{
+    return std::accumulate(std::begin(cell),
+                           std::end(cell),
+                           UNREACHABLE,
+                           [&](auto acc, const auto& node) {
+                               return std::min(acc, getDistanceTo(node));
+                           });
+}
+
 auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph::Node& target) noexcept
     -> void
 {
     using graph::UNREACHABLE;
 
     if(source == last_source_
-       && isSettled(target)
-       && isSettled(target).value()) {
+       && isSettled(target)) {
         return;
     }
 
@@ -274,7 +285,6 @@ auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph:
 
     while(!pq_.empty()) {
         auto [current_node, current_dist] = pq_.top();
-        pq_.pop();
 
         settle(current_node);
 
@@ -282,16 +292,20 @@ auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph:
             return;
         }
 
+        //pop after the return, otherwise we loose a value
+        //when reusing the pq
+        pq_.pop();
+
         auto neigbours = getWalkableNeigboursOf(current_node);
 
         for(auto&& neig : neigbours) {
-            touched_.emplace_back(neig);
-
             auto neig_dist = getDistanceTo(neig);
+            auto new_dist = current_dist + 1;
 
-            if(UNREACHABLE != current_dist and neig_dist > current_dist + 1) {
-                setDistanceTo(neig, current_dist + 1);
-                pq_.emplace(neig, current_dist + 1);
+            if(UNREACHABLE != current_dist and neig_dist > new_dist) {
+                touched_.emplace_back(neig);
+                setDistanceTo(neig, new_dist);
+                pq_.emplace(neig, new_dist);
             }
         }
     }

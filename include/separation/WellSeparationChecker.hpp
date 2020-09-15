@@ -17,9 +17,10 @@ template<class PathFinder>
 [[nodiscard]] auto findCenterCandidates(PathFinder& path_finder,
                                         const graph::GridCell& first,
                                         const graph::GridCell& second) noexcept
-    -> std::optional<std::tuple<graph::Node,
-                                graph::Node,
-                                graph::Distance>>
+    -> std::optional<
+        std::tuple<graph::Node,
+                   graph::Node,
+                   graph::Distance>>
 {
     using graph::Distance;
     using graph::UNREACHABLE;
@@ -27,14 +28,10 @@ template<class PathFinder>
     auto min_distance = UNREACHABLE;
     std::optional<graph::Node> first_center;
     std::optional<graph::Node> second_center;
-    auto is_first_run = true;
-    std::vector<graph::Node> min_node_candidates;
-
 
     for(auto from : first) {
         for(auto to : second) {
             auto distance = path_finder.findDistance(from, to);
-
 
             if(distance < min_distance) {
                 min_distance = distance;
@@ -42,26 +39,9 @@ template<class PathFinder>
                 second_center = to;
             }
         }
-        /////////////////////////////////////////////////////////////////////////////////////
-        //// check if the nodes which can be used as centers for cluster second
-        //// are distinct from the candidates which were found until now
-        //// if this is not the case, this allows an early return since
-        //// it is not possible to route all paths from first to second over
-        //// a common node in second
-        if(is_first_run) {
-            min_node_candidates = path_finder.getNodesWithMinDistanceIn(second);
-            is_first_run = false;
-        }
-
-        min_node_candidates = util::intersect(std::move(min_node_candidates),
-                                              path_finder.getNodesWithMinDistanceIn(second));
-        if(min_node_candidates.empty()) {
-            return std::nullopt;
-        }
-        /////////////////////////////////////////////////////////////////////////////////////
     }
 
-    if(!first_center or !second_center or min_distance == UNREACHABLE) {
+    if(min_distance == UNREACHABLE) {
         return std::nullopt;
     }
 
@@ -119,9 +99,16 @@ template<class PathFinder>
     //if all paths go over the selected centers
     for(std::size_t i{0}; i < first.size(); i++) {
         auto source = first[i];
+        if(path_finder.getGraph().isBarrier(source)) {
+            continue;
+        }
 
         for(std::size_t j{0}; j < second.size(); j++) {
             auto target = second[j];
+            if(path_finder.getGraph().isBarrier(target)) {
+                continue;
+            }
+
             auto optimal_distance = path_finder.findDistance(source, target);
 
             if(first_to_center_distances[i] == UNREACHABLE
@@ -142,7 +129,7 @@ template<class PathFinder>
                 + center_to_center_distance // distance from center to center
                 + second_to_center_distances[j]; // distance from node j to second center;
 
-            if(optimal_distance < over_center_distance) {
+            if(optimal_distance != over_center_distance) {
                 return std::nullopt;
             }
         }

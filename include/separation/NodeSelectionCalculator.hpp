@@ -120,7 +120,6 @@ public:
 
         for(auto [target, center_target_dist] : right_selection_) {
             auto opt_dist = path_finder_.findDistance(node, target);
-            // fmt::print("left: opt {}, center: {}, center2target: {}\n", opt_dist, center_dist, center_target_dist);
 
             if(center_target_dist == graph::UNREACHABLE
                or center_dist == graph::UNREACHABLE) {
@@ -129,7 +128,7 @@ public:
                 }
             }
 
-            if(center_dist + center_target_dist > opt_dist) {
+            if(center_dist + center_target_dist != opt_dist) {
                 return std::nullopt;
             }
         }
@@ -145,7 +144,7 @@ public:
 
         for(auto [target, center_target_dist] : left_selection_) {
             auto opt_dist = path_finder_.findDistance(node, target);
-            // fmt::print("right: opt {}, center: {}, center2target: {}\n", opt_dist, center_dist, center_target_dist);
+
             if(center_target_dist == graph::UNREACHABLE
                or center_dist == graph::UNREACHABLE) {
                 if(opt_dist != graph::UNREACHABLE) {
@@ -153,7 +152,7 @@ public:
                 }
             }
 
-            if(center_dist + center_target_dist > opt_dist) {
+            if(center_dist + center_target_dist != opt_dist) {
                 return std::nullopt;
             }
         }

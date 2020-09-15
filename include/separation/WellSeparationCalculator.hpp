@@ -53,6 +53,16 @@ template<class PathFinder>
 
     auto [split0, split1, split2, split3] = first.split();
 
+    // fmt::print("width: {}\n", split0.getWidth());
+    // fmt::print("width: {}\n", split1.getWidth());
+    // fmt::print("width: {}\n", split2.getWidth());
+    // fmt::print("width: {}\n", split3.getWidth());
+
+    // fmt::print("height: {}\n", split0.getHeight());
+    // fmt::print("height: {}\n", split1.getHeight());
+    // fmt::print("height: {}\n", split2.getHeight());
+    // fmt::print("height: {}\n", split3.getHeight());
+
     return util::concat(calculateSeparation(path_finder, split0, second),
                         calculateSeparation(path_finder, split1, second),
                         calculateSeparation(path_finder, split2, second),
@@ -66,6 +76,7 @@ template<class PathFinder>
     -> std::vector<Separation>
 {
     const auto& graph = path_finder.getGraph();
+    fmt::print("wasdad\n");
     auto root = graph.wrapGraphInCell();
 
     return impl::calculateSeparation(path_finder, root, root);

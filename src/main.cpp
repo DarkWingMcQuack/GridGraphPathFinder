@@ -26,6 +26,8 @@ auto main(int argc, char* argv[])
     // auto right = graph.getRandomWalkableNode();
     separation::NodeSelectionCalculator<ManhattanDijkstra> selection_calculator{graph};
 
+    fmt::print("height: {}\n", graph.height);
+    fmt::print("width: {}\n", graph.width);
     utils::Timer t;
     // auto selection = selection_calculator.calculateFullSelection(left, right);
 
