@@ -30,10 +30,8 @@ template<class PathFinder>
     auto is_first_run = true;
     std::vector<graph::Node> min_node_candidates;
 
-    for(std::size_t i{0}; i < first.size(); i++) {
-        auto idx = i % 2 == 0 ? i : first.size() - 1 - i;
-        auto from = first[idx];
 
+    for(auto from : first) {
         for(auto to : second) {
             auto distance = path_finder.findDistance(from, to);
 
@@ -144,7 +142,7 @@ template<class PathFinder>
                 + center_to_center_distance // distance from center to center
                 + second_to_center_distances[j]; // distance from node j to second center;
 
-            if(optimal_distance != over_center_distance) {
+            if(optimal_distance < over_center_distance) {
                 return std::nullopt;
             }
         }

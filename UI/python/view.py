@@ -1,5 +1,16 @@
-from tkinter import *
+from tkinter import (HORIZONTAL,
+                     VERTICAL,
+                     Scrollbar,
+                     Tk,
+                     BOTTOM,
+                     Canvas,
+                     RIGHT,
+                     X,
+                     Y,
+                     LEFT,
+                     BOTH)
 from graph import Graph, NodeSelection
+
 
 class View:
     def __init__(self, graph_width, graph_height, title):
@@ -15,8 +26,8 @@ class View:
                              height=650,
                              scrollregion=(0,
                                            0,
-                                           graph_width*(self.scale_factor + 0.1),
-                                           graph_height*(self.scale_factor + 0.1)))
+                                           graph_width*(self.scale_factor + 1.5),
+                                           graph_height*(self.scale_factor + 1.5)))
 
 
     def draw_model(self, model):
