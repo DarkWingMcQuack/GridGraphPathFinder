@@ -43,6 +43,20 @@ auto ManhattanDijkstra::findDistance(const graph::Node& source, const graph::Nod
     return computeDistance(source, target);
 }
 
+auto ManhattanDijkstra::findTrivialDistance(const graph::Node& source, const graph::Node& target) noexcept
+    -> graph::Distance
+{
+    auto source_row = source.row;
+    auto target_row = target.row;
+    auto source_column = source.column;
+    auto target_column = target.column;
+
+    return (std::max(source_row, target_row)
+            - std::min(source_row, target_row))
+        + (std::max(source_column, target_column)
+           - std::min(source_column, target_column));
+}
+
 auto ManhattanDijkstra::getIndex(const graph::Node& n) const noexcept
     -> std::optional<std::size_t>
 {

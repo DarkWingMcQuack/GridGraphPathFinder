@@ -34,6 +34,9 @@ public:
     [[nodiscard]] auto findDistance(const graph::Node& source, const graph::Node& target) noexcept
         -> graph::Distance;
 
+    [[nodiscard]] auto findTrivialDistance(const graph::Node& source, const graph::Node& target) noexcept
+        -> graph::Distance;
+
     [[nodiscard]] auto getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
         -> std::vector<graph::Node>;
 
