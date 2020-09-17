@@ -28,10 +28,16 @@ template<class PathFinder>
     auto min_distance = UNREACHABLE;
     std::optional<graph::Node> first_center;
     std::optional<graph::Node> second_center;
+    bool is_trivial_separated = true;
 
     for(auto from : first) {
         for(auto to : second) {
             auto distance = path_finder.findDistance(from, to);
+            auto trivial_distance = path_finder.findTrivialDistance(from, to);
+
+            if(distance != trivial_distance) {
+                is_trivial_separated = false;
+            }
 
             if(distance < min_distance) {
                 min_distance = distance;
@@ -40,6 +46,9 @@ template<class PathFinder>
             }
         }
     }
+
+    if(is_trivial_separated)
+        fmt::print("trivial distance of size: {}, {}\n", first.size(), second.size());
 
     if(min_distance == UNREACHABLE) {
         return std::nullopt;
@@ -126,11 +135,11 @@ template<class PathFinder>
         }
     }
 
-    return Separation{first,
-                      second,
-                      first_center,
-                      second_center,
-                      center_to_center_distance};
+    return ComplexSeparation{first,
+                             second,
+                             first_center,
+                             second_center,
+                             center_to_center_distance};
 }
 
 

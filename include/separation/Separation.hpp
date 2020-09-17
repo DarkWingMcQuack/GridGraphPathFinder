@@ -4,26 +4,27 @@
 #include <graph/GridGraph.hpp>
 #include <pathfinding/Distance.hpp>
 #include <pathfinding/Path.hpp>
+#include <variant>
 
 namespace separation {
 
-class Separation
+class ComplexSeparation
 {
 public:
-    Separation(graph::GridCell first,
-               graph::GridCell second,
-               graph::Node first_center,
-               graph::Node second_center,
-               graph::Distance center_distance);
-    Separation(const Separation&) = default;
-    Separation(Separation&&) = default;
+    ComplexSeparation(graph::GridCell first,
+                      graph::GridCell second,
+                      graph::Node first_center,
+                      graph::Node second_center,
+                      graph::Distance center_distance);
+    ComplexSeparation(const ComplexSeparation&) = default;
+    ComplexSeparation(ComplexSeparation&&) = default;
 
-    auto operator=(const Separation&) noexcept
-        -> Separation& = default;
-    auto operator=(Separation&&) noexcept
-        -> Separation& = default;
+    auto operator=(const ComplexSeparation&) noexcept
+        -> ComplexSeparation& = default;
+    auto operator=(ComplexSeparation&&) noexcept
+        -> ComplexSeparation& = default;
 
-    auto operator<(const Separation& other) const noexcept
+    auto operator<(const ComplexSeparation& other) const noexcept
         -> bool;
 
 
@@ -52,5 +53,38 @@ private:
     graph::Node second_center_;
     graph::Distance center_distance_;
 };
+
+class TrivialSeparation
+{
+public:
+    TrivialSeparation(graph::GridCell first,
+                      graph::GridCell second);
+
+
+    [[nodiscard]] auto getFirstCluster() const noexcept
+        -> graph::GridCell;
+
+    [[nodiscard]] auto getSecondCluster() const noexcept
+        -> graph::GridCell;
+
+    auto toFile(std::string_view path) const noexcept
+        -> void;
+
+private:
+    graph::GridCell first_;
+    graph::GridCell second_;
+};
+
+using Separation = std::variant<ComplexSeparation,
+                                TrivialSeparation>;
+
+auto getFirstCluster(const Separation& sep) noexcept
+    -> graph::GridCell;
+
+auto getSecondCluster(const Separation& sep) noexcept
+    -> graph::GridCell;
+
+auto toFile(const Separation& sep, std::string_view path) noexcept
+    -> void;
 
 } // namespace separation

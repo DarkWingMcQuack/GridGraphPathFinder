@@ -38,11 +38,11 @@ template<class PathFinder>
     //TODO: what to do with two nodes with no path between them?
     if(first.size() == second.size() and first.size() == 1) {
         return {
-            Separation{first,
-                       second,
-                       first[0],
-                       second[0],
-                       graph::UNREACHABLE}};
+            ComplexSeparation{first,
+                              second,
+                              first[0],
+                              second[0],
+                              graph::UNREACHABLE}};
     }
 
     if(first.size() < second.size()) {
