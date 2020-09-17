@@ -73,17 +73,13 @@ template<class PathFinder>
           second_center,
           center_to_center_distance] = std::move(center_opt.value());
 
-    if(center_to_center_distance == UNREACHABLE) {
-        return std::nullopt;
-    }
-
     //calculate all distances from the clusters to its centers
     std::vector<Distance> first_to_center_distances;
     std::transform(std::begin(first),
                    std::end(first),
                    std::back_inserter(first_to_center_distances),
                    [&path_finder, first_center = first_center](auto source) {
-                       return path_finder.findDistance(source, first_center);
+                       return path_finder.findDistance(first_center, source);
                    });
 
     std::vector<Distance> second_to_center_distances;
@@ -91,7 +87,7 @@ template<class PathFinder>
                    std::end(second),
                    std::back_inserter(second_to_center_distances),
                    [&path_finder, second_center = second_center](auto source) {
-                       return path_finder.findDistance(source, second_center);
+                       return path_finder.findDistance(second_center, source);
                    });
 
 
@@ -99,15 +95,9 @@ template<class PathFinder>
     //if all paths go over the selected centers
     for(std::size_t i{0}; i < first.size(); i++) {
         auto source = first[i];
-        if(path_finder.getGraph().isBarrier(source)) {
-            continue;
-        }
 
         for(std::size_t j{0}; j < second.size(); j++) {
             auto target = second[j];
-            if(path_finder.getGraph().isBarrier(target)) {
-                continue;
-            }
 
             auto optimal_distance = path_finder.findDistance(source, target);
 
@@ -125,7 +115,8 @@ template<class PathFinder>
                 return std::nullopt;
             }
 
-            auto over_center_distance = first_to_center_distances[i] // distance from node i to first center
+            auto over_center_distance =
+                first_to_center_distances[i] // distance from node i to first center
                 + center_to_center_distance // distance from center to center
                 + second_to_center_distances[j]; // distance from node j to second center;
 

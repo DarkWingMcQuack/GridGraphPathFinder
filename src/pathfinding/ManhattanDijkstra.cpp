@@ -26,22 +26,21 @@ ManhattanDijkstra::ManhattanDijkstra(const graph::GridGraph& graph) noexcept
 auto ManhattanDijkstra::findAllRoutes(const graph::Node& source, const graph::Node& target) noexcept
     -> std::vector<Path>
 {
-    computeDistances(source, target);
+    [[maybe_unused]] auto _ = computeDistance(source, target);
     return extractAllShortestPaths(source, target);
 }
 
 auto ManhattanDijkstra::findRoute(const graph::Node& source, const graph::Node& target) noexcept
     -> std::optional<Path>
 {
-    computeDistances(source, target);
+    [[maybe_unused]] auto _ = computeDistance(source, target);
     return extractShortestPath(source, target);
 }
 
 auto ManhattanDijkstra::findDistance(const graph::Node& source, const graph::Node& target) noexcept
     -> Distance
 {
-    computeDistances(source, target);
-    return getDistanceTo(target);
+    return computeDistance(source, target);
 }
 
 auto ManhattanDijkstra::getIndex(const graph::Node& n) const noexcept
@@ -265,14 +264,19 @@ auto ManhattanDijkstra::getMinDistanceIn(const graph::GridCell& cell) noexcept
                            });
 }
 
-auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph::Node& target) noexcept
-    -> void
+auto ManhattanDijkstra::computeDistance(const graph::Node& source, const graph::Node& target) noexcept
+    -> Distance
 {
     using graph::UNREACHABLE;
 
+    if(graph_.get().isBarrier(source)
+       or graph_.get().isBarrier(target)) {
+        return UNREACHABLE;
+    }
+
     if(source == last_source_
        && isSettled(target)) {
-        return;
+        return getDistanceTo(target);
     }
 
     if(source != last_source_) {
@@ -289,7 +293,7 @@ auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph:
         settle(current_node);
 
         if(current_node == target) {
-            return;
+            return current_dist;
         }
 
         //pop after the return, otherwise we loose a value
@@ -309,6 +313,8 @@ auto ManhattanDijkstra::computeDistances(const graph::Node& source, const graph:
             }
         }
     }
+
+    return getDistanceTo(target);
 }
 
 

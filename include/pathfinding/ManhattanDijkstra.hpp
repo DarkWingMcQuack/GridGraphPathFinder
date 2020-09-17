@@ -47,25 +47,25 @@ protected:
     [[nodiscard]] auto getWalkableNeigboursOf(const graph::Node& n) const noexcept
         -> std::vector<graph::Node>;
 
-    auto getDistanceTo(const graph::Node& n) const noexcept
+    [[nodiscard]] auto getDistanceTo(const graph::Node& n) const noexcept
         -> graph::Distance;
 
     auto setDistanceTo(const graph::Node& n, std::int64_t distance) noexcept
         -> void;
 
-    auto computeDistances(const graph::Node& source, const graph::Node& target) noexcept
-        -> void;
-
-    auto extractAllShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
-        -> std::vector<Path>;
-
-    auto extractShortestPath(const graph::Node& source, const graph::Node& target) const noexcept
-        -> std::optional<Path>;
-
-    auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
+    [[nodiscard]] auto computeDistance(const graph::Node& source, const graph::Node& target) noexcept
         -> graph::Distance;
 
-    auto getIndex(const graph::Node& n) const noexcept
+    [[nodiscard]] auto extractAllShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
+        -> std::vector<Path>;
+
+    [[nodiscard]] auto extractShortestPath(const graph::Node& source, const graph::Node& target) const noexcept
+        -> std::optional<Path>;
+
+    [[nodiscard]] auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
+        -> graph::Distance;
+
+    [[nodiscard]] auto getIndex(const graph::Node& n) const noexcept
         -> std::optional<std::size_t>;
 
     auto unSettle(const graph::Node& n)
@@ -74,7 +74,7 @@ protected:
     auto settle(const graph::Node& n) noexcept
         -> void;
 
-    auto isSettled(const graph::Node& n)
+    [[nodiscard]] auto isSettled(const graph::Node& n)
         -> bool;
 
     auto reset() noexcept

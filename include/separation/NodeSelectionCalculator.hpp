@@ -24,8 +24,8 @@ public:
                          false) {}
 
 
-    auto calculateFullSelection(graph::Node left_start,
-                                graph::Node right_start) noexcept
+    [[nodiscard]] auto calculateFullSelection(graph::Node left_start,
+                                              graph::Node right_start) noexcept
         -> std::optional<NodeSelection>
     {
         auto center_opt = calculateCenter(left_start, right_start);
