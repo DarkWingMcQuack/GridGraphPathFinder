@@ -145,6 +145,16 @@ auto GridGraph::hasWalkableNode(const graph::GridCell& cell) const noexcept
                        });
 }
 
+auto GridGraph::hasBarrier(const graph::GridCell& cell) const noexcept
+    -> bool
+{
+    return std::any_of(std::begin(cell),
+                       std::end(cell),
+                       [&](const auto& node) {
+                           return isWalkableNode(node);
+                       });
+}
+
 auto GridGraph::countNumberOfWalkableNodes(const graph::GridCell& cell) const noexcept
     -> std::size_t
 {

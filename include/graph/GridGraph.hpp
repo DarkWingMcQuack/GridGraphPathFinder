@@ -42,6 +42,9 @@ public:
     [[nodiscard]] auto hasWalkableNode(const graph::GridCell& cell) const noexcept
         -> bool;
 
+    [[nodiscard]] auto hasBarrier(const graph::GridCell& cell) const noexcept
+        -> bool;
+
     [[nodiscard]] auto wrapGraphInCell() const noexcept
         -> graph::GridCell;
 
