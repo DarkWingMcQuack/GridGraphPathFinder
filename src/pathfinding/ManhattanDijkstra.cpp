@@ -46,6 +46,10 @@ auto ManhattanDijkstra::findDistance(const graph::Node& source, const graph::Nod
 auto ManhattanDijkstra::findTrivialDistance(const graph::Node& source, const graph::Node& target) noexcept
     -> graph::Distance
 {
+    if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
+        return UNREACHABLE;
+    }
+
     auto source_row = source.row;
     auto target_row = target.row;
     auto source_column = source.column;

@@ -17,10 +17,7 @@ template<class PathFinder>
 [[nodiscard]] auto findCenterCandidates(PathFinder& path_finder,
                                         const graph::GridCell& first,
                                         const graph::GridCell& second) noexcept
-    -> std::optional<
-        std::tuple<graph::Node,
-                   graph::Node,
-                   graph::Distance>>
+    -> Separation
 {
     using graph::Distance;
     using graph::UNREACHABLE;
@@ -35,9 +32,7 @@ template<class PathFinder>
             auto distance = path_finder.findDistance(from, to);
             auto trivial_distance = path_finder.findTrivialDistance(from, to);
 
-            if(distance != trivial_distance) {
-                is_trivial_separated = false;
-            }
+            is_trivial_separated &= distance == trivial_distance;
 
             if(distance < min_distance) {
                 min_distance = distance;
@@ -47,16 +42,15 @@ template<class PathFinder>
         }
     }
 
-    if(is_trivial_separated)
-        fmt::print("trivial distance of size: {}, {}\n", first.size(), second.size());
-
-    if(min_distance == UNREACHABLE) {
-        return std::nullopt;
+    if(is_trivial_separated) {
+        return TrivialSeparation{first, second};
     }
 
-    return std::tuple{first_center.value(),
-                      second_center.value(),
-                      min_distance};
+    return ComplexSeparation{first,
+                             second,
+                             first_center.value(),
+                             second_center.value(),
+                             min_distance};
 }
 
 template<class PathFinder>
@@ -73,14 +67,16 @@ template<class PathFinder>
     }
 
     //find first center
-    auto center_opt = findCenterCandidates(path_finder, first, second);
-    if(!center_opt) {
-        return std::nullopt;
+    auto separation = findCenterCandidates(path_finder, first, second);
+
+    if(std::holds_alternative<TrivialSeparation>(separation)) {
+        return separation;
     }
 
-    auto [first_center,
-          second_center,
-          center_to_center_distance] = std::move(center_opt.value());
+    auto complex_separation = std::move(std::get<ComplexSeparation>(separation));
+    auto first_center = complex_separation.getFirstClusterCenter();
+    auto second_center = complex_separation.getSecondClusterCenter();
+    auto center_to_center_distance = complex_separation.getCenterDistance();
 
     //calculate all distances from the clusters to its centers
     std::vector<Distance> first_to_center_distances;

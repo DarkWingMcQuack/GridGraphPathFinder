@@ -39,17 +39,30 @@ auto main(int argc, char* argv[])
     //                + selection.value().getRightSelection().size());
     // fmt::print("number of nodes: {}\n",
     //            graph_opt.value().width * graph_opt.value().height);
+    std::sort(std::begin(separations),
+              std::end(separations),
+              [&](const auto& lhs, const auto& rhs) {
+                  return graph.countNumberOfWalkableNodes(getFirstCluster(lhs))
+                      * graph.countNumberOfWalkableNodes(getSecondCluster(lhs))
+                      > graph.countNumberOfWalkableNodes(getFirstCluster(rhs))
+                      * graph.countNumberOfWalkableNodes(getSecondCluster(rhs));
+              });
     auto max_segment = *std::max_element(std::begin(separations),
                                          std::end(separations),
                                          [&](const auto& lhs, const auto& rhs) {
                                              return graph.countNumberOfWalkableNodes(getFirstCluster(lhs))
                                                  * graph.countNumberOfWalkableNodes(getSecondCluster(lhs))
-                                                 < graph.countNumberOfWalkableNodes(getFirstCluster(rhs))
+                                                 > graph.countNumberOfWalkableNodes(getFirstCluster(rhs))
                                                  * graph.countNumberOfWalkableNodes(getSecondCluster(rhs));
                                          });
 
     fmt::print("separations calculated: {}\n", separations.size());
 
+    int counter = 0;
+    for(const auto& seg : separations) {
+        auto path = fmt::format("result-{}.seg", counter++);
+        separation::toFile(seg, path);
+    }
     separation::toFile(max_segment, "result.seg");
     // selection.value().toFile("result.seg");
 }
