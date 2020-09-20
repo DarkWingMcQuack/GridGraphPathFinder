@@ -198,6 +198,37 @@ auto GridCell::size() const noexcept
     return getHeight() * getWidth();
 }
 
+
+auto GridCell::cacluclateOrientation(const GridCell& other) const noexcept
+    -> CellOrientation
+{
+    if(isSuperSetOf(other) or isSubSetOf(other)) {
+        return CellOrientation::OTHER;
+    }
+
+    if(other.top_left_.row_ <= top_left_.row_
+       and other.bottom_left_.row_ >= bottom_left_.row_) {
+        return CellOrientation::HORIZONTAL;
+    }
+
+    if(top_left_.row_ <= other.top_left_.row_
+       and bottom_left_.row_ >= other.bottom_left_.row_) {
+        return CellOrientation::HORIZONTAL;
+    }
+
+    if(other.top_left_.column_ <= top_left_.column_
+       and other.bottom_left_.column_ >= bottom_left_.column_) {
+        return CellOrientation::VERTICAL;
+    }
+
+    if(top_left_.column_ <= other.top_left_.column_
+       and bottom_left_.column_ >= other.bottom_left_.column_) {
+        return CellOrientation::VERTICAL;
+    }
+
+    return CellOrientation::OTHER;
+}
+
 auto GridCell::isSuperSetOf(const GridCell& other) const noexcept
     -> bool
 {

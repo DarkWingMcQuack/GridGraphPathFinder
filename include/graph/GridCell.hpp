@@ -8,6 +8,12 @@
 
 namespace graph {
 
+enum class CellOrientation {
+    HORIZONTAL,
+    VERTICAL,
+    OTHER
+};
+
 class GridCell
 {
 public:
@@ -55,6 +61,9 @@ public:
 
     [[nodiscard]] auto size() const noexcept
         -> std::size_t;
+
+    [[nodiscard]] auto cacluclateOrientation(const GridCell& other) const noexcept
+        -> CellOrientation;
 
     auto getNodeAt(std::size_t row, std::size_t column) const noexcept
         -> std::optional<graph::Node>;
