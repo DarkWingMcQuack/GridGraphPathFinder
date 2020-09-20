@@ -58,10 +58,10 @@ auto GridCell::operator[](std::size_t idx) const noexcept
 auto GridCell::isInCell(const graph::Node& node) const noexcept
     -> bool
 {
-    return node.row >= top_left_.row_
-        && node.row <= bottom_left_.row_
-        && node.column >= top_left_.column_
-        && node.column <= top_right_.column_;
+    return node.row >= static_cast<std::size_t>(top_left_.row_)
+        && node.row <= static_cast<std::size_t>(bottom_left_.row_)
+        && node.column >= static_cast<std::size_t>(top_left_.column_)
+        && node.column <= static_cast<std::size_t>(top_right_.column_);
 }
 
 auto GridCell::isSplitable() const noexcept

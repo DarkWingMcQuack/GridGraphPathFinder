@@ -30,12 +30,12 @@ public:
     auto operator=(const GridCell&) noexcept
         -> GridCell& = default;
 
-    auto operator==(const GridCell& other) const noexcept
+    [[nodiscard]] auto operator==(const GridCell& other) const noexcept
         -> bool;
-    auto operator!=(const GridCell& other) const noexcept
+    [[nodiscard]] auto operator!=(const GridCell& other) const noexcept
         -> bool;
 
-    auto operator[](std::size_t idx) const noexcept
+    [[nodiscard]] auto operator[](std::size_t idx) const noexcept
         -> graph::Node;
 
     [[nodiscard]] auto isInCell(const graph::Node& node) const noexcept
@@ -96,6 +96,9 @@ private:
                       const GridCell& third,
                       const GridCell& fourth) noexcept
         -> GridCell;
+
+    friend class RowWalker;
+    friend class ColumnWalker;
 
     GridCorner top_left_;
     GridCorner top_right_;
