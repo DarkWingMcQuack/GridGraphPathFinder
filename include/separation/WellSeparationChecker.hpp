@@ -17,7 +17,9 @@ template<class PathFinder>
 [[nodiscard]] auto findCenterCandidates(PathFinder& path_finder,
                                         const graph::GridCell& first,
                                         const graph::GridCell& second) noexcept
-    -> Separation
+    -> std::tuple<graph::Node,
+                  graph::Node,
+                  graph::Distance>
 {
     using graph::Distance;
     using graph::UNREACHABLE;
@@ -25,14 +27,10 @@ template<class PathFinder>
     auto min_distance = UNREACHABLE;
     std::optional<graph::Node> first_center;
     std::optional<graph::Node> second_center;
-    bool is_trivial_separated = true;
 
     for(auto from : first) {
         for(auto to : second) {
             auto distance = path_finder.findDistance(from, to);
-            auto trivial_distance = path_finder.findTrivialDistance(from, to);
-
-            is_trivial_separated &= distance == trivial_distance;
 
             if(distance < min_distance) {
                 min_distance = distance;
@@ -42,15 +40,16 @@ template<class PathFinder>
         }
     }
 
-    if(is_trivial_separated) {
-        return TrivialSeparation{first, second};
-    }
+    return std::tuple{first_center.value(),
+                      second_center.value(),
+                      min_distance};
+}
 
-    return ComplexSeparation{first,
-                             second,
-                             first_center.value(),
-                             second_center.value(),
-                             min_distance};
+[[nodiscard]] auto checkTrivialSeparation(const graph::GridCell& first,
+                                          const graph::GridCell& second) noexcept
+    -> std::optional<TrivialSeparation>
+{
+    return std::nullopt;
 }
 
 template<class PathFinder>
@@ -67,13 +66,8 @@ template<class PathFinder>
     }
 
     //find first center
-    auto separation = findCenterCandidates(path_finder, first, second);
+    auto [complex_separation, trivial] = findCenterCandidates(path_finder, first, second);
 
-    if(std::holds_alternative<TrivialSeparation>(separation)) {
-        return separation;
-    }
-
-    auto complex_separation = std::move(std::get<ComplexSeparation>(separation));
     auto first_center = complex_separation.getFirstClusterCenter();
     auto second_center = complex_separation.getSecondClusterCenter();
     auto center_to_center_distance = complex_separation.getCenterDistance();
@@ -116,6 +110,10 @@ template<class PathFinder>
                     continue;
                 }
 
+                if(trivial) {
+                    return TrivialSeparation{first, second};
+                }
+
                 //otherwise nothing is ok and we return std::nullopt
                 return std::nullopt;
             }
@@ -126,6 +124,9 @@ template<class PathFinder>
                 + second_to_center_distances[j]; // distance from node j to second center;
 
             if(optimal_distance != over_center_distance) {
+                if(trivial) {
+                    return TrivialSeparation{first, second};
+                }
                 return std::nullopt;
             }
         }
