@@ -46,6 +46,8 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCellIterator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCell.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/Node.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/CellRowWalker.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/CellColumnWalker.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/utils/Utils.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/utils/Timer.hpp
@@ -69,6 +71,8 @@ target_sources(GridGraphPathFinderSrc
   src/graph/GridCorner.cpp
   src/graph/GridCellIterator.cpp
   src/graph/Node.cpp
+  src/graph/CellRowWalker.cpp
+  src/graph/CellColumnWalker.cpp
 
   src/separation/Separation.cpp
   src/separation/NodeSelection.cpp

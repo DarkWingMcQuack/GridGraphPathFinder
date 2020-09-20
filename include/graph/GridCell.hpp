@@ -59,6 +59,15 @@ public:
     [[nodiscard]] auto getHeight() const noexcept
         -> std::size_t;
 
+    [[nodiscard]] auto getTopLeft() const noexcept
+        -> GridCorner;
+    [[nodiscard]] auto getTopRight() const noexcept
+        -> GridCorner;
+    [[nodiscard]] auto getBottomLeft() const noexcept
+        -> GridCorner;
+    [[nodiscard]] auto getBottomRight() const noexcept
+        -> GridCorner;
+
     [[nodiscard]] auto size() const noexcept
         -> std::size_t;
 

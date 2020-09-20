@@ -87,7 +87,7 @@ public:
         -> CellRowIterator;
 
 private:
-    const GridCell& cell;
+    const GridCell& cell_;
 };
 
 } // namespace graph

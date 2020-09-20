@@ -165,6 +165,31 @@ auto GridCell::getHeight() const noexcept
     return bottom_left_.row_ - top_left_.row_ + 1;
 }
 
+
+auto GridCell::getTopLeft() const noexcept
+    -> GridCorner
+{
+    return top_left_;
+}
+
+auto GridCell::getTopRight() const noexcept
+    -> GridCorner
+{
+    return top_right_;
+}
+
+auto GridCell::getBottomLeft() const noexcept
+    -> GridCorner
+{
+    return bottom_left_;
+}
+
+auto GridCell::getBottomRight() const noexcept
+    -> GridCorner
+{
+    return bottom_right_;
+}
+
 auto GridCell::getNodeAt(std::size_t row, std::size_t column) const noexcept
     -> std::optional<graph::Node>
 {
