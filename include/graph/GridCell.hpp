@@ -97,8 +97,8 @@ private:
                       const GridCell& fourth) noexcept
         -> GridCell;
 
-    friend class RowWalker;
-    friend class ColumnWalker;
+    friend class CellRowWalker;
+    friend class CellColumnWalker;
 
     GridCorner top_left_;
     GridCorner top_right_;
