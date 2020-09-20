@@ -31,7 +31,20 @@ auto main(int argc, char* argv[])
     utils::Timer t;
     // auto selection = selection_calculator.calculateFullSelection(left, right);
 
-    auto separations = separation::calculateSeparation(std::move(path_finder));
+    auto raw_separations = separation::calculateSeparation(std::move(path_finder));
+
+    std::vector<separation::Separation> separations;
+
+    std::copy_if(std::begin(raw_separations),
+                 std::end(raw_separations),
+                 std::back_inserter(separations),
+                 [&](const auto& sep) {
+                     return std::find(std::begin(separations),
+                                      std::end(separations),
+                                      sep)
+                         == std::end(separations);
+                 });
+
 
     fmt::print("runtime: {}\n", t.elapsed());
     // fmt::print("selection size: {}\n",
@@ -47,6 +60,7 @@ auto main(int argc, char* argv[])
                       > graph.countNumberOfWalkableNodes(getFirstCluster(rhs))
                       * graph.countNumberOfWalkableNodes(getSecondCluster(rhs));
               });
+
     auto max_segment = *std::max_element(std::begin(separations),
                                          std::end(separations),
                                          [&](const auto& lhs, const auto& rhs) {
