@@ -214,3 +214,32 @@ TEST(GridCellTest, IndexTest)
 
     EXPECT_FALSE(cell.isInCell(n));
 }
+
+TEST(GridCellTest, CellOrientationTest)
+{
+
+    GridCorner tl{1, 1};
+    GridCorner tr{1, 3};
+    GridCorner bl{3, 1};
+    GridCorner br{3, 3};
+
+    GridCell first{tl, tr, bl, br};
+
+    tl = {5, 1};
+    tr = {5, 3};
+    bl = {7, 1};
+    br = {7, 3};
+
+    GridCell second{tl, tr, bl, br};
+
+    EXPECT_EQ(first.cacluclateOrientation(second), graph::CellOrientation::VERTICAL);
+
+    tl = {1, 7};
+    tr = {1, 30};
+    bl = {2, 7};
+    br = {2, 30};
+
+    second = {tl, tr, bl, br};
+
+    EXPECT_EQ(first.cacluclateOrientation(second), graph::CellOrientation::HORIZONTAL);
+}
