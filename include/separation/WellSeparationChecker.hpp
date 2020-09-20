@@ -49,6 +49,10 @@ template<class PathFinder>
                                           const graph::GridCell& second) noexcept
     -> std::optional<TrivialSeparation>
 {
+    if(first.cacluclateOrientation(second) == graph::CellOrientation::OTHER) {
+        return std::nullopt;
+    }
+
     return std::nullopt;
 }
 
@@ -65,12 +69,15 @@ template<class PathFinder>
         return std::nullopt;
     }
 
-    //find first center
-    auto [complex_separation, trivial] = findCenterCandidates(path_finder, first, second);
+    if(auto trivial_separation_opt = checkTrivialSeparation(first, second)) {
+        return trivial_separation_opt.value();
+    }
 
-    auto first_center = complex_separation.getFirstClusterCenter();
-    auto second_center = complex_separation.getSecondClusterCenter();
-    auto center_to_center_distance = complex_separation.getCenterDistance();
+    //find first center
+
+    auto [first_center,
+          second_center,
+          center_to_center_distance] = findCenterCandidates(path_finder, first, second);
 
     //calculate all distances from the clusters to its centers
     std::vector<Distance> first_to_center_distances;
@@ -110,10 +117,6 @@ template<class PathFinder>
                     continue;
                 }
 
-                if(trivial) {
-                    return TrivialSeparation{first, second};
-                }
-
                 //otherwise nothing is ok and we return std::nullopt
                 return std::nullopt;
             }
@@ -124,9 +127,6 @@ template<class PathFinder>
                 + second_to_center_distances[j]; // distance from node j to second center;
 
             if(optimal_distance != over_center_distance) {
-                if(trivial) {
-                    return TrivialSeparation{first, second};
-                }
                 return std::nullopt;
             }
         }
