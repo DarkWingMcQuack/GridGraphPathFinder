@@ -65,13 +65,13 @@ public:
     [[nodiscard]] auto cacluclateOrientation(const GridCell& other) const noexcept
         -> CellOrientation;
 
-    auto getNodeAt(std::size_t row, std::size_t column) const noexcept
+    [[nodiscard]] auto getNodeAt(std::size_t row, std::size_t column) const noexcept
         -> std::optional<graph::Node>;
 
-    auto begin() const noexcept
+    [[nodiscard]] auto begin() const noexcept
         -> GridCellIterator;
 
-    auto end() const noexcept
+    [[nodiscard]] auto end() const noexcept
         -> GridCellIterator;
 
     [[nodiscard]] auto isSuperSetOf(const GridCell& other) const noexcept
