@@ -207,8 +207,8 @@ auto graph::parseFileToGridGraph(std::string_view path) noexcept
     try {
         std::ifstream graph_file{path.data()};
 
-        int height{0};
-        int width{0};
+        std::size_t height{0};
+        std::size_t width{0};
         std::string dummy;
 
         graph_file >> dummy >> dummy;
