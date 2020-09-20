@@ -24,10 +24,6 @@ public:
     auto operator=(ComplexSeparation&&) noexcept
         -> ComplexSeparation& = default;
 
-    auto operator<(const ComplexSeparation& other) const noexcept
-        -> bool;
-
-
     [[nodiscard]] auto getCenterDistance() const noexcept
         -> graph::Distance;
 
@@ -84,7 +80,15 @@ auto getFirstCluster(const Separation& sep) noexcept
 auto getSecondCluster(const Separation& sep) noexcept
     -> graph::GridCell;
 
+
+auto operator==(const Separation& lhs, const Separation& rhs) noexcept
+    -> bool;
+
+auto operator!=(const Separation& lhs, const Separation& rhs) noexcept
+    -> bool;
+
 auto toFile(const Separation& sep, std::string_view path) noexcept
     -> void;
+
 
 } // namespace separation

@@ -21,13 +21,6 @@ ComplexSeparation::ComplexSeparation(GridCell first,
       center_distance_(center_distance) {}
 
 
-auto ComplexSeparation::operator<(const ComplexSeparation& other) const noexcept
-    -> bool
-{
-    return first_.size() * second_.size()
-        < other.first_.size() * other.second_.size();
-}
-
 auto ComplexSeparation::getCenterDistance() const noexcept
     -> Distance
 {
@@ -123,6 +116,22 @@ auto separation::getSecondCluster(const Separation& sep) noexcept
             return separation.getSecondCluster();
         },
         sep);
+}
+
+
+auto separation::operator==(const Separation& lhs, const Separation& rhs) noexcept
+    -> bool
+{
+    return (getFirstCluster(lhs) == getFirstCluster(rhs)
+            and getSecondCluster(lhs) == getSecondCluster(rhs))
+        or (getFirstCluster(lhs) == getSecondCluster(rhs)
+            and getSecondCluster(lhs) == getFirstCluster(rhs));
+}
+
+auto separation::operator!=(const Separation& lhs, const Separation& rhs) noexcept
+    -> bool
+{
+    return !(lhs == rhs);
 }
 
 
