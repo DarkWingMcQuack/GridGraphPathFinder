@@ -1,5 +1,3 @@
-#pragma once
-
 #include <array>
 #include <graph/CellRowWalker.hpp>
 #include <graph/GridCell.hpp>

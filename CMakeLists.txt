@@ -42,6 +42,7 @@ add_library(GridGraphPathFinderSrc "")
 target_sources(GridGraphPathFinderSrc
   PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridGraph.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridGraphIterator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCorner.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCellIterator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCell.hpp
@@ -67,6 +68,7 @@ target_sources(GridGraphPathFinderSrc
 
   PRIVATE
   src/graph/GridGraph.cpp
+  src/graph/GridGraphIterator.cpp
   src/graph/GridCell.cpp
   src/graph/GridCorner.cpp
   src/graph/GridCellIterator.cpp

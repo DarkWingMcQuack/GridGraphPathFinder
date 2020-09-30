@@ -1,5 +1,3 @@
-#pragma once
-
 #include <array>
 #include <graph/CellColumnWalker.hpp>
 #include <graph/GridCell.hpp>
@@ -148,7 +146,7 @@ auto CellColumnIterator::operator->() noexcept -> GridCell
 auto CellColumnIterator::operator[](int idx) noexcept -> GridCell
 {
     auto top_left = GridCorner{cell_.getTopLeft().getRow(),
-                               cell_.getTopLeft().getColumn(), +idx};
+                               cell_.getTopLeft().getColumn() +idx};
 
     auto top_right = GridCorner{cell_.getTopRight().getRow(),
                                 cell_.getTopRight().getColumn() + idx + 1};
