@@ -1,3 +1,6 @@
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+#include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
 
 #include <gtest/gtest.h>
@@ -445,4 +448,48 @@ TEST(GridGraphTest, WalkableManhattanNeigGridGraphTest)
 
     EXPECT_NE(std::find(std::cbegin(neigs3), std::cend(neigs3), Node{0, 1}), std::cend(neigs3));
     EXPECT_EQ(std::find(std::cbegin(neigs3), std::cend(neigs3), Node{1, 0}), std::cend(neigs3));
+}
+
+TEST(GridGraphTest, GridGraphITeratorTest)
+{
+    std::vector test1{
+        std::vector{true, true, false, false, false},
+        std::vector{true, true, true, true, true},
+        std::vector{true, false, false, true, false},
+        std::vector{true, false, false, true, true},
+        std::vector{true, true, false, true, false}};
+
+    GridGraph graph_test1{test1};
+
+    std::vector<Node> nodes;
+    std::copy(std::begin(graph_test1),
+              std::end(graph_test1),
+              std::back_inserter(nodes));
+
+    for(auto n : nodes) {
+        EXPECT_TRUE(graph_test1.isWalkableNode(n));
+    }
+
+    EXPECT_EQ(nodes.size(), 15);
+
+	
+    std::vector test2{
+        std::vector{false, true, false, false, false},
+        std::vector{true, true, true, true, true},
+        std::vector{true, false, false, true, false},
+        std::vector{true, false, false, true, true},
+        std::vector{true, true, false, true, true}};
+
+    GridGraph graph_test2{test2};
+
+    std::vector<Node> nodes2;
+    std::copy(std::begin(graph_test2),
+              std::end(graph_test2),
+              std::back_inserter(nodes2));
+
+    for(auto n : nodes2) {
+        EXPECT_TRUE(graph_test2.isWalkableNode(n));
+    }
+
+    EXPECT_EQ(nodes.size(), 15);
 }

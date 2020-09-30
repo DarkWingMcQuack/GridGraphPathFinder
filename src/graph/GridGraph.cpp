@@ -201,6 +201,18 @@ auto GridGraph::getRandomWalkableNode() const noexcept
     return random_node;
 }
 
+auto GridGraph::begin() const noexcept
+    -> GridGraphIterator
+{
+    return GridGraphIterator{*this};
+}
+
+auto GridGraph::end() const noexcept
+    -> GridGraphIterator
+{
+    return GridGraphIterator{*this, width * height};
+}
+
 auto graph::parseFileToGridGraph(std::string_view path) noexcept
     -> std::optional<GridGraph>
 {

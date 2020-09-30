@@ -16,7 +16,7 @@ public:
     using value_type = graph::Node;
     using pointer = graph::Node;
     using reference = graph::Node;
-    using GridGraphIterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::forward_iterator_tag;
 
     GridGraphIterator(const GridGraph& graph,
                       std::size_t idx = 0);
@@ -25,23 +25,15 @@ public:
         -> GridGraphIterator&;
     auto operator++(int) noexcept
         -> GridGraphIterator;
-    auto operator--() noexcept
-        -> GridGraphIterator&;
-    auto operator--(int) noexcept
-        -> GridGraphIterator;
 
     auto operator+=(difference_type rhs) noexcept
         -> GridGraphIterator&;
-    auto operator-=(difference_type rhs) noexcept
-        -> GridGraphIterator&;
     auto operator+=(const GridGraphIterator& rhs) noexcept
         -> GridGraphIterator&;
-    auto operator-=(const GridGraphIterator& rhs) noexcept
-        -> GridGraphIterator&;
 
-    auto operator==(GridGraphIterator other) const noexcept
+    auto operator==(const GridGraphIterator& other) const noexcept
         -> bool;
-    auto operator!=(GridGraphIterator other) const noexcept
+    auto operator!=(const GridGraphIterator& other) const noexcept
         -> bool;
     auto operator<=(const GridGraphIterator& other) const noexcept
         -> bool;
@@ -54,12 +46,9 @@ public:
 
     auto operator*() noexcept -> graph::Node;
     auto operator->() noexcept -> graph::Node;
-    auto operator[](int) noexcept -> graph::Node;
-
 
 private:
-    auto getNodeAtCurrentIdx() const
-        -> Node;
+    auto getNodeAtIdx(std::size_t idx) noexcept -> graph::Node;
 
 private:
     const std::reference_wrapper<const GridGraph> graph_;

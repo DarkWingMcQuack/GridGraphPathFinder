@@ -10,14 +10,20 @@ GridGraphIterator::GridGraphIterator(const GridGraph& graph,
                                      std::size_t idx)
     : graph_(graph),
       idx_(idx),
-      max_idx_(graph.width * graph.height) {}
+      max_idx_(graph.width * graph.height)
+{
+    auto node = getNodeAtIdx(idx_);
+    while(graph_.get().isBarrier(node) && idx_ < max_idx_) {
+        node = getNodeAtIdx(++idx_);
+    }
+}
 
 auto GridGraphIterator::operator++() noexcept
     -> GridGraphIterator&
 {
-    auto node = (*this)[idx_++];
-    while(graph_.get().isBarrier(node) && idx_ <= max_idx_) {
-        node = (*this)[idx_++];
+    auto node = getNodeAtIdx(++idx_);
+    while(graph_.get().isBarrier(node) && idx_ < max_idx_) {
+        node = getNodeAtIdx(++idx_);
     }
     return *this;
 }
@@ -30,35 +36,10 @@ auto GridGraphIterator::operator++(int) noexcept
     return ret;
 }
 
-auto GridGraphIterator::operator--() noexcept
-    -> GridGraphIterator&
-{
-    auto node = (*this)[idx_--];
-    while(graph_.get().isBarrier(node) && idx_ >= 0) {
-        node = (*this)[idx_--];
-    }
-    return *this;
-}
-
-auto GridGraphIterator::operator--(int) noexcept
-    -> GridGraphIterator
-{
-    auto ret = *this;
-    --(*this);
-    return ret;
-}
-
 auto GridGraphIterator::operator+=(difference_type rhs) noexcept
     -> GridGraphIterator&
 {
     idx_ += rhs;
-    return *this;
-}
-
-auto GridGraphIterator::operator-=(difference_type rhs) noexcept
-    -> GridGraphIterator&
-{
-    idx_ -= rhs;
     return *this;
 }
 
@@ -69,20 +50,13 @@ auto GridGraphIterator::operator+=(const GridGraphIterator& rhs) noexcept
     return *this;
 }
 
-auto GridGraphIterator::operator-=(const GridGraphIterator& rhs) noexcept
-    -> GridGraphIterator&
-{
-    idx_ -= rhs.idx_;
-    return *this;
-}
-
-auto GridGraphIterator::operator==(GridGraphIterator other) const noexcept
+auto GridGraphIterator::operator==(const GridGraphIterator& other) const noexcept
     -> bool
 {
     return idx_ == other.idx_;
 }
 
-auto GridGraphIterator::operator!=(GridGraphIterator other) const noexcept
+auto GridGraphIterator::operator!=(const GridGraphIterator& other) const noexcept
     -> bool
 {
     return idx_ != other.idx_;
@@ -112,12 +86,21 @@ auto GridGraphIterator::operator>(const GridGraphIterator& other) const noexcept
     return idx_ > other.idx_;
 }
 
-auto GridGraphIterator::operator*() noexcept -> graph::Node
+auto GridGraphIterator::operator*() noexcept
+    -> graph::Node
 {
-    return (*this)[idx_];
+    return getNodeAtIdx(idx_);
 }
 
-auto GridGraphIterator::operator[](int idx) noexcept -> graph::Node
+auto GridGraphIterator::operator->() noexcept
+    -> graph::Node
+{
+    return getNodeAtIdx(idx_);
+}
+
+
+auto GridGraphIterator::getNodeAtIdx(std::size_t idx) noexcept
+    -> graph::Node
 {
     const auto width = graph_.get().width;
     const auto row = static_cast<std::size_t>(
