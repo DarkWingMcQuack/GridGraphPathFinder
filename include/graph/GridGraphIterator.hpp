@@ -44,11 +44,11 @@ public:
     auto operator>(const GridGraphIterator& other) const noexcept
         -> bool;
 
-    auto operator*() noexcept -> graph::Node;
-    auto operator->() noexcept -> graph::Node;
+    auto operator*() const noexcept -> graph::Node;
+    auto operator->() const noexcept -> graph::Node;
 
 private:
-    auto getNodeAtIdx(std::size_t idx) noexcept -> graph::Node;
+    auto getNodeAtIdx(std::size_t idx) const noexcept -> graph::Node;
 
 private:
     const std::reference_wrapper<const GridGraph> graph_;

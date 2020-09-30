@@ -86,20 +86,20 @@ auto GridGraphIterator::operator>(const GridGraphIterator& other) const noexcept
     return idx_ > other.idx_;
 }
 
-auto GridGraphIterator::operator*() noexcept
+auto GridGraphIterator::operator*() const noexcept
     -> graph::Node
 {
     return getNodeAtIdx(idx_);
 }
 
-auto GridGraphIterator::operator->() noexcept
+auto GridGraphIterator::operator->() const noexcept
     -> graph::Node
 {
     return getNodeAtIdx(idx_);
 }
 
 
-auto GridGraphIterator::getNodeAtIdx(std::size_t idx) noexcept
+auto GridGraphIterator::getNodeAtIdx(std::size_t idx) const noexcept
     -> graph::Node
 {
     const auto width = graph_.get().width;
