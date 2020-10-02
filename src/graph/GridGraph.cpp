@@ -55,19 +55,18 @@ auto GridGraph::isWalkableNode(const Node& n) const noexcept
 auto GridGraph::getWalkableNeigbours(const Node& n) const noexcept
     -> std::vector<Node>
 {
-    const auto raw_neigs = graph::calculateNeigbours(neigbour_calculator_, n);
+    auto neigs = graph::calculateNeigbours(neigbour_calculator_, n);
 
-    std::vector<Node> nodes;
-    nodes.reserve(raw_neigs.size());
+    neigs.erase(
+        std::remove_if(std::begin(neigs),
+                       std::end(neigs),
+                       [&](auto node) {
+                           return !isWalkableNode(node);
+                       }),
+        std::end(neigs));
 
-    std::copy_if(std::cbegin(raw_neigs),
-                 std::cend(raw_neigs),
-                 std::back_inserter(nodes),
-                 [&](const auto& n) {
-                     return isWalkableNode(n);
-                 });
 
-    return nodes;
+    return neigs;
 }
 
 auto GridGraph::getAllWalkableNodesOfCell(const graph::GridCell& cell) const noexcept
