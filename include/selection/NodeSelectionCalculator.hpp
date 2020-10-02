@@ -6,10 +6,10 @@
 #include <graph/Node.hpp>
 #include <pathfinding/Distance.hpp>
 #include <queue>
-#include <separation/NodeSelection.hpp>
+#include <selection/NodeSelection.hpp>
 #include <vector>
 
-namespace separation {
+namespace selection {
 
 template<class PathFinder>
 class NodeSelectionCalculator
@@ -60,6 +60,7 @@ public:
                     for(auto neig : graph_.getWalkableNeigbours(current)) {
                         if(!isLeftSettled(neig)) {
                             settleLeft(neig);
+                            touched_.push_back(neig);
                             left_candidates.push_back(neig);
                         }
                     }
@@ -77,6 +78,7 @@ public:
                     for(auto neig : graph_.getWalkableNeigbours(current)) {
                         if(!isRightSettled(neig)) {
                             settleRight(neig);
+                            touched_.push_back(neig);
                             right_candidates.push_back(neig);
                         }
                     }

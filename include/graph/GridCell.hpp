@@ -35,6 +35,9 @@ public:
     [[nodiscard]] auto operator!=(const GridCell& other) const noexcept
         -> bool;
 
+    [[nodiscard]] auto operator<(const GridCell& other) const noexcept
+        -> bool;
+
     [[nodiscard]] auto operator[](std::size_t idx) const noexcept
         -> graph::Node;
 

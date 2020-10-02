@@ -87,6 +87,9 @@ auto operator==(const Separation& lhs, const Separation& rhs) noexcept
 auto operator!=(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
 
+auto operator<(const Separation& lhs, const Separation& rhs) noexcept
+    -> bool;
+
 auto toFile(const Separation& sep, std::string_view path) noexcept
     -> void;
 

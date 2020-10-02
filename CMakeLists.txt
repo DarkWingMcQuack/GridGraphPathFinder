@@ -55,10 +55,12 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/utils/ProgramOptions.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/Separation.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/separation/NodeSelection.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/separation/NodeSelectionCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationChecker.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationCalculator.hpp
+
+  ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelection.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelectionCalculator.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/selection/FullNodeSelectionCalculator.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Path.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/ManhattanDijkstra.hpp
@@ -77,7 +79,8 @@ target_sources(GridGraphPathFinderSrc
   src/graph/CellColumnWalker.cpp
 
   src/separation/Separation.cpp
-  src/separation/NodeSelection.cpp
+
+  src/selection/NodeSelection.cpp
 
   src/utils/ProgramOptions.cpp
 

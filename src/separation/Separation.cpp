@@ -145,3 +145,17 @@ auto separation::toFile(const Separation& sep, std::string_view path) noexcept
         },
         sep);
 }
+
+auto separation::operator<(const Separation& lhs, const Separation& rhs) noexcept
+    -> bool
+{
+    return std::visit(
+        [=](const auto& first, const auto& second) {
+            return getFirstCluster(first).size()
+                * getSecondCluster(first).size()
+                < getFirstCluster(second).size()
+                * getSecondCluster(second).size();
+        },
+        lhs,
+        rhs);
+}

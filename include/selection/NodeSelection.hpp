@@ -5,7 +5,7 @@
 #include <queue>
 #include <vector>
 
-namespace separation {
+namespace selection {
 
 class NodeSelection
 {
@@ -32,4 +32,4 @@ private:
     graph::Node center_;
 };
 
-} // namespace separation
+} // namespace selction

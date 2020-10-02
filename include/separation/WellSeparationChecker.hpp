@@ -49,11 +49,15 @@ template<class PathFinder>
                                           const graph::GridCell& second) noexcept
     -> std::optional<TrivialSeparation>
 {
-    if(first.cacluclateOrientation(second) == graph::CellOrientation::OTHER) {
+    auto orientation = first.cacluclateOrientation(second);
+    switch(orientation) {
+
+    case graph::CellOrientation::HORIZONTAL:
+    case graph::CellOrientation::VERTICAL:
+
+    default:
         return std::nullopt;
     }
-
-    return std::nullopt;
 }
 
 template<class PathFinder>

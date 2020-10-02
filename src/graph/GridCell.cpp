@@ -42,6 +42,12 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
     return !(*this == other);
 }
 
+auto GridCell::operator<(const GridCell& other) const noexcept
+    -> bool
+{
+    return size() < other.size();
+}
+
 auto GridCell::operator[](std::size_t idx) const noexcept
     -> graph::Node
 {

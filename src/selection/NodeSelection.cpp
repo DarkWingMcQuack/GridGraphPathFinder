@@ -1,8 +1,8 @@
 #include <fstream>
 #include <graph/Node.hpp>
-#include <separation/NodeSelection.hpp>
+#include <selection/NodeSelection.hpp>
 
-using separation::NodeSelection;
+using selection::NodeSelection;
 
 
 NodeSelection::NodeSelection(std::vector<graph::Node> left_selection,

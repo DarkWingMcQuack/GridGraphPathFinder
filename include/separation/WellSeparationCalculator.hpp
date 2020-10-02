@@ -1,9 +1,12 @@
 #pragma once
 
+#include <fmt/ostream.h>
+#include <fmt/ranges.h>
 #include <graph/GridCell.hpp>
 #include <pathfinding/Distance.hpp>
 #include <separation/Separation.hpp>
 #include <separation/WellSeparationChecker.hpp>
+#include <unordered_set>
 #include <utils/Utils.hpp>
 #include <vector>
 
@@ -17,26 +20,19 @@ template<class PathFinder>
                                        const graph::GridCell& second) noexcept
     -> std::vector<Separation>
 {
-    if(first == second and first.size() == 1) {
+    //are first and second the same a grid with exactly one node
+    if((first == second and first.size() == 1)) {
         return {};
     }
 
+    //check if first and second have at least one walkable node
     const auto& graph = path_finder.getGraph();
     if(!graph.hasWalkableNode(first) or !graph.hasWalkableNode(second)) {
         return {};
     }
 
-    auto separation_opt = checkSeparation(path_finder, first, second);
-
-    if(separation_opt) {
-        // fmt::print("found well separated pair with sizes {} and {}\n",
-        //            graph.countNumberOfWalkableNodes(first),
-        //            graph.countNumberOfWalkableNodes(second));
-        return std::vector{std::move(separation_opt.value())};
-    }
-
-    //TODO: what to do with two nodes with no path between them?
-    if(first.size() == second.size() and first.size() == 1) {
+    //if first and second are each of size 1 then they are surely well separated
+    if(first.size() == 1 and second.size() == 1) {
         return {
             ComplexSeparation{first,
                               second,
@@ -45,19 +41,55 @@ template<class PathFinder>
                               graph::UNREACHABLE}};
     }
 
-    if(first.size() < second.size()) {
-        return calculateSeparation(path_finder, second, first);
+    if(auto separation_opt = checkSeparation(path_finder, first, second)) {
+        return std::vector{std::move(separation_opt.value())};
     }
 
     auto [split0, split1, split2, split3] = first.split();
 
-    return util::concat(calculateSeparation(path_finder, split0, second),
-                        calculateSeparation(path_finder, split1, second),
-                        calculateSeparation(path_finder, split2, second),
-                        calculateSeparation(path_finder, split3, second));
+    return util::concat(calculateSeparation(path_finder, second, split0),
+                        calculateSeparation(path_finder, second, split1),
+                        calculateSeparation(path_finder, second, split2),
+                        calculateSeparation(path_finder, second, split3));
 }
 
 } // namespace impl
+
+namespace test {
+
+[[nodiscard]] inline auto separationSanityCheck(const graph::GridGraph& graph,
+                                                const std::vector<Separation>& separations) noexcept
+    -> bool
+{
+    std::unordered_set<std::pair<graph::Node, graph::Node>> all_pairs;
+
+    for(auto first : graph) {
+        for(auto second : graph) {
+            if(first == second) {
+                continue;
+            }
+            all_pairs.emplace(first, second);
+        }
+    }
+
+    for(const auto& sep : separations) {
+        auto first = getFirstCluster(sep);
+        auto second = getSecondCluster(sep);
+
+        for(auto f : first) {
+            for(auto s : second) {
+                all_pairs.erase(std::pair{f, s});
+                all_pairs.erase(std::pair{s, f});
+            }
+        }
+    }
+
+    fmt::print("{}\n", all_pairs.size());
+
+    return all_pairs.empty();
+}
+
+} // namespace test
 
 template<class PathFinder>
 [[nodiscard]] auto calculateSeparation(PathFinder&& path_finder) noexcept

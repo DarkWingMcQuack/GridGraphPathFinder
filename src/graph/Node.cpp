@@ -39,6 +39,16 @@ auto Node::operator>=(const Node& other) const noexcept
 }
 
 
+auto Node::isManhattanNeigbourOf(const Node& other) const noexcept
+    -> bool
+{
+    return other == Node{row, column + 1}
+    or other == Node{row, column - 1}
+    or other == Node{row - 1, column}
+    or other == Node{row + 1, column};
+}
+
+
 auto graph::operator<<(std::ostream& os, Node n) noexcept
     -> std::ostream&
 {
