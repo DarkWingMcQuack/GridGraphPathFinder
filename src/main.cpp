@@ -47,11 +47,17 @@ auto main(int argc, char* argv[])
         break;
     }
     case utils::RunningMode::SELECTION: {
+
+        utils::Timer t;
         FullNodeSelectionCalculator<ManhattanDijkstra> selection_calculator{graph};
         auto selections = selection_calculator.calculateFullNodeSelection();
 
+        fmt::print("runtime: {}\n", t.elapsed());
+        fmt::print("selections calculated: {}\n", selections.size());
+
         std::sort(std::rbegin(selections),
                   std::rend(selections));
+
 
         for(std::size_t i{0}; i < selections.size(); i++) {
             const auto& sel = selections[i];
