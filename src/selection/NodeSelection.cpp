@@ -12,6 +12,13 @@ NodeSelection::NodeSelection(std::vector<graph::Node> left_selection,
       right_selection_(std::move(right_selection)),
       center_(center) {}
 
+auto NodeSelection::operator<(const NodeSelection& other) const noexcept
+    -> bool
+{
+    return left_selection_.size() * right_selection_.size()
+        < other.left_selection_.size() * other.right_selection_.size();
+}
+
 auto NodeSelection::getLeftSelection() const noexcept
     -> const std::vector<graph::Node>&
 {

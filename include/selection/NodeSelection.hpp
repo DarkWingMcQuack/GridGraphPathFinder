@@ -23,6 +23,9 @@ public:
     [[nodiscard]] auto getCenter() const noexcept
         -> graph::Node;
 
+    [[nodiscard]] auto operator<(const NodeSelection& other) const noexcept
+        -> bool;
+
     auto toFile(std::string_view path) const noexcept
         -> void;
 
@@ -32,4 +35,4 @@ private:
     graph::Node center_;
 };
 
-} // namespace selction
+} // namespace selection

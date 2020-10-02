@@ -19,38 +19,45 @@ auto main(int argc, char* argv[])
     -> int
 {
     auto options = utils::parseArguments(argc, argv);
-
     auto graph_file = options.getGraphFile();
-
     auto graph_opt = graph::parseFileToGridGraph(graph_file);
     const auto& graph = graph_opt.value();
+    auto running_mode = options.getRunningMode();
+
     ManhattanDijkstra path_finder{graph_opt.value()};
 
     // FullNodeSelectionCalculator<ManhattanDijkstra> selection_calculator{graph};
+    switch(running_mode) {
+    case utils::RunningMode::SEPARATION: {
 
-    fmt::print("height: {}\n", graph.height);
-    fmt::print("width: {}\n", graph.width);
-    utils::Timer t;
-    // auto selections = selection_calculator.calculateFullNodeSelection();
-    auto separations = separation::calculateSeparation(path_finder);
+        utils::Timer t;
+        auto separations = separation::calculateSeparation(path_finder);
+        fmt::print("runtime: {}\n", t.elapsed());
+        fmt::print("separations calculated: {}\n", separations.size());
 
-    fmt::print("runtime: {}\n", t.elapsed());
+        std::sort(std::rbegin(separations),
+                  std::rend(separations));
 
-    fmt::print("selections calculated: {}\n", separations.size());
+        for(std::size_t i{0}; i < separations.size(); i++) {
+            const auto& sep = separations[i];
+            auto path = fmt::format("result-{}.seg", i);
+            separation::toFile(sep, path);
+        }
 
-    std::sort(std::rbegin(separations),
-              std::rend(separations));
-
-    auto isSane = separation::test::separationSanityCheck(graph, separations);
-
-    fmt::print("IS SANE: {}\n", isSane);
-
-    int counter{0};
-    for(const auto& seg : separations) {
-        auto path = fmt::format("result-{}.seg", counter++);
-        // seg.toFile(path);
-        separation::toFile(seg, path);
+        break;
     }
+    case utils::RunningMode::SELECTION: {
+        FullNodeSelectionCalculator<ManhattanDijkstra> selection_calculator{graph};
+        auto selections = selection_calculator.calculateFullNodeSelection();
 
-    // selection.value().toFile("result.seg");
+        std::sort(std::rbegin(selections),
+                  std::rend(selections));
+
+        for(std::size_t i{0}; i < selections.size(); i++) {
+            const auto& sel = selections[i];
+            auto path = fmt::format("result-{}.seg", i);
+            sel.toFile(path);
+        }
+    }
+    }
 }

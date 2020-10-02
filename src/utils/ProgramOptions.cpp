@@ -6,26 +6,49 @@
 
 using utils::ProgramOptions;
 using utils::RunningMode;
+using std::string_literals::operator""s;
 
 
 
-ProgramOptions::ProgramOptions(std::string graph_file)
-    : graph_file_(std::move(graph_file)) {}
+ProgramOptions::ProgramOptions(std::string graph_file,
+                               NeigbourMetric neigbour_mode,
+                               RunningMode running_mode)
+    : graph_file_(std::move(graph_file)),
+      neigbour_mode_(neigbour_mode),
+      running_mode_(running_mode) {}
 
-auto ProgramOptions::getGraphFile() const
+auto ProgramOptions::getGraphFile() const noexcept
     -> std::string_view
 {
     return graph_file_;
 }
 
 
+auto ProgramOptions::getNeigbourMode() const noexcept
+    -> NeigbourMetric
+{
+    return neigbour_mode_;
+}
+
+auto ProgramOptions::getRunningMode() const noexcept
+    -> RunningMode
+{
+    return running_mode_;
+}
+
 
 auto utils::parseArguments(int argc, char* argv[])
     -> ProgramOptions
 {
     CLI::App app{"Grid-Graph Path Finder"};
+    static const std::unordered_map mode_map{std::pair{"separation"s, RunningMode::SEPARATION},
+                                             std::pair{"selection"s, RunningMode::SELECTION}};
+
+    static const std::unordered_map neigbour_map{std::pair{"manhattan"s, NeigbourMetric::MANHATTAN}};
 
     std::string graph_file;
+    auto mode = RunningMode::SEPARATION;
+    auto neigbours = NeigbourMetric::MANHATTAN;
 
     app.add_option("-g,--graph",
                    graph_file,
@@ -33,73 +56,24 @@ auto utils::parseArguments(int argc, char* argv[])
         ->check(CLI::ExistingFile)
         ->required();
 
+    app.add_option("-m,--mode",
+                   mode,
+                   "preprocessing mode")
+        ->transform(CLI::CheckedTransformer(mode_map, CLI::ignore_case))
+        ->required();
+
+    app.add_option("-n,--neigbour-mode",
+                   neigbours,
+                   "neigbour mode")
+        ->transform(CLI::CheckedTransformer(neigbour_map, CLI::ignore_case));
+
     try {
         app.parse(argc, argv);
     } catch(const CLI::ParseError& e) {
         std::exit(app.exit(e));
     }
 
-    return ProgramOptions{std::move(graph_file)};
-}
-
-auto utils::operator>>(std::istream& in, NeigbourMetric& num)
-    -> std::istream&
-{
-    std::string token;
-    in >> token;
-    if(token == "manhattan") {
-        num = NeigbourMetric::MANHATTAN;
-    } else {
-        in.setstate(std::ios_base::failbit);
-    }
-    return in;
-}
-
-auto utils::operator<<(std::ostream& os, const NeigbourMetric& num)
-    -> std::ostream&
-{
-    switch(num) {
-    case NeigbourMetric::MANHATTAN:
-        os << "manhattan";
-        break;
-    default:
-        os.setstate(std::ios_base::failbit);
-        break;
-    }
-
-    return os;
-}
-
-auto utils::operator>>(std::istream& in, RunningMode& num)
-    -> std::istream&
-{
-    std::string token;
-    in >> token;
-    if(token == "selection") {
-        num = RunningMode::SELECTION;
-    } else if(token == "separation") {
-        num = RunningMode::SEPARATION;
-    } else {
-        in.setstate(std::ios_base::failbit);
-    }
-
-    return in;
-}
-
-auto utils::operator<<(std::ostream& os, const RunningMode& num)
-    -> std::ostream&
-{
-    switch(num) {
-    case RunningMode::SELECTION:
-        os << "selection";
-        break;
-    case RunningMode::SEPARATION:
-        os << "separation";
-        break;
-    default:
-        os.setstate(std::ios_base::failbit);
-        break;
-    }
-
-    return os;
+    return ProgramOptions{std::move(graph_file),
+                          neigbours,
+                          mode};
 }

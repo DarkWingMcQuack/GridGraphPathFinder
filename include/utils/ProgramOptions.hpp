@@ -1,8 +1,8 @@
 #pragma once
 
+#include <iostream>
 #include <optional>
 #include <string>
-#include <iostream>
 #include <string_view>
 
 namespace utils {
@@ -16,25 +16,26 @@ enum class RunningMode {
     SEPARATION
 };
 
-auto operator>>(std::istream& in, NeigbourMetric& num)
-    -> std::istream&;
-auto operator<<(std::ostream& os, const NeigbourMetric& num)
-    -> std::ostream&;
-auto operator>>(std::istream& in, RunningMode& num)
-    -> std::istream&;
-auto operator<<(std::ostream& os, const RunningMode& num)
-    -> std::ostream&;
-
 class ProgramOptions
 {
 public:
-    ProgramOptions(std::string graph_file);
+    ProgramOptions(std::string graph_file,
+                   NeigbourMetric neigbour_mode,
+                   RunningMode running_mode);
 
-    auto getGraphFile() const
+    auto getGraphFile() const noexcept
         -> std::string_view;
+
+    auto getNeigbourMode() const noexcept
+        -> NeigbourMetric;
+
+    auto getRunningMode() const noexcept
+        -> RunningMode;
 
 private:
     std::string graph_file_;
+    NeigbourMetric neigbour_mode_;
+    RunningMode running_mode_;
 };
 
 auto parseArguments(int argc, char* argv[])
