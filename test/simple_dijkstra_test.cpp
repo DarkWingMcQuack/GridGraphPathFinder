@@ -2,17 +2,15 @@
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
-#include <pathfinding/NormalDijkstra.hpp>
+#include <pathfinding/Dijkstra.hpp>
 
 #include <gtest/gtest.h>
 
-using graph::Node;
 using graph::GridGraph;
-using pathfinding::NormalDijkstra;
-using pathfinding::Path;
+using pathfinding::Dijkstra;
 
 
-TEST(StraightNormalDijkstraTest, NormalDijkstraWithoutBarriersTest)
+TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, true, true, true},
@@ -21,14 +19,14 @@ TEST(StraightNormalDijkstraTest, NormalDijkstraWithoutBarriersTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::AllSouroundingNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    NormalDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
-    auto paths = d.findRoutes({0, 0}, {0, 4});
+    auto paths = d.findAllRoutes({0, 0}, {0, 4});
 
     for(auto& p : paths) {
         EXPECT_EQ(p.getLength(), 4);
@@ -37,7 +35,7 @@ TEST(StraightNormalDijkstraTest, NormalDijkstraWithoutBarriersTest)
     EXPECT_EQ(paths.size(), 9);
 }
 
-TEST(StraightNormalDijkstraTest, NormalDijkstraWithOneBarrierTest)
+TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -46,14 +44,14 @@ TEST(StraightNormalDijkstraTest, NormalDijkstraWithOneBarrierTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::AllSouroundingNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    NormalDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
-    auto paths = d.findRoutes({0, 0}, {0, 4});
+    auto paths = d.findAllRoutes({0, 0}, {0, 4});
 
     for(auto& p : paths) {
         EXPECT_EQ(p.getLength(), 4);
@@ -62,7 +60,7 @@ TEST(StraightNormalDijkstraTest, NormalDijkstraWithOneBarrierTest)
     EXPECT_EQ(paths.size(), 5);
 }
 
-TEST(StraightNormalDijkstraTest, NormalDijkstraWithMoreBarriersTest)
+TEST(StraightDijkstraTest, DijkstraWithMoreBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -71,14 +69,14 @@ TEST(StraightNormalDijkstraTest, NormalDijkstraWithMoreBarriersTest)
         std::vector{true, true, true, false, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::AllSouroundingNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    NormalDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
-    auto paths = d.findRoutes({0, 0}, {0, 4});
+    auto paths = d.findAllRoutes({0, 0}, {0, 4});
 
     for(auto& p : paths) {
         EXPECT_EQ(p.getLength(), 8);

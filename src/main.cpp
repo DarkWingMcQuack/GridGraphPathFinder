@@ -2,8 +2,7 @@
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
-#include <pathfinding/ManhattanDijkstra.hpp>
-#include <pathfinding/NormalDijkstra.hpp>
+#include <pathfinding/Dijkstra.hpp>
 #include <selection/FullNodeSelectionCalculator.hpp>
 #include <separation/WellSeparationCalculator.hpp>
 #include <separation/WellSeparationChecker.hpp>
@@ -11,27 +10,35 @@
 #include <utils/Timer.hpp>
 
 
-using pathfinding::ManhattanDijkstra;
+using pathfinding::Dijkstra;
 using selection::FullNodeSelectionCalculator;
-
 
 auto main(int argc, char* argv[])
     -> int
 {
     auto options = utils::parseArguments(argc, argv);
     auto graph_file = options.getGraphFile();
-    auto graph_opt = graph::parseFileToGridGraph(graph_file);
+    auto neigbour_mode = options.getNeigbourMode();
+
+    auto neigbour_calculator = [&]() -> graph::NeigbourCalculator {
+        switch(neigbour_mode) {
+        case utils::NeigbourMetric::MANHATTAN:
+            return graph::NeigbourCalculator{};
+        }
+    }();
+
+    auto graph_opt = graph::parseFileToGridGraph(graph_file, neigbour_calculator);
     const auto& graph = graph_opt.value();
     auto running_mode = options.getRunningMode();
 
-    ManhattanDijkstra path_finder{graph_opt.value()};
+    Dijkstra path_finder{graph_opt.value()};
 
-    // FullNodeSelectionCalculator<ManhattanDijkstra> selection_calculator{graph};
+    // FullNodeSelectionCalculator<Dijkstra> selection_calculator{graph};
     switch(running_mode) {
     case utils::RunningMode::SEPARATION: {
 
         utils::Timer t;
-        auto separations = separation::calculateSeparation(path_finder);
+        auto separations = separation::calculateSeparation<Dijkstra>(graph);
         fmt::print("runtime: {}\n", t.elapsed());
         fmt::print("separations calculated: {}\n", separations.size());
 
@@ -49,7 +56,7 @@ auto main(int argc, char* argv[])
     case utils::RunningMode::SELECTION: {
 
         utils::Timer t;
-        FullNodeSelectionCalculator<ManhattanDijkstra> selection_calculator{graph};
+        FullNodeSelectionCalculator<Dijkstra> selection_calculator{graph};
         auto selections = selection_calculator.calculateFullNodeSelection();
 
         fmt::print("runtime: {}\n", t.elapsed());

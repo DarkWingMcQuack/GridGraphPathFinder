@@ -92,11 +92,11 @@ namespace test {
 } // namespace test
 
 template<class PathFinder>
-[[nodiscard]] auto calculateSeparation(PathFinder&& path_finder) noexcept
+[[nodiscard]] auto calculateSeparation(const graph::GridGraph& graph) noexcept
     -> std::vector<Separation>
 {
-    const auto& graph = path_finder.getGraph();
     auto root = graph.wrapGraphInCell();
+    PathFinder path_finder{graph};
 
     return impl::calculateSeparation(path_finder, root, root);
 }

@@ -40,6 +40,7 @@ auto AllSouroundingNeigbourCalculator::calculateNeigbours(const Node& node) cons
         Node{node.row - 1, node.column + 1},
     };
 }
+
 auto AllSouroundingNeigbourCalculator::isNeigbourOf(const Node& first, const Node& second) const noexcept
     -> bool
 {
@@ -52,7 +53,6 @@ auto AllSouroundingNeigbourCalculator::isNeigbourOf(const Node& first, const Nod
     or second == Node{first.row - 1, first.column - 1}
     or second == Node{first.row - 1, first.column + 1};
 }
-
 
 auto graph::calculateNeigbours(const NeigbourCalculator& calculator,
                                const Node& node) noexcept

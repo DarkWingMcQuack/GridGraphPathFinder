@@ -2,15 +2,15 @@
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
-#include <pathfinding/ManhattanDijkstra.hpp>
+#include <pathfinding/Dijkstra.hpp>
 
 #include <gtest/gtest.h>
 
 using graph::GridGraph;
-using pathfinding::ManhattanDijkstra;
+using pathfinding::Dijkstra;
 
 
-TEST(ManhattanDijkstraTest, ManhattanDijkstraWithoutBarriersTest)
+TEST(ManhattanDijkstraTest, DijkstraWithoutBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, true, true, true},
@@ -19,12 +19,12 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraWithoutBarriersTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
     auto paths = d.findAllRoutes({0, 0}, {0, 4});
 
@@ -35,7 +35,7 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraWithoutBarriersTest)
     EXPECT_EQ(paths.size(), 1);
 }
 
-TEST(ManhattanDijkstraTest, ManhattanDijkstraSingleWithoutBarriersTest)
+TEST(ManhattanDijkstraTest, DijkstraSingleWithoutBarriersTest)
 {
     std::vector test1{
         std::vector{true, true, true, true, true},
@@ -44,12 +44,12 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraSingleWithoutBarriersTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
     auto path_opt = d.findRoute({0, 0}, {0, 4});
 
@@ -59,7 +59,7 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraSingleWithoutBarriersTest)
 
 }
 
-TEST(ManhattanDijkstraTest, ManhattanDijkstraWithBarrierTest)
+TEST(ManhattanDijkstraTest, DijkstraWithBarrierTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -68,12 +68,12 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraWithBarrierTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
     auto paths = d.findAllRoutes({0, 0}, {0, 4});
 
@@ -84,7 +84,7 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraWithBarrierTest)
     EXPECT_EQ(paths.size(), 4);
 }
 
-TEST(ManhattanDijkstraTest, ManhattanDijkstraSingleRouteWithBarrierTest)
+TEST(ManhattanDijkstraTest, DijkstraSingleRouteWithBarrierTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -93,12 +93,12 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraSingleRouteWithBarrierTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
     auto path_opt = d.findRoute({0, 0}, {0, 4});
 
@@ -107,7 +107,7 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraSingleRouteWithBarrierTest)
     EXPECT_EQ(path_opt.value().getLength(), 6);
 }
 
-TEST(ManhattanDijkstraTest, ManhattanDijkstraWithBarrierDistanceTest)
+TEST(ManhattanDijkstraTest, DijkstraWithBarrierDistanceTest)
 {
     std::vector test1{
         std::vector{true, true, false, true, true},
@@ -116,12 +116,12 @@ TEST(ManhattanDijkstraTest, ManhattanDijkstraWithBarrierDistanceTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     ASSERT_EQ(graph_test1.width, 5);
     ASSERT_EQ(graph_test1.height, 5);
 
-    ManhattanDijkstra d{graph_test1};
+    Dijkstra d{graph_test1};
 
     auto dist = d.findDistance({0, 0}, {0, 4});
     EXPECT_EQ(dist, 6);

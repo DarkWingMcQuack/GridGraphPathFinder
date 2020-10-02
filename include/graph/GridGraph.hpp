@@ -2,6 +2,7 @@
 
 #include <graph/GridCell.hpp>
 #include <graph/GridGraphIterator.hpp>
+#include <graph/NeigbourCalculator.hpp>
 #include <graph/Node.hpp>
 #include <optional>
 #include <string_view>
@@ -12,7 +13,8 @@ namespace graph {
 class GridGraph
 {
 public:
-    GridGraph(std::vector<std::vector<bool>> grid) noexcept;
+    GridGraph(std::vector<std::vector<bool>> grid,
+              NeigbourCalculator neigbour_calculator) noexcept;
 
     //the big 5
     GridGraph() = delete;
@@ -28,9 +30,6 @@ public:
         -> bool;
 
     [[nodiscard]] auto getWalkableNeigbours(const Node& n) const noexcept
-        -> std::vector<Node>;
-
-    [[nodiscard]] auto getWalkableManhattanNeigbours(const Node& n) const noexcept
         -> std::vector<Node>;
 
     [[nodiscard]] auto getAllWalkableNodesOfCell(const graph::GridCell& cell) const noexcept
@@ -65,9 +64,11 @@ public:
 
 private:
     std::vector<bool> grid_;
+    NeigbourCalculator neigbour_calculator_;
 };
 
-[[nodiscard]] auto parseFileToGridGraph(std::string_view path) noexcept
+[[nodiscard]] auto parseFileToGridGraph(std::string_view path,
+                                        NeigbourCalculator neigbour_calc) noexcept
     -> std::optional<GridGraph>;
 
 } // namespace graph

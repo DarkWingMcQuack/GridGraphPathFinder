@@ -2,15 +2,20 @@
 #include <fmt/core.h>
 #include <fstream>
 #include <graph/GridGraph.hpp>
+#include <graph/NeigbourCalculator.hpp>
 #include <random>
 #include <vector>
 
 using graph::GridGraph;
 using graph::Node;
+using graph::NeigbourCalculator;
 
-GridGraph::GridGraph(std::vector<std::vector<bool>> grid) noexcept
+
+GridGraph::GridGraph(std::vector<std::vector<bool>> grid,
+                     NeigbourCalculator neigbour_calculator) noexcept
     : height(grid.size()),
-      width(grid[0].size())
+      width(grid[0].size()),
+      neigbour_calculator_(std::move(neigbour_calculator))
 {
     const auto total_size = grid.size() * grid[0].size();
     grid_.reserve(total_size);
@@ -21,6 +26,7 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid) noexcept
                      std::end(sub_grid));
     }
 }
+
 
 auto GridGraph::isBarrier(const Node& n) const noexcept
     -> bool
@@ -49,43 +55,10 @@ auto GridGraph::isWalkableNode(const Node& n) const noexcept
 auto GridGraph::getWalkableNeigbours(const Node& n) const noexcept
     -> std::vector<Node>
 {
-    const std::array raw_neigs{
-        Node{n.row, n.column + 1},
-        Node{n.row, n.column - 1},
-        Node{n.row - 1, n.column},
-        Node{n.row + 1, n.column},
-        Node{n.row + 1, n.column + 1},
-        Node{n.row + 1, n.column - 1},
-        Node{n.row - 1, n.column - 1},
-        Node{n.row - 1, n.column + 1},
-    };
+    const auto raw_neigs = graph::calculateNeigbours(neigbour_calculator_, n);
 
     std::vector<Node> nodes;
-    nodes.reserve(8);
-
-    std::copy_if(std::cbegin(raw_neigs),
-                 std::cend(raw_neigs),
-                 std::back_inserter(nodes),
-                 [&](const auto& n) {
-                     return isWalkableNode(n);
-                 });
-
-    return nodes;
-}
-
-
-auto GridGraph::getWalkableManhattanNeigbours(const Node& n) const noexcept
-    -> std::vector<Node>
-{
-    const std::array raw_neigs{
-        Node{n.row, n.column + 1},
-        Node{n.row, n.column - 1},
-        Node{n.row - 1, n.column},
-        Node{n.row + 1, n.column},
-    };
-
-    std::vector<Node> nodes;
-    nodes.reserve(4);
+    nodes.reserve(raw_neigs.size());
 
     std::copy_if(std::cbegin(raw_neigs),
                  std::cend(raw_neigs),
@@ -113,7 +86,6 @@ auto GridGraph::getAllWalkableNodesOfCell(const graph::GridCell& cell) const noe
     return nodes;
 }
 
-
 auto GridGraph::generateRandomCellOfSize(std::int64_t cell_size) const noexcept
     -> graph::GridCell
 {
@@ -133,7 +105,6 @@ auto GridGraph::generateRandomCellOfSize(std::int64_t cell_size) const noexcept
         bottom_left,
         bottom_right};
 }
-
 
 auto GridGraph::hasWalkableNode(const graph::GridCell& cell) const noexcept
     -> bool
@@ -213,7 +184,8 @@ auto GridGraph::end() const noexcept
     return GridGraphIterator{*this, width * height};
 }
 
-auto graph::parseFileToGridGraph(std::string_view path) noexcept
+auto graph::parseFileToGridGraph(std::string_view path,
+                                 NeigbourCalculator neigbour_calc) noexcept
     -> std::optional<GridGraph>
 {
     try {
@@ -254,7 +226,7 @@ auto graph::parseFileToGridGraph(std::string_view path) noexcept
             }
         }
 
-        return GridGraph{std::move(grid)};
+        return GridGraph{std::move(grid), std::move(neigbour_calc)};
 
     } catch(...) {
         return std::nullopt;

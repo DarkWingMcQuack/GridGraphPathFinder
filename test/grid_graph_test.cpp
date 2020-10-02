@@ -17,7 +17,7 @@ TEST(GridGraphTest, SimpleSquareGridGraphTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     EXPECT_EQ(graph_test1.width, 5);
     EXPECT_EQ(graph_test1.height, 5);
@@ -101,7 +101,7 @@ TEST(GridGraphTest, SimpleNonSquareGridGraphTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     EXPECT_EQ(graph_test1.width, 5);
     EXPECT_EQ(graph_test1.height, 4);
@@ -186,7 +186,7 @@ TEST(GridGraphTest, SimpleBarrierSquareGridGraphTest)
         std::vector{false, false, false, false, false},
         std::vector{false, false, false, false, false}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     EXPECT_EQ(graph_test1.width, 5);
     EXPECT_EQ(graph_test1.height, 5);
@@ -271,7 +271,7 @@ TEST(GridGraphTest, BarrierSquareGridGraphTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     EXPECT_EQ(graph_test1.width, 5);
     EXPECT_EQ(graph_test1.height, 5);
@@ -360,7 +360,7 @@ TEST(GridGraphTest, WalkableNeigGridGraphTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::AllSouroundingNeigbourCalculator{}};
 
     auto neigs1 = graph_test1.getWalkableNeigbours({2, 2});
     ASSERT_EQ(neigs1.size(), 8);
@@ -391,7 +391,7 @@ TEST(GridGraphTest, WalkableNeigGridGraphTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test2{test2};
+    GridGraph graph_test2{test2, graph::AllSouroundingNeigbourCalculator{}};
 
     auto neigs3 = graph_test2.getWalkableNeigbours({0, 0});
     ASSERT_EQ(neigs3.size(), 2);
@@ -409,9 +409,9 @@ TEST(GridGraphTest, WalkableManhattanNeigGridGraphTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    auto neigs1 = graph_test1.getWalkableManhattanNeigbours({2, 2});
+    auto neigs1 = graph_test1.getWalkableNeigbours({2, 2});
     ASSERT_EQ(neigs1.size(), 4);
     EXPECT_NE(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{1, 2}), std::cend(neigs1));
     EXPECT_NE(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{2, 1}), std::cend(neigs1));
@@ -425,7 +425,7 @@ TEST(GridGraphTest, WalkableManhattanNeigGridGraphTest)
     EXPECT_EQ(std::find(std::cbegin(neigs1), std::cend(neigs1), Node{3, 1}), std::cend(neigs1));
 
 
-    auto neigs2 = graph_test1.getWalkableManhattanNeigbours({0, 0});
+    auto neigs2 = graph_test1.getWalkableNeigbours({0, 0});
     ASSERT_EQ(neigs2.size(), 2);
 
     EXPECT_NE(std::find(std::cbegin(neigs2), std::cend(neigs2), Node{1, 0}), std::cend(neigs2));
@@ -441,7 +441,7 @@ TEST(GridGraphTest, WalkableManhattanNeigGridGraphTest)
         std::vector{true, true, true, true, true},
         std::vector{true, true, true, true, true}};
 
-    GridGraph graph_test2{test2};
+    GridGraph graph_test2{test2, graph::ManhattanNeigbourCalculator{}};
 
     auto neigs3 = graph_test2.getWalkableNeigbours({0, 0});
     ASSERT_EQ(neigs3.size(), 1);
@@ -459,7 +459,7 @@ TEST(GridGraphTest, GridGraphITeratorTest)
         std::vector{true, false, false, true, true},
         std::vector{true, true, false, true, false}};
 
-    GridGraph graph_test1{test1};
+    GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
     std::vector<Node> nodes;
     std::copy(std::begin(graph_test1),
@@ -480,7 +480,7 @@ TEST(GridGraphTest, GridGraphITeratorTest)
         std::vector{true, false, false, true, true},
         std::vector{true, true, false, true, true}};
 
-    GridGraph graph_test2{test2};
+    GridGraph graph_test2{test2, graph::ManhattanNeigbourCalculator{}};
 
     std::vector<Node> nodes2;
     std::copy(std::begin(graph_test2),

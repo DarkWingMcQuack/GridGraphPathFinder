@@ -3,19 +3,19 @@
 #include <numeric>
 #include <optional>
 #include <pathfinding/Distance.hpp>
-#include <pathfinding/ManhattanDijkstra.hpp>
+#include <pathfinding/Dijkstra.hpp>
 #include <queue>
 #include <string_view>
 #include <vector>
 
 using graph::Node;
 using graph::GridGraph;
-using pathfinding::ManhattanDijkstra;
+using pathfinding::Dijkstra;
 using pathfinding::Path;
 using graph::Distance;
 using graph::UNREACHABLE;
 
-ManhattanDijkstra::ManhattanDijkstra(const graph::GridGraph& graph) noexcept
+Dijkstra::Dijkstra(const graph::GridGraph& graph) noexcept
     : graph_(graph),
       distances_(graph.width * graph.height,
                  UNREACHABLE),
@@ -23,27 +23,27 @@ ManhattanDijkstra::ManhattanDijkstra(const graph::GridGraph& graph) noexcept
       pq_(DijkstraQueueComparer{}) {}
 
 
-auto ManhattanDijkstra::findAllRoutes(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findAllRoutes(const graph::Node& source, const graph::Node& target) noexcept
     -> std::vector<Path>
 {
     [[maybe_unused]] auto _ = computeDistance(source, target);
     return extractAllShortestPaths(source, target);
 }
 
-auto ManhattanDijkstra::findRoute(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findRoute(const graph::Node& source, const graph::Node& target) noexcept
     -> std::optional<Path>
 {
     [[maybe_unused]] auto _ = computeDistance(source, target);
     return extractShortestPath(source, target);
 }
 
-auto ManhattanDijkstra::findDistance(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findDistance(const graph::Node& source, const graph::Node& target) noexcept
     -> Distance
 {
     return computeDistance(source, target);
 }
 
-auto ManhattanDijkstra::findTrivialDistance(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findTrivialDistance(const graph::Node& source, const graph::Node& target) noexcept
     -> graph::Distance
 {
     if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
@@ -61,7 +61,7 @@ auto ManhattanDijkstra::findTrivialDistance(const graph::Node& source, const gra
            - std::min(source_column, target_column));
 }
 
-auto ManhattanDijkstra::getIndex(const graph::Node& n) const noexcept
+auto Dijkstra::getIndex(const graph::Node& n) const noexcept
     -> std::optional<std::size_t>
 {
     auto row = n.row;
@@ -78,7 +78,7 @@ auto ManhattanDijkstra::getIndex(const graph::Node& n) const noexcept
     return n.row * graph_.get().width + n.column;
 }
 
-auto ManhattanDijkstra::getDistanceTo(const graph::Node& n) const noexcept
+auto Dijkstra::getDistanceTo(const graph::Node& n) const noexcept
     -> Distance
 {
     auto index_opt = getIndex(n);
@@ -91,7 +91,7 @@ auto ManhattanDijkstra::getDistanceTo(const graph::Node& n) const noexcept
 }
 
 
-auto ManhattanDijkstra::setDistanceTo(const graph::Node& n, Distance distance) noexcept
+auto Dijkstra::setDistanceTo(const graph::Node& n, Distance distance) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -101,7 +101,7 @@ auto ManhattanDijkstra::setDistanceTo(const graph::Node& n, Distance distance) n
     }
 }
 
-auto ManhattanDijkstra::extractAllShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
+auto Dijkstra::extractAllShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
     -> std::vector<Path>
 {
     //check if a path exists
@@ -129,7 +129,7 @@ auto ManhattanDijkstra::extractAllShortestPaths(const graph::Node& source, const
         }
 
         const auto& last_inserted = path.getSource();
-        auto neigbours = getWalkableNeigboursOf(last_inserted);
+        auto neigbours = graph_.get().getWalkableNeigbours(last_inserted);
         auto smallest_distance = findSmallestDistance(neigbours);
 
         if(smallest_distance == UNREACHABLE) {
@@ -158,7 +158,7 @@ auto ManhattanDijkstra::extractAllShortestPaths(const graph::Node& source, const
     return complete_paths;
 }
 
-auto ManhattanDijkstra::extractShortestPath(const graph::Node& source, const graph::Node& target) const noexcept
+auto Dijkstra::extractShortestPath(const graph::Node& source, const graph::Node& target) const noexcept
     -> std::optional<Path>
 {
     //check if a path exists
@@ -170,7 +170,7 @@ auto ManhattanDijkstra::extractShortestPath(const graph::Node& source, const gra
 
     while(path.getSource() != source) {
         const auto& last_inserted = path.getSource();
-        auto neigbours = getWalkableNeigboursOf(last_inserted);
+        auto neigbours = graph_.get().getWalkableNeigbours(last_inserted);
 
         auto min_iter = std::min_element(
             std::begin(neigbours),
@@ -198,14 +198,7 @@ auto ManhattanDijkstra::extractShortestPath(const graph::Node& source, const gra
 }
 
 
-auto ManhattanDijkstra::getWalkableNeigboursOf(const graph::Node& n) const noexcept
-    -> std::vector<graph::Node>
-{
-    return graph_.get().getWalkableManhattanNeigbours(n);
-}
-
-
-auto ManhattanDijkstra::reset() noexcept
+auto Dijkstra::reset() noexcept
     -> void
 {
     for(auto n : touched_) {
@@ -216,7 +209,7 @@ auto ManhattanDijkstra::reset() noexcept
     pq_ = DijkstraQueue{DijkstraQueueComparer{}};
 }
 
-auto ManhattanDijkstra::unSettle(const graph::Node& n)
+auto Dijkstra::unSettle(const graph::Node& n)
     -> void
 {
     auto index_opt = getIndex(n);
@@ -226,7 +219,7 @@ auto ManhattanDijkstra::unSettle(const graph::Node& n)
     }
 }
 
-auto ManhattanDijkstra::settle(const graph::Node& n) noexcept
+auto Dijkstra::settle(const graph::Node& n) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -236,7 +229,7 @@ auto ManhattanDijkstra::settle(const graph::Node& n) noexcept
     }
 }
 
-auto ManhattanDijkstra::isSettled(const graph::Node& n)
+auto Dijkstra::isSettled(const graph::Node& n)
     -> bool
 {
     auto index_opt = getIndex(n);
@@ -248,7 +241,7 @@ auto ManhattanDijkstra::isSettled(const graph::Node& n)
     return false;
 }
 
-auto ManhattanDijkstra::getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
+auto Dijkstra::getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
     -> std::vector<graph::Node>
 {
     auto min_dist = std::accumulate(std::begin(cell),
@@ -271,7 +264,7 @@ auto ManhattanDijkstra::getNodesWithMinDistanceIn(const graph::GridCell& cell) n
 }
 
 
-auto ManhattanDijkstra::getMinDistanceIn(const graph::GridCell& cell) noexcept
+auto Dijkstra::getMinDistanceIn(const graph::GridCell& cell) noexcept
     -> graph::Distance
 {
     return std::accumulate(std::begin(cell),
@@ -282,7 +275,7 @@ auto ManhattanDijkstra::getMinDistanceIn(const graph::GridCell& cell) noexcept
                            });
 }
 
-auto ManhattanDijkstra::computeDistance(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::computeDistance(const graph::Node& source, const graph::Node& target) noexcept
     -> Distance
 {
     using graph::UNREACHABLE;
@@ -318,7 +311,7 @@ auto ManhattanDijkstra::computeDistance(const graph::Node& source, const graph::
         //when reusing the pq
         pq_.pop();
 
-        auto neigbours = getWalkableNeigboursOf(current_node);
+        auto neigbours = graph_.get().getWalkableNeigbours(current_node);
 
         for(auto&& neig : neigbours) {
             auto neig_dist = getDistanceTo(neig);
@@ -336,13 +329,13 @@ auto ManhattanDijkstra::computeDistance(const graph::Node& source, const graph::
 }
 
 
-auto ManhattanDijkstra::getGraph() const noexcept
+auto Dijkstra::getGraph() const noexcept
     -> const GridGraph&
 {
     return graph_.get();
 }
 
-auto ManhattanDijkstra::findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
+auto Dijkstra::findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
     -> Distance
 {
     if(nodes.empty()) {
