@@ -1,5 +1,6 @@
 #pragma once
 
+#include <graph/NeigbourCalculator.hpp>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -8,7 +9,8 @@
 namespace utils {
 
 enum class NeigbourMetric {
-    MANHATTAN
+    MANHATTAN,
+    ALL_SURROUNDING
 };
 
 enum class RunningMode {
@@ -26,8 +28,8 @@ public:
     auto getGraphFile() const noexcept
         -> std::string_view;
 
-    auto getNeigbourMode() const noexcept
-        -> NeigbourMetric;
+    auto getNeigbourCalculator() const noexcept
+        -> graph::NeigbourCalculator;
 
     auto getRunningMode() const noexcept
         -> RunningMode;

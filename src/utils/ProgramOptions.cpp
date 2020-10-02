@@ -23,17 +23,21 @@ auto ProgramOptions::getGraphFile() const noexcept
     return graph_file_;
 }
 
-
-auto ProgramOptions::getNeigbourMode() const noexcept
-    -> NeigbourMetric
-{
-    return neigbour_mode_;
-}
-
 auto ProgramOptions::getRunningMode() const noexcept
     -> RunningMode
 {
     return running_mode_;
+}
+
+auto ProgramOptions::getNeigbourCalculator() const noexcept
+    -> graph::NeigbourCalculator
+{
+    switch(neigbour_mode_) {
+    case utils::NeigbourMetric::ALL_SURROUNDING:
+        return graph::AllSouroundingNeigbourCalculator{};
+    default:
+        return graph::ManhattanNeigbourCalculator{};
+    }
 }
 
 
@@ -44,7 +48,8 @@ auto utils::parseArguments(int argc, char* argv[])
     static const std::unordered_map mode_map{std::pair{"separation"s, RunningMode::SEPARATION},
                                              std::pair{"selection"s, RunningMode::SELECTION}};
 
-    static const std::unordered_map neigbour_map{std::pair{"manhattan"s, NeigbourMetric::MANHATTAN}};
+    static const std::unordered_map neigbour_map{std::pair{"manhattan"s, NeigbourMetric::MANHATTAN},
+                                                 std::pair{"all-sourounding"s, NeigbourMetric::ALL_SURROUNDING}};
 
     std::string graph_file;
     auto mode = RunningMode::SEPARATION;
