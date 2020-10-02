@@ -47,6 +47,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCellIterator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/GridCell.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/Node.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/graph/NeigbourCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/CellRowWalker.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/graph/CellColumnWalker.hpp
 
@@ -77,6 +78,7 @@ target_sources(GridGraphPathFinderSrc
   src/graph/Node.cpp
   src/graph/CellRowWalker.cpp
   src/graph/CellColumnWalker.cpp
+  src/graph/NeigbourCalculator.cpp
 
   src/separation/Separation.cpp
 
@@ -140,6 +142,6 @@ target_link_libraries(GridGraphPathFinder LINK_PUBLIC
 add_dependencies(GridGraphPathFinder GridGraphPathFinderSrc)
 
 if (BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(test)
+  enable_testing()
+  add_subdirectory(test)
 endif (BUILD_TESTS)
