@@ -19,7 +19,8 @@ template<class PathFinder>
                                         const graph::GridCell& second) noexcept
     -> std::tuple<graph::Node,
                   graph::Node,
-                  graph::Distance>
+                  graph::Distance,
+                  bool>
 {
     using graph::Distance;
     using graph::UNREACHABLE;
@@ -28,9 +29,14 @@ template<class PathFinder>
     std::optional<graph::Node> first_center;
     std::optional<graph::Node> second_center;
 
+    auto is_trivial_separated = true;
+
     for(auto from : first) {
         for(auto to : second) {
             auto distance = path_finder.findDistance(from, to);
+            auto trivial_distance = path_finder.findTrivialDistance(from, to);
+
+            is_trivial_separated &= trivial_distance == distance;
 
             if(distance < min_distance) {
                 min_distance = distance;
@@ -42,22 +48,8 @@ template<class PathFinder>
 
     return std::tuple{first_center.value(),
                       second_center.value(),
-                      min_distance};
-}
-
-[[nodiscard]] auto checkTrivialSeparation(const graph::GridCell& first,
-                                          const graph::GridCell& second) noexcept
-    -> std::optional<TrivialSeparation>
-{
-    auto orientation = first.cacluclateOrientation(second);
-    switch(orientation) {
-
-    case graph::CellOrientation::HORIZONTAL:
-    case graph::CellOrientation::VERTICAL:
-
-    default:
-        return std::nullopt;
-    }
+                      min_distance,
+                      is_trivial_separated};
 }
 
 template<class PathFinder>
@@ -73,15 +65,14 @@ template<class PathFinder>
         return std::nullopt;
     }
 
-    if(auto trivial_separation_opt = checkTrivialSeparation(first, second)) {
-        return trivial_separation_opt.value();
-    }
-
-    //find first center
-
     auto [first_center,
           second_center,
-          center_to_center_distance] = findCenterCandidates(path_finder, first, second);
+          center_to_center_distance,
+          is_trivial_separation] = findCenterCandidates(path_finder, first, second);
+
+    if(is_trivial_separation) {
+        return TrivialSeparation(first, second);
+    }
 
     //calculate all distances from the clusters to its centers
     std::vector<Distance> first_to_center_distances;
