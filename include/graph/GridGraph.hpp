@@ -41,6 +41,9 @@ public:
     [[nodiscard]] auto hasWalkableNode(const graph::GridCell& cell) const noexcept
         -> bool;
 
+    [[nodiscard]] auto areNeighbours(const Node& first, const Node& second) const noexcept
+        -> bool;
+
     [[nodiscard]] auto hasBarrier(const graph::GridCell& cell) const noexcept
         -> bool;
 

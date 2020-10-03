@@ -115,6 +115,12 @@ auto GridGraph::hasWalkableNode(const graph::GridCell& cell) const noexcept
                        });
 }
 
+auto GridGraph::areNeighbours(const Node& first, const Node& second) const noexcept
+    -> bool
+{
+    return isNeigbourOf(neigbour_calculator_, first, second);
+}
+
 auto GridGraph::hasBarrier(const graph::GridCell& cell) const noexcept
     -> bool
 {
