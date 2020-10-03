@@ -31,14 +31,11 @@ template<class PathFinder>
         return {};
     }
 
-    //if first and second are each of size 1 then they are surely well separated
-    if(first.size() == 1 and second.size() == 1) {
-        return {
-            ComplexSeparation{first,
-                              second,
-                              first[0],
-                              second[0],
-                              graph::UNREACHABLE}};
+    //if two clusters only have one node and they are neighbors, then ignore them
+    if(first.size() == 1
+       and second.size() == 1
+       and path_finder.getGraph().areNeighbours(first[0], second[0])) {
+        return {};
     }
 
     if(auto separation_opt = checkSeparation(path_finder, first, second)) {

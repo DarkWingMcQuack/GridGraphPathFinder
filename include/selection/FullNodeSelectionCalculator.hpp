@@ -22,7 +22,7 @@ public:
     {
         for(auto first : graph) {
             for(auto second : graph) {
-                if(first == second or first.isManhattanNeigbourOf(second)) {
+                if(first == second or graph.areNeighbours(first, second)) {
                     continue;
                 }
                 all_to_all_pairs_.emplace(std::pair{first, second});
