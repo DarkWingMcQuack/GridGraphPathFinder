@@ -1,12 +1,12 @@
 #pragma once
 
 #include <algorithm>
-#include <future>
 #include <fmt/core.h>
+#include <future>
 #include <utility>
 #include <vector>
 
-namespace util {
+namespace utils {
 
 template<class Head0, class Head1, class... Tail>
 constexpr auto min(Head0&& head0, Head1&& head1, Tail&&... tail) noexcept
@@ -101,7 +101,29 @@ auto intersect(std::vector<T>&& head0,
     }
 }
 
+template<class T, class... Tail>
+auto intersect(const std::vector<T>& head0,
+               const std::vector<T>& head1,
+               Tail&&... tail) noexcept
+    -> std::vector<T>
+{
+    if constexpr(sizeof...(tail) == 0) {
+        std::vector<T> intersection;
+        std::set_intersection(std::begin(head0),
+                              std::end(head0),
+                              std::begin(head1),
+                              std::end(head1),
+                              std::back_inserter(intersection));
+        return intersection;
+    } else {
+        return intersect(
+            intersect(head0,
+                      head1),
+            std::forward<Tail>(tail)...);
+    }
+}
 
 
 
-} // namespace util
+
+} // namespace utils

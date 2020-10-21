@@ -13,65 +13,68 @@
 
 namespace selection {
 
-template<class PathFinder>
-class FullNodeSelectionCalculator
-{
-public:
+  template<class PathFinder>
+  class FullNodeSelectionCalculator
+  {
+  public:
     FullNodeSelectionCalculator(const graph::GridGraph& graph)
-        : node_selector_(graph)
+	  : node_selector_(graph)
     {
-        for(auto first : graph) {
-            for(auto second : graph) {
-                if(first == second or graph.areNeighbours(first, second)) {
-                    continue;
-                }
-                all_to_all_pairs_.emplace(std::pair{first, second});
-            }
-        }
+	  for(auto first : graph) {
+		for(auto second : graph) {
+		  if(first == second or graph.areNeighbours(first, second)) {
+			continue;
+		  }
+		  all_to_all_pairs_.emplace(std::pair{first, second});
+		}
+	  }
     }
 
     auto calculateFullNodeSelection() noexcept
-        -> std::vector<NodeSelection>
+	  -> std::vector<NodeSelection>
     {
-        std::vector<NodeSelection> calculated_selections;
-        while(!all_to_all_pairs_.empty()) {
-            auto [first, second] = getRandomRemainingPair();
-            auto selection = node_selector_.calculateFullSelection(first, second).value();
-            eraseNodeSelection(selection);
-            calculated_selections.emplace_back(std::move(selection));
-        }
+	  std::vector<NodeSelection> calculated_selections;
+	  while(!all_to_all_pairs_.empty()) {
+		auto [first, second] = getRandomRemainingPair();
+		auto selection = node_selector_.calculateFullSelection(first, second).value();
+		eraseNodeSelection(selection);
+		calculated_selections.emplace_back(std::move(selection));
+	  }
 
-        return calculated_selections;
+	  return calculated_selections;
     }
 
     auto getRandomRemainingPair() const noexcept
-        -> std::pair<graph::Node, graph::Node>
+	  -> std::pair<graph::Node, graph::Node>
     {
-        static std::mt19937 engine;
-        std::uniform_int_distribution<std::size_t> dist(0, all_to_all_pairs_.size() - 1);
+	  static std::mt19937 engine{time(0)};
+	  std::uniform_int_distribution<std::size_t> dist(0, all_to_all_pairs_.size() - 1);
 
-        auto iter = std::begin(all_to_all_pairs_);
-        std::advance(iter, dist(engine));
+	  auto iter = std::begin(all_to_all_pairs_);
+	  std::advance(iter, dist(engine));
 
-        return *iter;
+	  return *iter;
     }
 
     auto eraseNodeSelection(const NodeSelection& selection) noexcept
-        -> void
+	  -> void
     {
-        for(auto first : selection.getLeftSelection()) {
-            for(auto second : selection.getRightSelection()) {
-                all_to_all_pairs_.erase(std::pair{first, second});
-                all_to_all_pairs_.erase(std::pair{second, first});
-            }
-        }
+	  for(auto first : selection.getLeftSelection()) {
+		for(auto second : selection.getRightSelection()) {
+		  all_to_all_pairs_.erase(std::pair{first, second});
+		  all_to_all_pairs_.erase(std::pair{second, first});
+		}
+	  }
+
+	  fmt::print("remaining size: {}\n",
+				 all_to_all_pairs_.size());
     }
 
-private:
+  private:
     std::unordered_set<std::pair<graph::Node,
                                  graph::Node>>
-        all_to_all_pairs_;
+	all_to_all_pairs_;
 
     NodeSelectionCalculator<PathFinder> node_selector_;
-};
+  };
 } // namespace selection

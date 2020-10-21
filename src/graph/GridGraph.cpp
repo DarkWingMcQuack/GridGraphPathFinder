@@ -10,13 +10,65 @@ using graph::GridGraph;
 using graph::Node;
 using graph::NeigbourCalculator;
 
+namespace {
+
+auto findClipValues(const std::vector<std::vector<bool>>& grid)
+{
+    std::size_t clipped_height = 0;
+    for(std::size_t i{0}; i < grid.size(); i++) {
+        if(std::all_of(std::begin(grid[i]), std::end(grid[i]), [](bool x) { return x; })) {
+            clipped_height++;
+        } else {
+            break;
+        }
+    }
+
+    std::size_t clipped_width = 0;
+
+    for(std::size_t i{0}; i < grid[0].size(); i++) {
+        for(std::size_t j{0}; j < grid.size(); j++) {
+            if(grid[j][i]) {
+                return std::pair{clipped_height, clipped_width};
+            }
+        }
+
+        clipped_width++;
+    }
+
+    return std::pair{clipped_height, clipped_width};
+}
+
+auto clipGrid(std::vector<std::vector<bool>> grid,
+              std::size_t clip_height,
+              std::size_t clip_width)
+{
+    grid.erase(std::begin(grid),
+               std::begin(grid) + clip_height);
+
+    for(auto& row : grid) {
+        row.erase(std::begin(row),
+                  std::begin(row) + clip_width);
+    }
+
+    return grid;
+}
+
+} // namespace
+
 
 GridGraph::GridGraph(std::vector<std::vector<bool>> grid,
                      NeigbourCalculator neigbour_calculator) noexcept
-    : height(grid.size()),
-      width(grid[0].size()),
-      neigbour_calculator_(std::move(neigbour_calculator))
+    : neigbour_calculator_(neigbour_calculator)
 {
+
+    auto [clipped_height, clipped_width] = findClipValues(grid);
+    clipped_height_ = clipped_height;
+    clipped_width_ = clipped_width;
+
+    grid = clipGrid(std::move(grid),
+                    clipped_height_,
+                    clipped_width_);
+
     const auto total_size = grid.size() * grid[0].size();
     grid_.reserve(total_size);
 
@@ -25,8 +77,9 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid,
                      std::begin(sub_grid),
                      std::end(sub_grid));
     }
+    height_ = grid.size();
+    width_ = grid[0].size();
 }
-
 
 auto GridGraph::isBarrier(const Node& n) const noexcept
     -> bool
@@ -34,21 +87,22 @@ auto GridGraph::isBarrier(const Node& n) const noexcept
     return !isWalkableNode(n);
 }
 
+
 auto GridGraph::isWalkableNode(const Node& n) const noexcept
     -> bool
 {
     const auto row = n.row;
     const auto column = n.column;
 
-    if(row >= height || row < 0) {
+    if(row >= height_ || row < 0) {
         return false;
     }
 
-    if(column >= width || column < 0) {
+    if(column >= width_ || column < 0) {
         return false;
     }
 
-    const auto index = n.row * width + n.column;
+    const auto index = n.row * width_ + n.column;
     return grid_[index];
 }
 
@@ -90,8 +144,8 @@ auto GridGraph::generateRandomCellOfSize(std::int64_t cell_size) const noexcept
 {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> width_dis(0, width - 1 - cell_size);
-    std::uniform_int_distribution<> heigth_dis(0, height - 1 - cell_size);
+    std::uniform_int_distribution<> width_dis(0, width_ - 1 - cell_size);
+    std::uniform_int_distribution<> heigth_dis(0, height_ - 1 - cell_size);
 
     graph::GridCorner top_left{heigth_dis(gen), width_dis(gen)};
     graph::GridCorner top_right{top_left.getRow(), top_left.getColumn() + cell_size};
@@ -144,8 +198,8 @@ auto GridGraph::countNumberOfWalkableNodes(const graph::GridCell& cell) const no
 auto GridGraph::wrapGraphInCell() const noexcept
     -> graph::GridCell
 {
-    auto right_border = static_cast<std::int64_t>(width - 1);
-    auto bottom_border = static_cast<std::int64_t>(height - 1);
+    auto right_border = static_cast<std::int64_t>(width_ - 1);
+    auto bottom_border = static_cast<std::int64_t>(height_ - 1);
 
     graph::GridCorner top_left{0, 0};
     graph::GridCorner top_right{0, right_border};
@@ -164,8 +218,8 @@ auto GridGraph::getRandomWalkableNode() const noexcept
 {
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<std::size_t> width_dis(0, width - 1);
-    std::uniform_int_distribution<std::size_t> heigth_dis(0, height - 1);
+    std::uniform_int_distribution<std::size_t> width_dis(0, width_ - 1);
+    std::uniform_int_distribution<std::size_t> heigth_dis(0, height_ - 1);
 
     Node random_node{heigth_dis(gen), width_dis(gen)};
 
@@ -186,7 +240,33 @@ auto GridGraph::begin() const noexcept
 auto GridGraph::end() const noexcept
     -> GridGraphIterator
 {
-    return GridGraphIterator{*this, width * height};
+    return GridGraphIterator{*this, width_ * height_};
+}
+
+auto GridGraph::getHeight() const noexcept
+    -> std::size_t
+{
+    return height_;
+}
+
+auto GridGraph::getWidth() const noexcept
+    -> std::size_t
+{
+    return width_;
+}
+
+auto GridGraph::nodeToClippedNode(Node n) const noexcept
+    -> Node
+{
+    return Node{n.column - clipped_width_,
+                n.row - clipped_height_};
+}
+
+auto GridGraph::clippedNodeToNormal(Node n) const noexcept
+    -> Node
+{
+    return Node{n.column + clipped_width_,
+                n.row + clipped_height_};
 }
 
 auto graph::parseFileToGridGraph(std::string_view path,

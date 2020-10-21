@@ -19,8 +19,8 @@ TEST(GridGraphTest, SimpleSquareGridGraphTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    EXPECT_EQ(graph_test1.width, 5);
-    EXPECT_EQ(graph_test1.height, 5);
+    EXPECT_EQ(graph_test1.getWidth(), 5);
+    EXPECT_EQ(graph_test1.getHeight(), 5);
 
     EXPECT_TRUE(graph_test1.isWalkableNode({0, 0}));
     EXPECT_TRUE(graph_test1.isWalkableNode({0, 1}));
@@ -103,8 +103,8 @@ TEST(GridGraphTest, SimpleNonSquareGridGraphTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    EXPECT_EQ(graph_test1.width, 5);
-    EXPECT_EQ(graph_test1.height, 4);
+    EXPECT_EQ(graph_test1.getWidth(), 5);
+    EXPECT_EQ(graph_test1.getHeight(), 4);
 
     EXPECT_TRUE(graph_test1.isWalkableNode({0, 0}));
     EXPECT_TRUE(graph_test1.isWalkableNode({0, 1}));
@@ -188,8 +188,8 @@ TEST(GridGraphTest, SimpleBarrierSquareGridGraphTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    EXPECT_EQ(graph_test1.width, 5);
-    EXPECT_EQ(graph_test1.height, 5);
+    EXPECT_EQ(graph_test1.getWidth(), 5);
+    EXPECT_EQ(graph_test1.getHeight(), 5);
 
     EXPECT_FALSE(graph_test1.isWalkableNode({0, 0}));
     EXPECT_FALSE(graph_test1.isWalkableNode({0, 1}));
@@ -273,8 +273,8 @@ TEST(GridGraphTest, BarrierSquareGridGraphTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    EXPECT_EQ(graph_test1.width, 5);
-    EXPECT_EQ(graph_test1.height, 5);
+    EXPECT_EQ(graph_test1.getWidth(), 5);
+    EXPECT_EQ(graph_test1.getHeight(), 5);
 
     EXPECT_TRUE(graph_test1.isWalkableNode({0, 0}));
     EXPECT_TRUE(graph_test1.isWalkableNode({0, 1}));

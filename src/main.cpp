@@ -4,6 +4,7 @@
 #include <graph/GridGraph.hpp>
 #include <pathfinding/Dijkstra.hpp>
 #include <selection/FullNodeSelectionCalculator.hpp>
+#include <selection/HubLabelSelectionLookup.hpp>
 #include <separation/WellSeparationCalculator.hpp>
 #include <separation/WellSeparationChecker.hpp>
 #include <utils/ProgramOptions.hpp>
@@ -48,6 +49,8 @@ auto runSelection(const graph::GridGraph& graph)
         auto path = fmt::format("result-{}.seg", i);
         sel.toFile(path);
     }
+
+	selection::HubLabelSelectionLookup lookup{std::move(selections)};
 }
 
 auto main(int argc, char* argv[])

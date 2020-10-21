@@ -21,8 +21,8 @@ TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
 
     GridGraph graph_test1{test1, graph::AllSouroundingNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 
@@ -46,8 +46,8 @@ TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
 
     GridGraph graph_test1{test1, graph::AllSouroundingNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 
@@ -71,8 +71,8 @@ TEST(StraightDijkstraTest, DijkstraWithMoreBarriersTest)
 
     GridGraph graph_test1{test1, graph::AllSouroundingNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 

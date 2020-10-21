@@ -2,8 +2,8 @@
 #include <graph/GridGraph.hpp>
 #include <numeric>
 #include <optional>
-#include <pathfinding/Distance.hpp>
 #include <pathfinding/Dijkstra.hpp>
+#include <pathfinding/Distance.hpp>
 #include <queue>
 #include <string_view>
 #include <vector>
@@ -17,9 +17,9 @@ using graph::UNREACHABLE;
 
 Dijkstra::Dijkstra(const graph::GridGraph& graph) noexcept
     : graph_(graph),
-      distances_(graph.width * graph.height,
+      distances_(graph.getWidth() * graph.getHeight(),
                  UNREACHABLE),
-      settled_(graph.width * graph.height, false),
+      settled_(graph.getWidth() * graph.getHeight(), false),
       pq_(DijkstraQueueComparer{}) {}
 
 
@@ -67,15 +67,15 @@ auto Dijkstra::getIndex(const graph::Node& n) const noexcept
     auto row = n.row;
     auto column = n.column;
 
-    if(row >= graph_.get().height || row < 0) {
+    if(row >= graph_.get().getHeight() || row < 0) {
         return std::nullopt;
     }
 
-    if(column >= graph_.get().width || column < 0) {
+    if(column >= graph_.get().getWidth() || column < 0) {
         return std::nullopt;
     }
 
-    return n.row * graph_.get().width + n.column;
+    return n.row * graph_.get().getWidth() + n.column;
 }
 
 auto Dijkstra::getDistanceTo(const graph::Node& n) const noexcept

@@ -44,7 +44,7 @@ template<class PathFinder>
 
     auto [split0, split1, split2, split3] = first.split();
 
-    return util::concat(calculateSeparation(path_finder, second, split0),
+    return utils::concat(calculateSeparation(path_finder, second, split0),
                         calculateSeparation(path_finder, second, split1),
                         calculateSeparation(path_finder, second, split2),
                         calculateSeparation(path_finder, second, split3));

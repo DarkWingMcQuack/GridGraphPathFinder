@@ -10,7 +10,7 @@ GridGraphIterator::GridGraphIterator(const GridGraph& graph,
                                      std::size_t idx)
     : graph_(graph),
       idx_(idx),
-      max_idx_(graph.width * graph.height)
+      max_idx_(graph.getWidth() * graph.getHeight())
 {
     auto node = getNodeAtIdx(idx_);
     while(graph_.get().isBarrier(node) && idx_ < max_idx_) {
@@ -102,7 +102,7 @@ auto GridGraphIterator::operator->() const noexcept
 auto GridGraphIterator::getNodeAtIdx(std::size_t idx) const noexcept
     -> graph::Node
 {
-    const auto width = graph_.get().width;
+    const auto width = graph_.get().getWidth();
     const auto row = static_cast<std::size_t>(
         std::floor(static_cast<double>(idx)
                    / static_cast<double>(width)));

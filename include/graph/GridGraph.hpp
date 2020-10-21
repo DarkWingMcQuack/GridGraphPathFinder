@@ -20,7 +20,7 @@ public:
     GridGraph() = delete;
     GridGraph(GridGraph&&) = default;
     GridGraph(const GridGraph&) = delete;
-    auto operator=(GridGraph &&) -> GridGraph& = delete;
+    auto operator=(GridGraph&&) -> GridGraph& = delete;
     auto operator=(const GridGraph&) -> GridGraph& = delete;
 
     [[nodiscard]] auto isBarrier(const Node& n) const noexcept
@@ -56,18 +56,32 @@ public:
     [[nodiscard]] auto getRandomWalkableNode() const noexcept
         -> Node;
 
+    [[nodiscard]] auto nodeToClippedNode(Node n) const noexcept
+        -> Node;
+
+    [[nodiscard]] auto clippedNodeToNormal(Node n) const noexcept
+        -> Node;
+
+    [[nodiscard]] auto getHeight() const noexcept
+	  -> std::size_t;
+
+    [[nodiscard]] auto getWidth() const noexcept
+	  -> std::size_t;
+
     auto begin() const noexcept
         -> GridGraphIterator;
 
     auto end() const noexcept
         -> GridGraphIterator;
 
-    const std::size_t height;
-    const std::size_t width;
 
 private:
     std::vector<bool> grid_;
     NeigbourCalculator neigbour_calculator_;
+    std::size_t height_;
+    std::size_t width_;
+    std::size_t clipped_height_ = 0;
+    std::size_t clipped_width_ = 0;
 };
 
 [[nodiscard]] auto parseFileToGridGraph(std::string_view path,

@@ -18,9 +18,9 @@ public:
     NodeSelectionCalculator(const graph::GridGraph& graph)
         : path_finder_(graph),
           graph_(graph),
-          left_settled_(graph_.width * graph_.height,
+          left_settled_(graph_.getWidth() * graph_.getHeight(),
                         false),
-          right_settled_(graph_.width * graph_.height,
+          right_settled_(graph_.getWidth() * graph_.getHeight(),
                          false) {}
 
 
@@ -235,15 +235,15 @@ private:
         auto row = n.row;
         auto column = n.column;
 
-        if(row >= graph_.height || row < 0) {
+        if(row >= graph_.getHeight() || row < 0) {
             return std::nullopt;
         }
 
-        if(column >= graph_.width || column < 0) {
+        if(column >= graph_.getWidth() || column < 0) {
             return std::nullopt;
         }
 
-        return n.row * graph_.width + n.column;
+        return n.row * graph_.getWidth() + n.column;
     }
 
     [[nodiscard]] auto calculateCenter(const graph::Node& left,
@@ -271,4 +271,4 @@ private:
     std::vector<std::pair<graph::Node, graph::Distance>> right_selection_;
 };
 
-} // namespace separation
+} // namespace selection

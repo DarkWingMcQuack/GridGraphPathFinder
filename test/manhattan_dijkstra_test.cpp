@@ -21,8 +21,8 @@ TEST(ManhattanDijkstraTest, DijkstraWithoutBarriersTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 
@@ -46,8 +46,8 @@ TEST(ManhattanDijkstraTest, DijkstraSingleWithoutBarriersTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 
@@ -70,8 +70,8 @@ TEST(ManhattanDijkstraTest, DijkstraWithBarrierTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 
@@ -95,8 +95,8 @@ TEST(ManhattanDijkstraTest, DijkstraSingleRouteWithBarrierTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 
@@ -118,8 +118,8 @@ TEST(ManhattanDijkstraTest, DijkstraWithBarrierDistanceTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    ASSERT_EQ(graph_test1.width, 5);
-    ASSERT_EQ(graph_test1.height, 5);
+    ASSERT_EQ(graph_test1.getWidth(), 5);
+    ASSERT_EQ(graph_test1.getHeight(), 5);
 
     Dijkstra d{graph_test1};
 

@@ -14,8 +14,8 @@ using graph::GridCell;
 using graph::GridCorner;
 using graph::GridCellIterator;
 using graph::Node;
-using util::min;
-using util::max;
+using utils::min;
+using utils::max;
 
 
 GridCell::GridCell(GridCorner top_left,
