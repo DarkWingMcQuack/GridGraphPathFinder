@@ -45,9 +45,9 @@ template<class PathFinder>
     auto [split0, split1, split2, split3] = first.split();
 
     return utils::concat(calculateSeparation(path_finder, second, split0),
-                        calculateSeparation(path_finder, second, split1),
-                        calculateSeparation(path_finder, second, split2),
-                        calculateSeparation(path_finder, second, split3));
+                         calculateSeparation(path_finder, second, split1),
+                         calculateSeparation(path_finder, second, split2),
+                         calculateSeparation(path_finder, second, split3));
 }
 
 } // namespace impl

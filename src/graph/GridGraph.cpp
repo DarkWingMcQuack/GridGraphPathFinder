@@ -296,30 +296,30 @@ auto GridGraph::getWidth() const noexcept
 auto GridGraph::toClipped(Node n) const noexcept
     -> Node
 {
-    return Node{n.column - clipped_width_,
-                n.row - clipped_height_};
+    return Node{n.row - clipped_height_,
+                n.column - clipped_width_};
 }
 
 auto GridGraph::unclip(Node n) const noexcept
     -> Node
 {
-    return Node{n.column + clipped_width_,
-                n.row + clipped_height_};
+    return Node{n.row + clipped_height_,
+                n.column + clipped_width_};
 }
 
 
 auto GridGraph::toClipped(GridCorner g) const noexcept
     -> GridCorner
 {
-    return GridCorner{static_cast<int64_t>(g.getRow() - clipped_width_),
-                      static_cast<int64_t>(g.getColumn() - clipped_height_)};
+    return GridCorner{static_cast<int64_t>(g.getRow() - clipped_height_),
+                      static_cast<int64_t>(g.getColumn() - clipped_width_)};
 }
 
 auto GridGraph::unclip(GridCorner g) const noexcept
     -> GridCorner
 {
-    return GridCorner{static_cast<int64_t>(g.getRow() + clipped_width_),
-                      static_cast<int64_t>(g.getColumn() + clipped_height_)};
+    return GridCorner{static_cast<int64_t>(g.getRow() + clipped_height_),
+                      static_cast<int64_t>(g.getColumn() + clipped_width_)};
 }
 
 auto GridGraph::toClipped(GridCell g) const noexcept
@@ -338,6 +338,41 @@ auto GridGraph::unclip(GridCell g) const noexcept
         unclip(g.getTopLeft()),
         unclip(g.getBottomRight()),
     };
+}
+
+auto GridGraph::unclip(separation::TrivialSeparation g) const noexcept
+    -> separation::TrivialSeparation
+{
+    auto left = g.getFirstCluster();
+    auto right = g.getSecondCluster();
+
+    return separation::TrivialSeparation{unclip(left),
+                                         unclip(right)};
+}
+
+auto GridGraph::unclip(separation::ComplexSeparation g) const noexcept
+    -> separation::ComplexSeparation
+{
+    auto left = g.getFirstCluster();
+    auto right = g.getSecondCluster();
+    auto left_center = g.getFirstClusterCenter();
+    auto right_center = g.getSecondClusterCenter();
+
+    return separation::ComplexSeparation{unclip(left),
+                                         unclip(right),
+                                         unclip(left_center),
+                                         unclip(right_center),
+                                         g.getCenterDistance()};
+}
+
+auto GridGraph::unclip(separation::Separation g) const noexcept
+    -> separation::Separation
+{
+    return std::visit(
+        [&](auto sep) -> separation::Separation {
+            return unclip(sep);
+        },
+        g);
 }
 
 auto graph::parseFileToGridGraph(std::string_view path,

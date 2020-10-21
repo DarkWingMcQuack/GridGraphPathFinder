@@ -5,6 +5,7 @@
 #include <graph/NeigbourCalculator.hpp>
 #include <graph/Node.hpp>
 #include <optional>
+#include <separation/Separation.hpp>
 #include <string_view>
 #include <vector>
 
@@ -73,6 +74,15 @@ public:
 
     [[nodiscard]] auto unclip(GridCorner g) const noexcept
         -> GridCorner;
+
+    [[nodiscard]] auto unclip(separation::TrivialSeparation g) const noexcept
+        -> separation::TrivialSeparation;
+
+    [[nodiscard]] auto unclip(separation::ComplexSeparation g) const noexcept
+        -> separation::ComplexSeparation;
+
+    [[nodiscard]] auto unclip(separation::Separation g) const noexcept
+        -> separation::Separation;
 
     [[nodiscard]] auto getHeight() const noexcept
         -> std::size_t;

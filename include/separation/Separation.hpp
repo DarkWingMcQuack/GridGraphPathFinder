@@ -1,7 +1,6 @@
 #pragma once
 
 #include <graph/GridCell.hpp>
-#include <graph/GridGraph.hpp>
 #include <pathfinding/Distance.hpp>
 #include <pathfinding/Path.hpp>
 #include <variant>

@@ -27,7 +27,27 @@ auto runSeparation(const graph::GridGraph& graph)
     for(std::size_t i{0}; i < separations.size(); i++) {
         const auto& sep = separations[i];
         auto path = fmt::format("result-{}.seg", i);
-        separation::toFile(sep, path);
+        separation::toFile(graph.unclip(sep), path);
+    }
+
+    for(std::size_t i{0}; i < separations.size(); i++) {
+        auto sep = separations[i];
+        auto left = separation::getFirstCluster(sep);
+        auto right = separation::getSecondCluster(sep);
+
+        for(std::size_t j{0}; j < separations.size(); j++) {
+            auto inner_sep = separations[j];
+            if(sep == inner_sep) {
+                continue;
+            }
+
+            auto inner_left = separation::getFirstCluster(inner_sep);
+            auto inner_right = separation::getSecondCluster(inner_sep);
+
+            if(left.isSubSetOf(inner_left) and right.isSubSetOf(inner_right)) {
+                fmt::print("FOUND A FUCKIN FLAW {} and {}\n", i, j);
+            }
+        }
     }
 }
 
@@ -50,7 +70,7 @@ auto runSelection(const graph::GridGraph& graph)
         sel.toFile(path);
     }
 
-	selection::HubLabelSelectionLookup lookup{std::move(selections)};
+    selection::HubLabelSelectionLookup lookup{std::move(selections)};
 }
 
 auto main(int argc, char* argv[])
