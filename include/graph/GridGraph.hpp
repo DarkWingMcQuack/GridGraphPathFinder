@@ -23,13 +23,13 @@ public:
     auto operator=(GridGraph&&) -> GridGraph& = delete;
     auto operator=(const GridGraph&) -> GridGraph& = delete;
 
-    [[nodiscard]] auto isBarrier(const Node& n) const noexcept
+    [[nodiscard]] auto isBarrier(Node n) const noexcept
         -> bool;
 
-    [[nodiscard]] auto isWalkableNode(const Node& n) const noexcept
+    [[nodiscard]] auto isWalkableNode(Node n) const noexcept
         -> bool;
 
-    [[nodiscard]] auto getWalkableNeigbours(const Node& n) const noexcept
+    [[nodiscard]] auto getWalkableNeigbours(Node n) const noexcept
         -> std::vector<Node>;
 
     [[nodiscard]] auto getAllWalkableNodesOfCell(const graph::GridCell& cell) const noexcept
@@ -41,7 +41,7 @@ public:
     [[nodiscard]] auto hasWalkableNode(const graph::GridCell& cell) const noexcept
         -> bool;
 
-    [[nodiscard]] auto areNeighbours(const Node& first, const Node& second) const noexcept
+    [[nodiscard]] auto areNeighbours(Node first, Node second) const noexcept
         -> bool;
 
     [[nodiscard]] auto hasBarrier(const graph::GridCell& cell) const noexcept
@@ -56,17 +56,29 @@ public:
     [[nodiscard]] auto getRandomWalkableNode() const noexcept
         -> Node;
 
-    [[nodiscard]] auto nodeToClippedNode(Node n) const noexcept
+    [[nodiscard]] auto toClipped(Node n) const noexcept
         -> Node;
 
-    [[nodiscard]] auto clippedNodeToNormal(Node n) const noexcept
+    [[nodiscard]] auto unclip(Node n) const noexcept
         -> Node;
+
+    [[nodiscard]] auto toClipped(GridCell g) const noexcept
+        -> GridCell;
+
+    [[nodiscard]] auto unclip(GridCell g) const noexcept
+        -> GridCell;
+
+    [[nodiscard]] auto toClipped(GridCorner g) const noexcept
+        -> GridCorner;
+
+    [[nodiscard]] auto unclip(GridCorner g) const noexcept
+        -> GridCorner;
 
     [[nodiscard]] auto getHeight() const noexcept
-	  -> std::size_t;
+        -> std::size_t;
 
     [[nodiscard]] auto getWidth() const noexcept
-	  -> std::size_t;
+        -> std::size_t;
 
     auto begin() const noexcept
         -> GridGraphIterator;

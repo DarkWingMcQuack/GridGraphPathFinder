@@ -16,7 +16,7 @@ TEST(GridCellTest, SimpleSplitTest)
     GridCorner bl{1, 0};
     GridCorner br{1, 1};
 
-    GridCell cell{tl, tr, bl, br};
+    GridCell cell{tl, br};
 
     ASSERT_TRUE(cell.isValid());
     ASSERT_TRUE(cell.isSplitable());
@@ -42,7 +42,7 @@ TEST(GridCellTest, AnotherSimpleSplitTest)
     GridCorner bl{3, 0};
     GridCorner br{3, 3};
 
-    GridCell cell{tl, tr, bl, br};
+    GridCell cell{tl, br};
 
     ASSERT_TRUE(cell.isValid());
     ASSERT_TRUE(cell.isSplitable());
@@ -50,10 +50,10 @@ TEST(GridCellTest, AnotherSimpleSplitTest)
 
     auto [top_l, top_r, bottom_l, bottom_r] = cell.split();
 
-    EXPECT_EQ(top_l, GridCell(GridCorner(0, 0), GridCorner(0, 1), GridCorner(1, 0), GridCorner(1, 1)));
-    EXPECT_EQ(top_r, GridCell(GridCorner(0, 2), GridCorner(0, 3), GridCorner(1, 2), GridCorner(1, 3)));
-    EXPECT_EQ(bottom_l, GridCell(GridCorner(2, 0), GridCorner(2, 1), GridCorner(3, 0), GridCorner(3, 1)));
-    EXPECT_EQ(bottom_r, GridCell(GridCorner(2, 2), GridCorner(2, 3), GridCorner(3, 2), GridCorner(3, 3)));
+    EXPECT_EQ(top_l, GridCell(GridCorner(0, 0), GridCorner(1, 1)));
+    EXPECT_EQ(top_r, GridCell(GridCorner(0, 2), GridCorner(1, 3)));
+    EXPECT_EQ(bottom_l, GridCell(GridCorner(2, 0), GridCorner(3, 1)));
+    EXPECT_EQ(bottom_r, GridCell(GridCorner(2, 2), GridCorner(3, 3)));
 
     EXPECT_TRUE(top_l.isValid());
     EXPECT_TRUE(top_r.isValid());
@@ -78,7 +78,7 @@ TEST(GridCellTest, SimpleSubSetSuperSetTest)
     GridCorner bl{3, 0};
     GridCorner br{3, 3};
 
-    GridCell cell{tl, tr, bl, br};
+    GridCell cell{tl, br};
 
     ASSERT_TRUE(cell.isValid());
     ASSERT_TRUE(cell.isSplitable());
@@ -106,7 +106,7 @@ TEST(GridCellTest, SimpleSizeTest)
     GridCorner bl{3, 0};
     GridCorner br{3, 3};
 
-    GridCell cell{tl, tr, bl, br};
+    GridCell cell{tl, br};
 
     ASSERT_TRUE(cell.isValid());
     ASSERT_TRUE(cell.isSplitable());
@@ -137,7 +137,7 @@ TEST(GridCellTest, IndexTest)
     GridCorner bl{3, 0};
     GridCorner br{3, 3};
 
-    GridCell cell{tl, tr, bl, br};
+    GridCell cell{tl, br};
 
     ASSERT_TRUE(cell.isValid());
     ASSERT_TRUE(cell.isSplitable());
@@ -223,14 +223,14 @@ TEST(GridCellTest, CellOrientationTest)
     GridCorner bl{3, 1};
     GridCorner br{3, 3};
 
-    GridCell first{tl, tr, bl, br};
+    GridCell first{tl, br};
 
     tl = {5, 1};
     tr = {5, 3};
     bl = {7, 1};
     br = {7, 3};
 
-    GridCell second{tl, tr, bl, br};
+    GridCell second{tl, br};
 
     EXPECT_EQ(first.cacluclateOrientation(second), graph::CellOrientation::VERTICAL);
 
@@ -239,7 +239,7 @@ TEST(GridCellTest, CellOrientationTest)
     bl = {2, 7};
     br = {2, 30};
 
-    second = {tl, tr, bl, br};
+    second = {tl, br};
 
     EXPECT_EQ(first.cacluclateOrientation(second), graph::CellOrientation::HORIZONTAL);
 }

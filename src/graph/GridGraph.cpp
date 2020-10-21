@@ -14,40 +14,76 @@ namespace {
 
 auto findClipValues(const std::vector<std::vector<bool>>& grid)
 {
-    std::size_t clipped_height = 0;
+    std::size_t clipped_upper_height = 0;
     for(std::size_t i{0}; i < grid.size(); i++) {
-        if(std::all_of(std::begin(grid[i]), std::end(grid[i]), [](bool x) { return x; })) {
-            clipped_height++;
+        if(std::none_of(std::begin(grid[i]), std::end(grid[i]), [](bool x) { return x; })) {
+            clipped_upper_height++;
         } else {
             break;
         }
     }
 
-    std::size_t clipped_width = 0;
+    std::size_t clipped_lower_height = 0;
+    for(std::size_t i{grid.size()}; i > 0; i--) {
+        if(std::none_of(std::begin(grid[i - 1]),
+                        std::end(grid[i - 1]),
+                        [](bool x) { return x; })) {
+            clipped_lower_height++;
+        } else {
+            break;
+        }
+    }
 
+    std::size_t clipped_upper_width = 0;
     for(std::size_t i{0}; i < grid[0].size(); i++) {
         for(std::size_t j{0}; j < grid.size(); j++) {
             if(grid[j][i]) {
-                return std::pair{clipped_height, clipped_width};
+                goto after_for;
             }
         }
 
-        clipped_width++;
+        clipped_upper_width++;
+    }
+after_for:
+
+    std::size_t clipped_lower_width = 0;
+    for(std::size_t i{grid[0].size()}; i > 0; i--) {
+        for(std::size_t j{0}; j < grid.size(); j++) {
+            if(grid[j][i - 1]) {
+                return std::tuple{clipped_upper_height,
+                                  clipped_upper_width,
+                                  clipped_lower_height,
+                                  clipped_lower_width};
+            }
+        }
+        clipped_lower_width++;
     }
 
-    return std::pair{clipped_height, clipped_width};
+    return std::tuple{clipped_upper_height,
+                      clipped_upper_width,
+                      clipped_lower_height,
+                      clipped_lower_width};
 }
 
 auto clipGrid(std::vector<std::vector<bool>> grid,
-              std::size_t clip_height,
-              std::size_t clip_width)
+              std::size_t clip_upper_height,
+              std::size_t clip_upper_width,
+              std::size_t clip_lower_height,
+              std::size_t clip_lower_width)
 {
     grid.erase(std::begin(grid),
-               std::begin(grid) + clip_height);
+               std::begin(grid) + clip_upper_height);
+
+    if(grid.empty()) {
+        return grid;
+    }
+
+    grid.resize(grid.size() - clip_lower_height);
 
     for(auto& row : grid) {
         row.erase(std::begin(row),
-                  std::begin(row) + clip_width);
+                  std::begin(row) + clip_upper_width);
+        row.resize(row.size() - clip_lower_width);
     }
 
     return grid;
@@ -60,14 +96,19 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid,
                      NeigbourCalculator neigbour_calculator) noexcept
     : neigbour_calculator_(neigbour_calculator)
 {
+    auto [clipped_height,
+          clipped_width,
+          clipped_lower_height,
+          clipped_lower_width] = findClipValues(grid);
 
-    auto [clipped_height, clipped_width] = findClipValues(grid);
     clipped_height_ = clipped_height;
     clipped_width_ = clipped_width;
 
     grid = clipGrid(std::move(grid),
                     clipped_height_,
-                    clipped_width_);
+                    clipped_width_,
+                    clipped_lower_height,
+                    clipped_lower_width);
 
     const auto total_size = grid.size() * grid[0].size();
     grid_.reserve(total_size);
@@ -78,17 +119,22 @@ GridGraph::GridGraph(std::vector<std::vector<bool>> grid,
                      std::end(sub_grid));
     }
     height_ = grid.size();
-    width_ = grid[0].size();
+    width_ = [&] {
+        if(grid.empty()) {
+            return 0uL;
+        }
+        return grid[0].size();
+    }();
 }
 
-auto GridGraph::isBarrier(const Node& n) const noexcept
+auto GridGraph::isBarrier(Node n) const noexcept
     -> bool
 {
     return !isWalkableNode(n);
 }
 
 
-auto GridGraph::isWalkableNode(const Node& n) const noexcept
+auto GridGraph::isWalkableNode(Node n) const noexcept
     -> bool
 {
     const auto row = n.row;
@@ -106,7 +152,7 @@ auto GridGraph::isWalkableNode(const Node& n) const noexcept
     return grid_[index];
 }
 
-auto GridGraph::getWalkableNeigbours(const Node& n) const noexcept
+auto GridGraph::getWalkableNeigbours(Node n) const noexcept
     -> std::vector<Node>
 {
     auto neigs = graph::calculateNeigbours(neigbour_calculator_, n);
@@ -148,14 +194,10 @@ auto GridGraph::generateRandomCellOfSize(std::int64_t cell_size) const noexcept
     std::uniform_int_distribution<> heigth_dis(0, height_ - 1 - cell_size);
 
     graph::GridCorner top_left{heigth_dis(gen), width_dis(gen)};
-    graph::GridCorner top_right{top_left.getRow(), top_left.getColumn() + cell_size};
-    graph::GridCorner bottom_left{top_left.getRow() + cell_size, top_left.getColumn()};
     graph::GridCorner bottom_right{top_left.getRow() + cell_size, top_left.getColumn() + cell_size};
 
     return graph::GridCell{
         top_left,
-        top_right,
-        bottom_left,
         bottom_right};
 }
 
@@ -169,7 +211,7 @@ auto GridGraph::hasWalkableNode(const graph::GridCell& cell) const noexcept
                        });
 }
 
-auto GridGraph::areNeighbours(const Node& first, const Node& second) const noexcept
+auto GridGraph::areNeighbours(Node first, Node second) const noexcept
     -> bool
 {
     return isNeigbourOf(neigbour_calculator_, first, second);
@@ -202,13 +244,9 @@ auto GridGraph::wrapGraphInCell() const noexcept
     auto bottom_border = static_cast<std::int64_t>(height_ - 1);
 
     graph::GridCorner top_left{0, 0};
-    graph::GridCorner top_right{0, right_border};
-    graph::GridCorner bottom_left{bottom_border, 0};
     graph::GridCorner bottom_right{bottom_border, right_border};
 
     return graph::GridCell{top_left,
-                           top_right,
-                           bottom_left,
                            bottom_right};
 }
 
@@ -255,18 +293,51 @@ auto GridGraph::getWidth() const noexcept
     return width_;
 }
 
-auto GridGraph::nodeToClippedNode(Node n) const noexcept
+auto GridGraph::toClipped(Node n) const noexcept
     -> Node
 {
     return Node{n.column - clipped_width_,
                 n.row - clipped_height_};
 }
 
-auto GridGraph::clippedNodeToNormal(Node n) const noexcept
+auto GridGraph::unclip(Node n) const noexcept
     -> Node
 {
     return Node{n.column + clipped_width_,
                 n.row + clipped_height_};
+}
+
+
+auto GridGraph::toClipped(GridCorner g) const noexcept
+    -> GridCorner
+{
+    return GridCorner{static_cast<int64_t>(g.getRow() - clipped_width_),
+                      static_cast<int64_t>(g.getColumn() - clipped_height_)};
+}
+
+auto GridGraph::unclip(GridCorner g) const noexcept
+    -> GridCorner
+{
+    return GridCorner{static_cast<int64_t>(g.getRow() + clipped_width_),
+                      static_cast<int64_t>(g.getColumn() + clipped_height_)};
+}
+
+auto GridGraph::toClipped(GridCell g) const noexcept
+    -> GridCell
+{
+    return GridCell{
+        toClipped(g.getTopLeft()),
+        toClipped(g.getBottomRight()),
+    };
+}
+
+auto GridGraph::unclip(GridCell g) const noexcept
+    -> GridCell
+{
+    return GridCell{
+        unclip(g.getTopLeft()),
+        unclip(g.getBottomRight()),
+    };
 }
 
 auto graph::parseFileToGridGraph(std::string_view path,
@@ -311,7 +382,7 @@ auto graph::parseFileToGridGraph(std::string_view path,
             }
         }
 
-        return GridGraph{std::move(grid), std::move(neigbour_calc)};
+        return GridGraph{std::move(grid), neigbour_calc};
 
     } catch(...) {
         return std::nullopt;

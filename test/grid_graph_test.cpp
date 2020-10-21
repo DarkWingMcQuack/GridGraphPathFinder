@@ -188,8 +188,8 @@ TEST(GridGraphTest, SimpleBarrierSquareGridGraphTest)
 
     GridGraph graph_test1{test1, graph::ManhattanNeigbourCalculator{}};
 
-    EXPECT_EQ(graph_test1.getWidth(), 5);
-    EXPECT_EQ(graph_test1.getHeight(), 5);
+    EXPECT_EQ(graph_test1.getWidth(), 0);
+    EXPECT_EQ(graph_test1.getHeight(), 0);
 
     EXPECT_FALSE(graph_test1.isWalkableNode({0, 0}));
     EXPECT_FALSE(graph_test1.isWalkableNode({0, 1}));

@@ -148,18 +148,10 @@ auto CellColumnIterator::operator[](int idx) noexcept -> GridCell
     auto top_left = GridCorner{cell_.getTopLeft().getRow(),
                                cell_.getTopLeft().getColumn() +idx};
 
-    auto top_right = GridCorner{cell_.getTopRight().getRow(),
-                                cell_.getTopRight().getColumn() + idx + 1};
-
-    auto bottom_left = GridCorner{cell_.getBottomLeft().getRow(),
-                                  cell_.getBottomLeft().getColumn() + idx};
-
     auto bottom_right = GridCorner{cell_.getBottomRight().getRow(),
                                    cell_.getBottomRight().getColumn() + idx + 1};
 
     return GridCell{top_left,
-                    top_right,
-                    bottom_left,
                     bottom_right};
 }
 

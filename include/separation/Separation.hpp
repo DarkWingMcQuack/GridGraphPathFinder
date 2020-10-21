@@ -80,7 +80,6 @@ auto getFirstCluster(const Separation& sep) noexcept
 auto getSecondCluster(const Separation& sep) noexcept
     -> graph::GridCell;
 
-
 auto operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
 

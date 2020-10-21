@@ -18,8 +18,6 @@ class GridCell
 {
 public:
     GridCell(GridCorner top_left,
-             GridCorner top_right,
-             GridCorner bottom_left,
              GridCorner bottom_right) noexcept;
 
     GridCell(GridCell&&) noexcept = default;
@@ -113,8 +111,6 @@ private:
     friend class CellColumnWalker;
 
     GridCorner top_left_;
-    GridCorner top_right_;
-    GridCorner bottom_left_;
     GridCorner bottom_right_;
 };
 
