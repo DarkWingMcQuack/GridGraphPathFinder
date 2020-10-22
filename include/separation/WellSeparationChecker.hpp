@@ -38,7 +38,7 @@ template<class PathFinder>
 
             is_trivial_separated &= trivial_distance == distance;
 
-            if(distance < min_distance) {
+            if(distance < min_distance or !first_center) {
                 min_distance = distance;
                 first_center = from;
                 second_center = to;
