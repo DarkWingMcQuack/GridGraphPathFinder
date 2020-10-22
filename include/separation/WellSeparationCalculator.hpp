@@ -57,6 +57,7 @@ template<class PathFinder>
                          calculateSeparation(path_finder, second, split3));
 }
 
+// TODO: make this impliit in the preprocessing
 [[nodiscard]] inline auto cleanupSeparations(std::vector<Separation>&& separations) noexcept
     -> std::vector<Separation>
 {
