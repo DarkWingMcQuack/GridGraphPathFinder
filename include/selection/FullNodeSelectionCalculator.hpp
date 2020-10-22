@@ -47,7 +47,7 @@ namespace selection {
     auto getRandomRemainingPair() const noexcept
 	  -> std::pair<graph::Node, graph::Node>
     {
-	  static std::mt19937 engine{time(0)};
+	  static std::mt19937 engine{static_cast<std::bernoulli_distribution::result_type>(time(nullptr))};
 	  std::uniform_int_distribution<std::size_t> dist(0, all_to_all_pairs_.size() - 1);
 
 	  auto iter = std::begin(all_to_all_pairs_);
