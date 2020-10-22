@@ -79,6 +79,12 @@ auto getFirstCluster(const Separation& sep) noexcept
 auto getSecondCluster(const Separation& sep) noexcept
     -> graph::GridCell;
 
+auto isSuperSetOf(const Separation& first, const Separation& second) noexcept
+    -> bool;
+
+auto isSubSetOf(const Separation& first, const Separation& second) noexcept
+    -> bool;
+
 auto operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
 

@@ -85,6 +85,7 @@ auto TrivialSeparation::getSecondCluster() const noexcept
     return second_;
 }
 
+
 auto TrivialSeparation::toFile(std::string_view path) const noexcept
     -> void
 {
@@ -116,6 +117,32 @@ auto separation::getSecondCluster(const Separation& sep) noexcept
             return separation.getSecondCluster();
         },
         sep);
+}
+
+auto separation::isSuperSetOf(const Separation& first, const Separation& second) noexcept
+    -> bool
+{
+    auto first_left = getFirstCluster(first);
+    auto first_right = getSecondCluster(first);
+
+    auto second_left = getFirstCluster(second);
+    auto second_right = getSecondCluster(second);
+
+    return (first_left.isSuperSetOf(second_left) and first_right.isSuperSetOf(second_right))
+        or (first_left.isSuperSetOf(second_right) and first_right.isSuperSetOf(second_left));
+}
+
+auto separation::isSubSetOf(const Separation& first, const Separation& second) noexcept
+    -> bool
+{
+    auto first_left = getFirstCluster(first);
+    auto first_right = getSecondCluster(first);
+
+    auto second_left = getFirstCluster(second);
+    auto second_right = getSecondCluster(second);
+
+    return (first_left.isSubSetOf(second_left) and first_right.isSubSetOf(second_right))
+        or (first_left.isSubSetOf(second_right) and first_right.isSubSetOf(second_left));
 }
 
 

@@ -6,6 +6,7 @@
 #include <pathfinding/Distance.hpp>
 #include <separation/Separation.hpp>
 #include <separation/WellSeparationChecker.hpp>
+#include <set>
 #include <unordered_set>
 #include <utils/Utils.hpp>
 #include <vector>
@@ -16,17 +17,22 @@ namespace impl {
 
 template<class PathFinder>
 [[nodiscard]] auto calculateSeparation(PathFinder& path_finder,
-                                       const graph::GridCell& first,
-                                       const graph::GridCell& second) noexcept
+                                       graph::GridCell first,
+                                       graph::GridCell second) noexcept
     -> std::vector<Separation>
 {
+    if(first.size() < second.size()) {
+        std::swap(first, second);
+    }
+
     //are first and second the same a grid with exactly one node
     if((first == second and first.size() == 1)) {
         return {};
     }
 
-    //check if first and second have at least one walkable node
     const auto& graph = path_finder.getGraph();
+
+    //check if first and second have at least one walkable node
     if(!graph.hasWalkableNode(first) or !graph.hasWalkableNode(second)) {
         return {};
     }
@@ -42,12 +48,38 @@ template<class PathFinder>
         return std::vector{std::move(separation_opt.value())};
     }
 
+
     auto [split0, split1, split2, split3] = first.split();
 
     return utils::concat(calculateSeparation(path_finder, second, split0),
                          calculateSeparation(path_finder, second, split1),
                          calculateSeparation(path_finder, second, split2),
                          calculateSeparation(path_finder, second, split3));
+}
+
+[[nodiscard]] inline auto cleanupSeparations(std::vector<Separation>&& separations) noexcept
+    -> std::vector<Separation>
+{
+    std::vector<Separation> filtered;
+
+    std::sort(std::rbegin(separations),
+              std::rend(separations));
+
+    for(auto sep : separations) {
+        auto should_be_added = std::find_if(
+                                   std::begin(filtered),
+                                   std::end(filtered),
+                                   [&](auto inner_sep) {
+                                       return isSubSetOf(sep, inner_sep);
+                                   })
+            == std::end(filtered);
+
+        if(should_be_added) {
+            filtered.emplace_back(sep);
+        }
+    }
+
+    return filtered;
 }
 
 } // namespace impl
@@ -62,7 +94,7 @@ namespace test {
 
     for(auto first : graph) {
         for(auto second : graph) {
-            if(first == second) {
+            if(first == second or graph.areNeighbours(first, second)) {
                 continue;
             }
             all_pairs.emplace(first, second);
@@ -95,7 +127,9 @@ template<class PathFinder>
     auto root = graph.wrapGraphInCell();
     PathFinder path_finder{graph};
 
-    return impl::calculateSeparation(path_finder, root, root);
+    auto uncleand = impl::calculateSeparation(path_finder, root, root);
+
+    return impl::cleanupSeparations(std::move(uncleand));
 }
 
 } // namespace separation
