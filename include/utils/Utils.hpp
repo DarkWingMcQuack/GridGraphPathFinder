@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <fmt/core.h>
+#include <functional>
 #include <future>
 #include <utility>
 #include <vector>
@@ -126,12 +127,11 @@ auto intersect(const std::vector<T>& head0,
 template<class Head0, class Head1, class... Tail>
 auto hashCombine(Head0&& head0, Head1&& head1, Tail&&... tail)
 {
-    std::hash<Head0> hasher0;
-    std::hash<Head1> hasher1;
-
     if constexpr(sizeof...(tail) == 0) {
+        std::hash<std::remove_const_t<std::remove_reference_t<Head0>>> hasher0;
+        std::hash<std::remove_const_t<std::remove_reference_t<Head1>>> hasher1;
         auto seed = hasher0(head0);
-        return seed xor hasher1(head1) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        return seed xor (hasher1(head1) + 0x9e3779b9 + (seed << 6) + (seed >> 2));
     } else {
         return hashCombine(
             hashCombine(head0, head1),

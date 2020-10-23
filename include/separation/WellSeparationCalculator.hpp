@@ -18,9 +18,23 @@ namespace impl {
 template<class PathFinder>
 [[nodiscard]] auto calculateSeparation(PathFinder& path_finder,
                                        graph::GridCell first,
-                                       graph::GridCell second) noexcept
+                                       graph::GridCell second,
+                                       std::unordered_set<std::pair<graph::GridCell, graph::GridCell>>& already_visited) noexcept
     -> std::vector<Separation>
 {
+    auto was_already_visited =
+        already_visited.find(std::pair{first, second})
+            != std::end(already_visited)
+        or already_visited.find(std::pair{second, first})
+            != std::end(already_visited);
+
+    if(was_already_visited) {
+        return {};
+    }
+
+
+    already_visited.emplace(first, second);
+
     if(first.size() < second.size()) {
         std::swap(first, second);
     }
@@ -51,36 +65,10 @@ template<class PathFinder>
 
     auto [split0, split1, split2, split3] = first.split();
 
-    return utils::concat(calculateSeparation(path_finder, second, split0),
-                         calculateSeparation(path_finder, second, split1),
-                         calculateSeparation(path_finder, second, split2),
-                         calculateSeparation(path_finder, second, split3));
-}
-
-// TODO: make this impliit in the preprocessing
-[[nodiscard]] inline auto cleanupSeparations(std::vector<Separation>&& separations) noexcept
-    -> std::vector<Separation>
-{
-    std::vector<Separation> filtered;
-
-    std::sort(std::rbegin(separations),
-              std::rend(separations));
-
-    for(auto sep : separations) {
-        auto should_be_added = std::find_if(
-                                   std::begin(filtered),
-                                   std::end(filtered),
-                                   [&](auto inner_sep) {
-                                       return isSubSetOf(sep, inner_sep);
-                                   })
-            == std::end(filtered);
-
-        if(should_be_added) {
-            filtered.emplace_back(sep);
-        }
-    }
-
-    return filtered;
+    return utils::concat(calculateSeparation(path_finder, second, split0, already_visited),
+                         calculateSeparation(path_finder, second, split1, already_visited),
+                         calculateSeparation(path_finder, second, split2, already_visited),
+                         calculateSeparation(path_finder, second, split3, already_visited));
 }
 
 } // namespace impl
@@ -91,32 +79,25 @@ namespace test {
                                                 const std::vector<Separation>& separations) noexcept
     -> bool
 {
-    std::unordered_set<std::pair<graph::Node, graph::Node>> all_pairs;
-
     for(auto first : graph) {
         for(auto second : graph) {
             if(first == second or graph.areNeighbours(first, second)) {
                 continue;
             }
-            all_pairs.emplace(first, second);
-        }
-    }
 
-    for(const auto& sep : separations) {
-        auto first = getFirstCluster(sep);
-        auto second = getSecondCluster(sep);
+            auto valid = std::any_of(std::begin(separations),
+                                     std::end(separations),
+                                     [&](auto sep) {
+                                         return canAnswer(sep, first, second);
+                                     });
 
-        for(auto f : first) {
-            for(auto s : second) {
-                all_pairs.erase(std::pair{f, s});
-                all_pairs.erase(std::pair{s, f});
+            if(!valid) {
+                return false;
             }
         }
     }
 
-    fmt::print("{}\n", all_pairs.size());
-
-    return all_pairs.empty();
+    return true;
 }
 
 } // namespace test
@@ -128,9 +109,8 @@ template<class PathFinder>
     auto root = graph.wrapGraphInCell();
     PathFinder path_finder{graph};
 
-    auto uncleand = impl::calculateSeparation(path_finder, root, root);
-
-    return impl::cleanupSeparations(std::move(uncleand));
+    std::unordered_set<std::pair<graph::GridCell, graph::GridCell>> visited;
+    return impl::calculateSeparation(path_finder, root, root, visited);
 }
 
 } // namespace separation

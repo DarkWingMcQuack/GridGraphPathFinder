@@ -145,6 +145,22 @@ auto separation::isSubSetOf(const Separation& first, const Separation& second) n
         or (first_left.isSubSetOf(second_right) and first_right.isSubSetOf(second_left));
 }
 
+auto separation::canAnswer(const Separation& sep, graph::Node from, graph::Node to) noexcept
+    -> bool
+{
+    auto left = getFirstCluster(sep);
+    auto right = getSecondCluster(sep);
+
+    auto left_from_iter = std::find(std::begin(left), std::end(left), from);
+    auto left_to_iter = std::find(std::begin(left), std::end(left), to);
+
+    auto right_from_iter = std::find(std::begin(right), std::end(right), from);
+    auto right_to_iter = std::find(std::begin(right), std::end(right), to);
+
+    return (left_from_iter != std::end(left) and right_to_iter != std::end(right))
+        or (right_from_iter != std::end(right) and left_to_iter != std::end(left));
+}
+
 
 auto separation::operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool

@@ -85,6 +85,9 @@ auto isSuperSetOf(const Separation& first, const Separation& second) noexcept
 auto isSubSetOf(const Separation& first, const Separation& second) noexcept
     -> bool;
 
+auto canAnswer(const Separation& sep, graph::Node from, graph::Node to) noexcept
+    -> bool;
+
 auto operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
 

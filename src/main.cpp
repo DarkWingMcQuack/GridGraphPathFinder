@@ -90,6 +90,8 @@ auto main(int argc, char* argv[])
     auto graph = graph::parseFileToGridGraph(graph_file, neigbour_calculator).value();
     auto running_mode = options.getRunningMode();
 
+    fmt::print("Parsed Graph: {}\n", graph_file);
+
     switch(running_mode) {
 
     case utils::RunningMode::SEPARATION: {

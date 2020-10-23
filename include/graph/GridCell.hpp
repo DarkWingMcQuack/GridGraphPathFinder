@@ -5,6 +5,7 @@
 #include <graph/GridCorner.hpp>
 #include <graph/Node.hpp>
 #include <iostream>
+#include <utils/Utils.hpp>
 
 namespace graph {
 
@@ -124,3 +125,34 @@ auto operator<<(std::ostream& os, const GridCell& c) noexcept
     -> std::ostream&;
 
 } // namespace graph
+
+
+namespace std {
+
+template<>
+class hash<graph::GridCell>
+{
+public:
+    auto operator()(const graph::GridCell& n) const noexcept
+        -> std::size_t
+    {
+        return utils::hashCombine(n.getTopLeft().getRow(),
+                                  n.getBottomRight().getRow(),
+                                  n.getTopLeft().getColumn(),
+                                  n.getBottomRight().getColumn());
+    }
+};
+
+template<>
+class hash<std::pair<graph::GridCell, graph::GridCell>>
+{
+public:
+    auto operator()(const std::pair<graph::GridCell, graph::GridCell>& n) const noexcept
+        -> std::size_t
+    {
+        return utils::hashCombine(n.first, n.second);
+    }
+};
+
+
+} // namespace std
