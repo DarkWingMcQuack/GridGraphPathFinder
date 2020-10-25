@@ -5,6 +5,7 @@
 #include <graph/GridCell.hpp>
 #include <pathfinding/Distance.hpp>
 #include <separation/Separation.hpp>
+#include <separation/WellSeparationCalculatorCache.hpp>
 #include <separation/WellSeparationChecker.hpp>
 #include <set>
 #include <unordered_set>
@@ -19,21 +20,14 @@ template<class PathFinder>
 [[nodiscard]] auto calculateSeparation(PathFinder& path_finder,
                                        graph::GridCell first,
                                        graph::GridCell second,
-                                       std::unordered_set<std::pair<graph::GridCell, graph::GridCell>>& already_visited) noexcept
+                                       WellSeparationCalculatorCache& already_visited) noexcept
     -> std::vector<Separation>
 {
-    auto was_already_visited =
-        already_visited.find(std::pair{first, second})
-            != std::end(already_visited)
-        or already_visited.find(std::pair{second, first})
-            != std::end(already_visited);
+    auto was_already_visited = already_visited.checkAndMarkCalculation(first, second);
 
     if(was_already_visited) {
         return {};
     }
-
-
-    already_visited.emplace(first, second);
 
     if(first.size() < second.size()) {
         std::swap(first, second);
@@ -109,8 +103,8 @@ template<class PathFinder>
     auto root = graph.wrapGraphInCell();
     PathFinder path_finder{graph};
 
-    std::unordered_set<std::pair<graph::GridCell, graph::GridCell>> visited;
-    return impl::calculateSeparation(path_finder, root, root, visited);
+    WellSeparationCalculatorCache cache;
+    return impl::calculateSeparation(path_finder, root, root, cache);
 }
 
 } // namespace separation

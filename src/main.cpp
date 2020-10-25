@@ -29,34 +29,6 @@ auto runSeparation(const graph::GridGraph& graph)
         auto path = fmt::format("result-{}.seg", i);
         separation::toFile(graph.unclip(sep), path);
     }
-
-    fmt::print("sound?: {}\n", separation::test::separationSanityCheck(graph, separations));
-
-    for(std::size_t i{0}; i < separations.size(); i++) {
-        auto sep = separations[i];
-        auto left = separation::getFirstCluster(sep);
-        auto right = separation::getSecondCluster(sep);
-
-        for(std::size_t j{0}; j < separations.size(); j++) {
-            auto inner_sep = separations[j];
-            // if(sep == inner_sep) {
-            //     continue;
-            // }
-            if(i == j) {
-                continue;
-            }
-
-            auto inner_left = separation::getFirstCluster(inner_sep);
-            auto inner_right = separation::getSecondCluster(inner_sep);
-
-            if((left.isSubSetOf(inner_left) and right.isSubSetOf(inner_right))
-               or (left.isSubSetOf(inner_right) and right.isSubSetOf(inner_left))
-               or (left == inner_left and right == inner_right)
-               or (left == inner_right and right == inner_left)) {
-                fmt::print("FOUND A FUCKIN FLAW {} and {}\n", i, j);
-            }
-        }
-    }
 }
 
 auto runSelection(const graph::GridGraph& graph)
