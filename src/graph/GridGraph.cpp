@@ -152,6 +152,25 @@ auto GridGraph::isWalkableNode(Node n) const noexcept
     return grid_[index];
 }
 
+auto GridGraph::getAllCellsContaining(Node node) const noexcept
+    -> std::vector<graph::GridCell>
+{
+    std::vector<graph::GridCell> result{wrapGraphInCell()};
+
+    while(result.back().size() != 1) {
+
+        auto splitted = result.back().split();
+        for(auto grid : splitted) {
+            if(grid.isInCell(node)) {
+                result.emplace_back(grid);
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
 auto GridGraph::countWalkableNodes() const noexcept
     -> std::size_t
 {

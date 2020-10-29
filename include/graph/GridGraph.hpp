@@ -51,6 +51,9 @@ public:
     [[nodiscard]] auto wrapGraphInCell() const noexcept
         -> graph::GridCell;
 
+    [[nodiscard]] auto getAllCellsContaining(Node node) const noexcept
+	  -> std::vector<graph::GridCell>;
+
     [[nodiscard]] auto countNumberOfWalkableNodes(const graph::GridCell& cell) const noexcept
         -> std::size_t;
 
