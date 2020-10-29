@@ -38,9 +38,10 @@ CachingDijkstra::CachingDijkstra(const graph::GridGraph &graph) noexcept
 
     for(auto from : graph) {
         for(auto to : graph) {
-            insertCache(from, to, computeDistance(from, to));
-            ++bar;
+            auto distance = computeDistance(from, to);
+            insertCache(from, to, distance);
         }
+        bar += graph_size;
         bar.displayIfChangedAtLeast(0.02);
     }
     bar.done();
@@ -50,6 +51,10 @@ auto CachingDijkstra::findDistance(const graph::Node &source,
                                    const graph::Node &target) noexcept
     -> Distance
 {
+    if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
+        return UNREACHABLE;
+    }
+
     return queryCache(source, target);
 }
 
