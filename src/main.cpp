@@ -37,11 +37,14 @@ auto runSeparation(const graph::GridGraph& graph,
     std::sort(std::rbegin(separations),
               std::rend(separations));
 
-    for(std::size_t i{0}; i < separations.size(); i++) {
-        const auto& sep = separations[i];
-        auto path = fmt::format("{}/result-{}.seg", result_folder, i);
-        separation::toFile(graph.unclip(sep), path);
-    }
+    auto distribution_file = fmt::format("{}/distribution", result_folder);
+    separation::sizeDistribution3DToFile(separations, distribution_file);
+
+    // for(std::size_t i{0}; i < separations.size(); i++) {
+    //     const auto& sep = separations[i];
+    //     auto path = fmt::format("{}/result-{}.seg", result_folder, i);
+    //     separation::toFile(graph.unclip(sep), path);
+    // }
 }
 
 auto runSelection(const graph::GridGraph& graph,
@@ -67,6 +70,7 @@ auto runSelection(const graph::GridGraph& graph,
     selection::HubLabelSelectionLookup lookup{std::move(selections)};
 }
 
+
 auto main(int argc, char* argv[])
     -> int
 {
@@ -75,8 +79,10 @@ auto main(int argc, char* argv[])
     auto neigbour_calculator = options.getNeigbourCalculator();
     auto graph = graph::parseFileToGridGraph(graph_file, neigbour_calculator).value();
     auto running_mode = options.getRunningMode();
-    auto graph_filename = fs::path(graph_file).filename();
-    auto result_folder = fmt::format("results/{}/", graph_filename);
+    auto graph_filename = utils::unquote(fs::path(graph_file).filename());
+    auto result_folder = fmt::format("./results/{}/", graph_filename);
+
+    fs::create_directories(result_folder);
 
     auto message = fmt::format("File: {}\nheight: {}\nwidth: {} |V|: {}",
                                graph_file,
