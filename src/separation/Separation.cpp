@@ -1,4 +1,5 @@
 #include <fstream>
+#include <map>
 #include <pathfinding/Distance.hpp>
 #include <pathfinding/Path.hpp>
 #include <separation/Separation.hpp>
@@ -178,17 +179,6 @@ auto separation::operator!=(const Separation& lhs, const Separation& rhs) noexce
 }
 
 
-auto separation::toFile(const Separation& sep, std::string_view path) noexcept
-    -> void
-
-{
-    std::visit(
-        [=](const auto& separation) {
-            return separation.toFile(path);
-        },
-        sep);
-}
-
 auto separation::operator<(const Separation& lhs, const Separation& rhs) noexcept
     -> bool
 {
@@ -201,4 +191,39 @@ auto separation::operator<(const Separation& lhs, const Separation& rhs) noexcep
         },
         lhs,
         rhs);
+}
+
+auto separation::toFile(const Separation& sep, std::string_view path) noexcept
+    -> void
+
+{
+    std::visit(
+        [=](const auto& separation) {
+            return separation.toFile(path);
+        },
+        sep);
+}
+
+
+auto separation::sizeDistribution3DToFile(const std::vector<Separation>& separations,
+                                        std::string_view file_path) noexcept
+    -> void
+{
+    std::map<std::pair<std::int64_t, std::int64_t>, std::int64_t> sep_distribution;
+
+    for(const auto& sep : separations) {
+        auto first = getFirstCluster(sep).size();
+        auto second = getSecondCluster(sep).size();
+
+        auto smaller = std::min(first, second);
+        auto larger = std::max(first, second);
+
+        sep_distribution[std::pair{smaller, larger}]++;
+    }
+
+    std::ofstream file{file_path.data()};
+    for(auto [pair, amount] : sep_distribution) {
+        auto [smaller, larger] = pair;
+        file << smaller << ", " << larger << ", " << amount << "\n";
+    }
 }

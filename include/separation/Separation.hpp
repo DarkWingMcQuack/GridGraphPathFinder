@@ -100,5 +100,9 @@ auto operator<(const Separation& lhs, const Separation& rhs) noexcept
 auto toFile(const Separation& sep, std::string_view path) noexcept
     -> void;
 
+auto sizeDistribution3DToFile(const std::vector<Separation>& separations,
+                              std::string_view file_path) noexcept
+    -> void;
+
 
 } // namespace separation

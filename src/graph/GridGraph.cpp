@@ -152,6 +152,17 @@ auto GridGraph::isWalkableNode(Node n) const noexcept
     return grid_[index];
 }
 
+auto GridGraph::countWalkableNodes() const noexcept
+    -> std::size_t
+{
+    return std::accumulate(std::begin(*this),
+                           std::end(*this),
+                           0,
+                           [](auto init, auto /*node*/) {
+                               return init + 1;
+                           });
+}
+
 auto GridGraph::getWalkableNeigbours(Node n) const noexcept
     -> std::vector<Node>
 {

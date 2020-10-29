@@ -21,6 +21,7 @@ include(cmake/tbb.cmake)
 include(cmake/span.cmake)
 include(cmake/CLI11.cmake)
 include(cmake/gtest.cmake)
+include(cmake/progress.cmake)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
@@ -67,6 +68,7 @@ target_sources(GridGraphPathFinderSrc
 
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Path.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Dijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/CachingDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/DijkstraQueue.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Distance.hpp
 
@@ -90,6 +92,7 @@ target_sources(GridGraphPathFinderSrc
 
   src/pathfinding/Path.cpp
   src/pathfinding/Dijkstra.cpp
+  src/pathfinding/CachingDijkstra.cpp
   )
 
 # add the dependencies of the target to enforce
@@ -98,6 +101,7 @@ add_dependencies(GridGraphPathFinderSrc fmt-project)
 add_dependencies(GridGraphPathFinderSrc tbb-project)
 add_dependencies(GridGraphPathFinderSrc span-lite-project)
 add_dependencies(GridGraphPathFinderSrc CLI11-project)
+add_dependencies(GridGraphPathFinderSrc progress-cpp-project)
 
 # make headers available
 target_include_directories(GridGraphPathFinderSrc PUBLIC
@@ -105,6 +109,7 @@ target_include_directories(GridGraphPathFinderSrc PUBLIC
   fmt
   tbb
   ${CLI11_INCLUDE_DIR}
+  ${PROGRESS_CPP_INCLUDE_DIR}
   ${SPAN_LITE_INCLUDE_DIR}
   )
 
@@ -128,6 +133,7 @@ target_include_directories(GridGraphPathFinder PUBLIC
   fmt
   tbb
   ${CLI11_INCLUDE_DIR}
+  ${PROGRESS_CPP_INCLUDE_DIR}
   ${SPAN_LITE_INCLUDE_DIR}
   )
 

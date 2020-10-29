@@ -57,6 +57,9 @@ public:
     [[nodiscard]] auto getRandomWalkableNode() const noexcept
         -> Node;
 
+    [[nodiscard]] auto countWalkableNodes() const noexcept
+        -> std::size_t;
+
     [[nodiscard]] auto toClipped(Node n) const noexcept
         -> Node;
 

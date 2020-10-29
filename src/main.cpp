@@ -1,7 +1,9 @@
+#include <filesystem>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
+#include <pathfinding/CachingDijkstra.hpp>
 #include <pathfinding/Dijkstra.hpp>
 #include <selection/FullNodeSelectionCalculator.hpp>
 #include <selection/HubLabelSelectionLookup.hpp>
@@ -12,26 +14,38 @@
 
 
 using pathfinding::Dijkstra;
+using pathfinding::CachingDijkstra;
 using selection::FullNodeSelectionCalculator;
+namespace fs = std::filesystem;
 
-auto runSeparation(const graph::GridGraph& graph)
+auto runSeparation(const graph::GridGraph& graph,
+                   std::string_view result_folder)
 {
     utils::Timer t;
-    auto separations = separation::calculateSeparation<Dijkstra>(graph);
-    fmt::print("runtime: {}\n", t.elapsed());
-    fmt::print("separations calculated: {}\n", separations.size());
+
+    auto separations = separation::calculateSeparation<CachingDijkstra>(graph);
+    auto message = fmt::format("runtime: {}, |S| = {}", t.elapsed(), separations.size());
+
+    fmt::print(
+        "┌{0:─^{2}}┐\n"
+        "│{1: ^{2}}│\n"
+        "└{0:─^{2}}┘\n",
+        "",
+        message,
+        80);
 
     std::sort(std::rbegin(separations),
               std::rend(separations));
 
     for(std::size_t i{0}; i < separations.size(); i++) {
         const auto& sep = separations[i];
-        auto path = fmt::format("result-{}.seg", i);
+        auto path = fmt::format("{}/result-{}.seg", result_folder, i);
         separation::toFile(graph.unclip(sep), path);
     }
 }
 
-auto runSelection(const graph::GridGraph& graph)
+auto runSelection(const graph::GridGraph& graph,
+                  std::string_view result_folder)
 {
     utils::Timer t;
     FullNodeSelectionCalculator<Dijkstra> selection_calculator{graph};
@@ -61,17 +75,39 @@ auto main(int argc, char* argv[])
     auto neigbour_calculator = options.getNeigbourCalculator();
     auto graph = graph::parseFileToGridGraph(graph_file, neigbour_calculator).value();
     auto running_mode = options.getRunningMode();
+    auto graph_filename = fs::path(graph_file).filename();
+    auto result_folder = fmt::format("results/{}/", graph_filename);
 
-    fmt::print("Parsed Graph: {}\n", graph_file);
+    auto message = fmt::format("File: {}\nheight: {}\nwidth: {} |V|: {}",
+                               graph_file,
+                               graph.getHeight(),
+                               graph.getWidth(),
+                               graph.countWalkableNodes());
+
+    fmt::print(
+        "┌{0:─^{6}}┐\n"
+        "  File: {1: <{6}}\n"
+        "  Height: {2: <{6}}\n"
+        "  Width: {3: <{6}}\n"
+        "  #Nodes: {4: <{6}}\n"
+        "  #active Nodes: {5: <{6}}\n"
+        "└{0:─^{6}}┘\n",
+        "",
+        graph_file,
+        graph.getHeight(),
+        graph.getWidth(),
+        graph.getHeight() * graph.getWidth(),
+        graph.countWalkableNodes(),
+        80);
 
     switch(running_mode) {
 
     case utils::RunningMode::SEPARATION: {
-        runSeparation(graph);
+        runSeparation(graph, result_folder);
         break;
     }
     case utils::RunningMode::SELECTION: {
-        runSelection(graph);
+        runSelection(graph, result_folder);
         break;
     }
     }
