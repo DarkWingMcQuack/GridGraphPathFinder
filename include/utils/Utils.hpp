@@ -4,6 +4,8 @@
 #include <fmt/core.h>
 #include <functional>
 #include <future>
+#include <iomanip>
+#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -137,6 +139,16 @@ auto hashCombine(Head0&& head0, Head1&& head1, Tail&&... tail)
             hashCombine(head0, head1),
             std::forward<Tail>(tail)...);
     }
+}
+
+
+inline auto unquote(const std::string& s)
+    -> std::string
+{
+    std::string result;
+    std::istringstream ss(s);
+    ss >> std::quoted(result);
+    return result;
 }
 
 
