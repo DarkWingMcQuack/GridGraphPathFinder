@@ -88,6 +88,9 @@ auto isSubSetOf(const Separation& first, const Separation& second) noexcept
 auto canAnswer(const Separation& sep, graph::Node from, graph::Node to) noexcept
     -> bool;
 
+auto weight(const Separation& sep) noexcept
+    -> std::size_t;
+
 auto operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
 

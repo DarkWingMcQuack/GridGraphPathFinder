@@ -205,8 +205,16 @@ auto separation::toFile(const Separation& sep, std::string_view path) noexcept
 }
 
 
+auto separation::weight(const Separation& sep) noexcept
+    -> std::size_t
+{
+    return getFirstCluster(sep).size()
+        * getSecondCluster(sep).size();
+}
+
+
 auto separation::sizeDistribution3DToFile(const std::vector<Separation>& separations,
-                                        std::string_view file_path) noexcept
+                                          std::string_view file_path) noexcept
     -> void
 {
     std::map<std::pair<std::int64_t, std::int64_t>, std::int64_t> sep_distribution;
