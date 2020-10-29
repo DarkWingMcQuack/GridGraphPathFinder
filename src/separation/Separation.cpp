@@ -182,15 +182,7 @@ auto separation::operator!=(const Separation& lhs, const Separation& rhs) noexce
 auto separation::operator<(const Separation& lhs, const Separation& rhs) noexcept
     -> bool
 {
-    return std::visit(
-        [=](const auto& first, const auto& second) {
-            return getFirstCluster(first).size()
-                * getSecondCluster(first).size()
-                < getFirstCluster(second).size()
-                * getSecondCluster(second).size();
-        },
-        lhs,
-        rhs);
+    return weight(lhs) < weight(rhs);
 }
 
 auto separation::toFile(const Separation& sep, std::string_view path) noexcept

@@ -26,8 +26,7 @@ public:
     {
         auto optimized = findOptimalSeparation(sep);
 
-        return getFirstCluster(sep).size() * getSecondCluster(sep).size()
-            < getFirstCluster(optimized).size() * getSecondCluster(optimized).size();
+        return weight(sep) < weight(optimized);
     }
 
 private:
@@ -48,7 +47,7 @@ private:
         for(auto left_cluster : all_left_clusters) {
             for(auto right_cluster : all_right_clusters) {
                 if(auto separation = checkSeparation(path_finder_, left_cluster, right_cluster)) {
-				  found_separations.emplace_back(separation.value());
+                    found_separations.emplace_back(separation.value());
                 }
             }
         }
@@ -56,8 +55,7 @@ private:
         return *std::max_element(std::begin(found_separations),
                                  std::end(found_separations),
                                  [](auto lhs, auto rhs) {
-                                     return getFirstCluster(lhs).size() * getSecondCluster(lhs).size()
-                                         < getFirstCluster(rhs).size() * getSecondCluster(rhs).size();
+                                     return weight(lhs) < weight(rhs);
                                  });
     }
 
