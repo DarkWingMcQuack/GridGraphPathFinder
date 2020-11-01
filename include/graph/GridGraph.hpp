@@ -106,6 +106,9 @@ public:
     [[nodiscard]] auto getWidth() const noexcept
         -> std::size_t;
 
+    [[nodiscard]] auto getTrivialDistance(const Node& from, const Node& to) const noexcept
+        -> Distance;
+
     auto begin() const noexcept
         -> GridGraphIterator;
 

@@ -246,6 +246,12 @@ auto GridGraph::getWalkableNeigbours(Node n) const noexcept
     return neigs;
 }
 
+auto GridGraph::getTrivialDistance(const Node& from, const Node& to) const noexcept
+    -> Distance
+{
+    return ::graph::getTrivialDistance(neigbour_calculator_, from, to);
+}
+
 auto GridGraph::getAllWalkableNodesOfCell(const graph::GridCell& cell) const noexcept
     -> std::vector<Node>
 {
