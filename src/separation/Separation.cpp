@@ -46,6 +46,16 @@ auto ComplexSeparation::getFirstClusterCenter() const noexcept
     return first_center_;
 }
 
+auto ComplexSeparation::switchSides() const noexcept
+    -> ComplexSeparation
+{
+    return ComplexSeparation{second_,
+                             first_,
+                             second_center_,
+                             first_center_,
+                             center_distance_};
+}
+
 auto ComplexSeparation::getSecondClusterCenter() const noexcept
     -> Node
 {
@@ -84,6 +94,13 @@ auto TrivialSeparation::getSecondCluster() const noexcept
     -> graph::GridCell
 {
     return second_;
+}
+
+auto TrivialSeparation::switchSides() const noexcept
+    -> TrivialSeparation
+{
+    return TrivialSeparation{second_,
+                             first_};
 }
 
 
@@ -216,6 +233,16 @@ auto separation::toString(const Separation& sep) noexcept
        << ")";
 
     return ss.str();
+}
+
+auto separation::switchSides(const Separation& sep) noexcept
+    -> Separation
+{
+    return std::visit(
+        [](const auto& sep) -> Separation {
+            return sep.switchSides();
+        },
+        sep);
 }
 
 

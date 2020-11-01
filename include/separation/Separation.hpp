@@ -38,6 +38,9 @@ public:
     [[nodiscard]] auto getSecondClusterCenter() const noexcept
         -> graph::Node;
 
+    [[nodiscard]] auto switchSides() const noexcept
+        -> ComplexSeparation;
+
     auto toFile(std::string_view path) const noexcept
         -> void;
 
@@ -61,6 +64,9 @@ public:
 
     [[nodiscard]] auto getSecondCluster() const noexcept
         -> graph::GridCell;
+
+    [[nodiscard]] auto switchSides() const noexcept
+        -> TrivialSeparation;
 
     auto toFile(std::string_view path) const noexcept
         -> void;
@@ -93,6 +99,9 @@ auto weight(const Separation& sep) noexcept
 
 auto toString(const Separation& sep) noexcept
     -> std::string;
+
+auto switchSides(const Separation& sep) noexcept
+    -> Separation;
 
 auto operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
