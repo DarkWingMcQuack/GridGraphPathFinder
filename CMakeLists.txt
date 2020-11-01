@@ -60,6 +60,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationChecker.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/WellSeparationCalculatorCache.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/separation/SeparationDistanceOracle.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelection.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelectionCalculator.hpp
@@ -84,6 +85,7 @@ target_sources(GridGraphPathFinderSrc
   src/graph/NeigbourCalculator.cpp
 
   src/separation/Separation.cpp
+  src/separation/SeparationDistanceOracle.cpp
 
   src/selection/NodeSelection.cpp
   src/selection/HubLabelSelectionLookup.cpp

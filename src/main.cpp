@@ -7,6 +7,7 @@
 #include <pathfinding/Dijkstra.hpp>
 #include <selection/FullNodeSelectionCalculator.hpp>
 #include <selection/HubLabelSelectionLookup.hpp>
+#include <separation/SeparationDistanceOracle.hpp>
 #include <separation/SeparationOptimizer.hpp>
 #include <separation/WellSeparationCalculator.hpp>
 #include <separation/WellSeparationChecker.hpp>
@@ -51,15 +52,34 @@ auto runSeparation(const graph::GridGraph& graph,
     auto optimized_distribution_file = fmt::format("{}/optimized_distribution", result_folder);
     separation::sizeDistribution3DToFile(separations, optimized_distribution_file);
 
-    // for(std::size_t i{0}; i < separations.size(); i++) {
-    //     const auto& sep = separations[i];
-    //     auto path = fmt::format("{}/result-{}.seg", result_folder, i);
-    //     separation::toFile(graph.unclip(sep), path);
-    // }
+    separation::SeparationDistanceOracle oracle{graph, separations};
+
+    Dijkstra compare{graph};
+    for(std::size_t i{0}; i < 100; i++) {
+        auto from = graph.getRandomWalkableNode();
+        auto to = graph.getRandomWalkableNode();
+
+        t.reset();
+        auto oracle_dist = oracle.findDistance(from, to);
+        auto oracle_time = t.elapsed();
+
+        t.reset();
+        auto compare_dist = compare.findDistance(from, to);
+        auto compare_time = t.elapsed();
+        fmt::print("separation distance: {}\n"
+				   "dijkstra distance: {}\n"
+				   "separation time: {}\n"
+				   "dijkstra time: {}\n",
+				   oracle_dist,
+				   compare_dist,
+				   oracle_time,
+				   compare_time);
+		fmt::print("----------------------------------------------\n");
+    }
 }
 
 auto runSelection(const graph::GridGraph& graph,
-                  std::string_view result_folder)
+                  std::string_view  /*result_folder*/)
 {
     utils::Timer t;
     FullNodeSelectionCalculator<Dijkstra> selection_calculator{graph};
