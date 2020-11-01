@@ -18,12 +18,14 @@ namespace pathfinding {
 class Dijkstra
 {
 public:
+    static constexpr auto is_thread_save = false;
+
     Dijkstra(const graph::GridGraph& graph) noexcept;
     Dijkstra() = delete;
     Dijkstra(Dijkstra&&) = default;
     Dijkstra(const Dijkstra&) = default;
     auto operator=(const Dijkstra&) -> Dijkstra& = delete;
-    auto operator=(Dijkstra &&) -> Dijkstra& = delete;
+    auto operator=(Dijkstra&&) -> Dijkstra& = delete;
 
     [[nodiscard]] auto findAllRoutes(const graph::Node& source, const graph::Node& target) noexcept
         -> std::vector<Path>;

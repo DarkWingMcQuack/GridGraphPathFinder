@@ -18,6 +18,8 @@ namespace pathfinding {
 class CachingDijkstra
 {
 public:
+    static constexpr auto is_thread_save = true;
+
     CachingDijkstra(const graph::GridGraph &graph) noexcept;
     CachingDijkstra() = delete;
     CachingDijkstra(CachingDijkstra &&) = default;

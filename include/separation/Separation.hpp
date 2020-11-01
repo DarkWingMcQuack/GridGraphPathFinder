@@ -91,6 +91,9 @@ auto canAnswer(const Separation& sep, graph::Node from, graph::Node to) noexcept
 auto weight(const Separation& sep) noexcept
     -> std::size_t;
 
+auto toString(const Separation& sep) noexcept
+    -> std::string;
+
 auto operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
 
@@ -102,6 +105,7 @@ auto operator<(const Separation& lhs, const Separation& rhs) noexcept
 
 auto toFile(const Separation& sep, std::string_view path) noexcept
     -> void;
+
 
 auto sizeDistribution3DToFile(const std::vector<Separation>& separations,
                               std::string_view file_path) noexcept

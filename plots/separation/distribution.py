@@ -30,7 +30,8 @@ def plotBar(x, y, z):
     xy = [f"{x}:{y}" for x, y in zip(x, y)]
 
     plt.bar(xy, z)
-    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.xticks(rotation=45)
     plt.show()
 
 
@@ -43,4 +44,5 @@ if __name__ == '__main__':
     path = args.file
     x, y, z = read_csv(path)
 
+    plot3D(x, y, z)
     plotBar(x, y, z)

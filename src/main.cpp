@@ -7,6 +7,7 @@
 #include <pathfinding/Dijkstra.hpp>
 #include <selection/FullNodeSelectionCalculator.hpp>
 #include <selection/HubLabelSelectionLookup.hpp>
+#include <separation/SeparationOptimizer.hpp>
 #include <separation/WellSeparationCalculator.hpp>
 #include <separation/WellSeparationChecker.hpp>
 #include <utils/ProgramOptions.hpp>
@@ -23,8 +24,21 @@ auto runSeparation(const graph::GridGraph& graph,
 {
     utils::Timer t;
 
-    auto separations = separation::calculateSeparation<CachingDijkstra>(graph);
-    auto message = fmt::format("runtime: {}, |S| = {}", t.elapsed(), separations.size());
+    CachingDijkstra dijkstra{graph};
+
+    auto separations = separation::calculateSeparation(graph, dijkstra);
+    auto sepataions_before_optimization = separations.size();
+
+    auto distribution_file = fmt::format("{}/distribution", result_folder);
+    separation::sizeDistribution3DToFile(separations, distribution_file);
+
+    separation::SeparationOptimizer optimizer{graph, dijkstra};
+    separations = optimizer.optimizeAll(std::move(separations));
+
+    auto message = fmt::format("runtime: {}, before optimization: |S| = {}, after |S| = {}",
+                               t.elapsed(),
+                               sepataions_before_optimization,
+                               separations.size());
 
     fmt::print(
         "┌{0:─^{2}}┐\n"
@@ -34,11 +48,8 @@ auto runSeparation(const graph::GridGraph& graph,
         message,
         80);
 
-    std::sort(std::rbegin(separations),
-              std::rend(separations));
-
-    auto distribution_file = fmt::format("{}/distribution", result_folder);
-    separation::sizeDistribution3DToFile(separations, distribution_file);
+    auto optimized_distribution_file = fmt::format("{}/optimized_distribution", result_folder);
+    separation::sizeDistribution3DToFile(separations, optimized_distribution_file);
 
     // for(std::size_t i{0}; i < separations.size(); i++) {
     //     const auto& sep = separations[i];

@@ -52,7 +52,17 @@ public:
         -> graph::GridCell;
 
     [[nodiscard]] auto getAllCellsContaining(Node node) const noexcept
-	  -> std::vector<graph::GridCell>;
+        -> std::vector<graph::GridCell>;
+
+    [[nodiscard]] auto getAllParrentCells(GridCell cell) const noexcept
+        -> std::vector<GridCell>;
+
+    // returns two vectors of cells which when used in separations would have a better weight than
+    // the separation between the given two cells
+    // cells which contain both given cells are also not in the vectors
+    [[nodiscard]] auto getAllPossibleSeparationCells(GridCell left, GridCell right) const noexcept
+        -> std::pair<std::vector<GridCell>,
+                     std::vector<GridCell>>;
 
     [[nodiscard]] auto countNumberOfWalkableNodes(const graph::GridCell& cell) const noexcept
         -> std::size_t;

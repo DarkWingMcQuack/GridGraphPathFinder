@@ -204,6 +204,20 @@ auto separation::weight(const Separation& sep) noexcept
         * getSecondCluster(sep).size();
 }
 
+auto separation::toString(const Separation& sep) noexcept
+    -> std::string
+{
+    std::stringstream ss;
+    ss << getFirstCluster(sep)
+       << ":"
+       << getSecondCluster(sep)
+       << "("
+       << weight(sep)
+       << ")";
+
+    return ss.str();
+}
+
 
 auto separation::sizeDistribution3DToFile(const std::vector<Separation>& separations,
                                           std::string_view file_path) noexcept

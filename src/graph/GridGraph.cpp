@@ -171,6 +171,53 @@ auto GridGraph::getAllCellsContaining(Node node) const noexcept
     return result;
 }
 
+auto GridGraph::getAllParrentCells(GridCell cell) const noexcept
+    -> std::vector<GridCell>
+{
+    std::vector<graph::GridCell> result{wrapGraphInCell()};
+
+    while(result.back().size() > cell.size()) {
+
+        auto splitted = result.back().split();
+        for(auto grid : splitted) {
+            if(grid.isSuperSetOf(cell)) {
+                result.emplace_back(grid);
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
+auto GridGraph::getAllPossibleSeparationCells(GridCell left, GridCell right) const noexcept
+    -> std::pair<std::vector<GridCell>, std::vector<GridCell>>
+{
+    auto left_candidates = getAllParrentCells(left);
+    auto right_candidates = getAllParrentCells(right);
+
+    left_candidates.erase(
+        std::remove_if(
+            std::begin(left_candidates),
+            std::end(left_candidates),
+            [&](auto candidate) {
+                return candidate.isSuperSetOf(right);
+            }),
+        std::end(left_candidates));
+
+    right_candidates.erase(
+        std::remove_if(
+            std::begin(right_candidates),
+            std::end(right_candidates),
+            [&](auto candidate) {
+                return candidate.isSuperSetOf(left);
+            }),
+        std::end(right_candidates));
+
+    return std::pair{std::move(left_candidates),
+                     std::move(right_candidates)};
+}
+
 auto GridGraph::countWalkableNodes() const noexcept
     -> std::size_t
 {
