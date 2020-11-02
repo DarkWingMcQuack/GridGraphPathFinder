@@ -13,7 +13,7 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
                                                    const std::vector<Separation>& separations) noexcept
     : graph_(graph),
       separation_lookup_(graph.getWidth() * graph.getHeight(),
-						 std::vector<Separation>{})
+                         std::vector<Separation>{})
 
 {
     for(auto sep : separations) {
@@ -36,6 +36,10 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
 [[nodiscard]] auto SeparationDistanceOracle::findDistance(graph::Node from, graph::Node to) const noexcept
     -> graph::Distance
 {
+    if(from == to) {
+        return 0;
+    }
+
     if(graph_.areNeighbours(from, to)) {
         return 1;
     }
