@@ -28,11 +28,11 @@ public:
     auto operator=(CachingDijkstra &&) -> CachingDijkstra & = delete;
 
     [[nodiscard]] auto findDistance(const graph::Node &source,
-                                    const graph::Node &target) noexcept
+                                    const graph::Node &target) const noexcept
         -> graph::Distance;
 
     [[nodiscard]] auto findTrivialDistance(const graph::Node &source,
-                                           const graph::Node &target) noexcept
+                                           const graph::Node &target) const noexcept
         -> graph::Distance;
 
     [[nodiscard]] auto getGraph() const noexcept -> const graph::GridGraph &;

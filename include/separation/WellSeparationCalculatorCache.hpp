@@ -13,7 +13,7 @@ public:
                                  graph::GridCell second)
         -> bool
     {
-        std::lock_guard lock{mtx_};
+        std::lock_guard lock{*mtx_};
         auto inserted =
             cache_.find(std::pair{first, second}) != std::end(cache_)
             or cache_.find(std::pair{second, first}) != std::end(cache_);
@@ -26,7 +26,7 @@ public:
     }
 
 private:
-    std::mutex mtx_;
+    std::unique_ptr<std::mutex> mtx_ = std::make_unique<std::mutex>();
     std::unordered_set<std::pair<graph::GridCell, graph::GridCell>> cache_;
 };
 

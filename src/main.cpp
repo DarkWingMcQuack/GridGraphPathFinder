@@ -27,13 +27,16 @@ auto runSeparation(const graph::GridGraph& graph,
 
     CachingDijkstra dijkstra{graph};
 
-    auto separations = separation::calculateSeparation(graph, dijkstra);
+    auto [separations, cache] = separation::calculateSeparation(graph, dijkstra);
     auto sepataions_before_optimization = separations.size();
 
     auto distribution_file = fmt::format("{}/distribution", result_folder);
     separation::sizeDistribution3DToFile(separations, distribution_file);
 
-    separation::SeparationOptimizer optimizer{graph, dijkstra};
+    separation::SeparationOptimizer optimizer{graph,
+                                              dijkstra,
+                                              std::move(cache)};
+
     separations = optimizer.optimizeAll(std::move(separations));
 
     auto message = fmt::format("runtime: {}, before optimization: |S| = {}, after |S| = {}",
@@ -54,8 +57,11 @@ auto runSeparation(const graph::GridGraph& graph,
 
     separation::SeparationDistanceOracle oracle{graph, separations};
 
+    //clear to save memory
+    separations.clear();
+
     Dijkstra compare{graph};
-    for(std::size_t i{0}; i < 100; i++) {
+    for(std::size_t i{0}; i < 5; i++) {
         auto from = graph.getRandomWalkableNode();
         auto to = graph.getRandomWalkableNode();
 
@@ -66,20 +72,21 @@ auto runSeparation(const graph::GridGraph& graph,
         t.reset();
         auto compare_dist = compare.findDistance(from, to);
         auto compare_time = t.elapsed();
-        fmt::print("separation distance: {}\n"
-				   "dijkstra distance: {}\n"
-				   "separation time: {}\n"
-				   "dijkstra time: {}\n",
-				   oracle_dist,
-				   compare_dist,
-				   oracle_time,
-				   compare_time);
-		fmt::print("----------------------------------------------\n");
+        fmt::print(
+            "separation distance: {}\n"
+            "dijkstra distance: {}\n"
+            "separation time: {}\n"
+            "dijkstra time: {}\n",
+            oracle_dist,
+            compare_dist,
+            oracle_time,
+            compare_time);
+        fmt::print("----------------------------------------------\n");
     }
 }
 
 auto runSelection(const graph::GridGraph& graph,
-                  std::string_view  /*result_folder*/)
+                  std::string_view /*result_folder*/)
 {
     utils::Timer t;
     FullNodeSelectionCalculator<Dijkstra> selection_calculator{graph};

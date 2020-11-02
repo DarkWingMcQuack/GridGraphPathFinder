@@ -4,6 +4,7 @@
 #include <graph/GridGraph.hpp>
 #include <progresscpp/ProgressBar.hpp>
 #include <separation/Separation.hpp>
+#include <separation/WellSeparationCalculatorCache.hpp>
 #include <separation/WellSeparationChecker.hpp>
 #include <unordered_set>
 #include <vector>
@@ -18,9 +19,11 @@ public:
     static_assert(PathFinder::is_thread_save, "the path finder needs to be threadsave");
 
     SeparationOptimizer(const graph::GridGraph& graph,
-                        PathFinder path_finder)
+                        const PathFinder& path_finder,
+                        WellSeparationCalculatorCache cache)
         : graph_(std::move(graph)),
-          path_finder_(std::move(path_finder)) {}
+          path_finder_(std::move(path_finder)),
+          calc_mem_(std::move(cache)) {}
 
     auto optimizeAll(std::vector<Separation> seps) noexcept
         -> std::vector<Separation>
@@ -48,7 +51,6 @@ public:
 
         auto result = std::move(optimized_);
         optimized_.clear();
-        calc_memory_.clear();
 
         return result;
     }
@@ -71,11 +73,10 @@ private:
                     continue;
                 }
 
-                if(isAlreadyCalculated(left_cluster, right_cluster)) {
+                if(calc_mem_.checkAndMarkCalculation(left_cluster, right_cluster)) {
                     continue;
                 }
 
-                calc_memory_.emplace(left_cluster, right_cluster);
 
                 if(auto separation = checkSeparation(path_finder_, left_cluster, right_cluster)) {
                     current_optimum = separation.value();
@@ -99,21 +100,6 @@ private:
 
         optimized_.emplace_back(sep);
     }
-
-    auto isAlreadyCalculated(graph::GridCell first, graph::GridCell second) const noexcept
-        -> bool
-    {
-        if(calc_memory_.count(std::pair{first, second}) != 0) {
-            return true;
-        }
-
-        if(calc_memory_.count(std::pair{second, first}) != 0) {
-            return true;
-        }
-
-        return false;
-    }
-
 
     auto weight(graph::GridCell first, graph::GridCell second) const noexcept
         -> std::size_t
@@ -143,9 +129,9 @@ private:
 private:
     std::vector<Separation> separations_;
     std::vector<Separation> optimized_;
-    std::unordered_set<std::pair<graph::GridCell, graph::GridCell>> calc_memory_;
     const graph::GridGraph& graph_;
-    mutable PathFinder path_finder_;
+    const PathFinder& path_finder_;
+    WellSeparationCalculatorCache calc_mem_;
 };
 
 } // namespace separation

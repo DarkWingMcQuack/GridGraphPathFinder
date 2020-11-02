@@ -55,7 +55,7 @@ CachingDijkstra::CachingDijkstra(const graph::GridGraph &graph) noexcept
 }
 
 auto CachingDijkstra::findDistance(const graph::Node &source,
-                                   const graph::Node &target) noexcept
+                                   const graph::Node &target) const noexcept
     -> Distance
 {
     if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
@@ -91,7 +91,7 @@ auto CachingDijkstra::queryCache(graph::Node first, graph::Node second) const no
 }
 
 auto CachingDijkstra::findTrivialDistance(const graph::Node &source,
-                                          const graph::Node &target) noexcept
+                                          const graph::Node &target) const noexcept
     -> graph::Distance
 {
     if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {

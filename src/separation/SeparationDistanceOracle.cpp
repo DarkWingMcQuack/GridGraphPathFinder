@@ -31,6 +31,17 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
             separation_lookup_[idx].emplace_back(sep);
         }
     }
+
+    for(auto& vec : separation_lookup_) {
+        std::sort(std::begin(vec),
+                  std::end(vec),
+                  [](const auto& lhs, const auto& rhs) {
+                      auto left = getSecondCluster(lhs);
+                      auto right = getSecondCluster(rhs);
+
+                      return left.size() < right.size();
+                  });
+    }
 }
 
 [[nodiscard]] auto SeparationDistanceOracle::findDistance(graph::Node from, graph::Node to) const noexcept
