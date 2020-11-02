@@ -45,6 +45,13 @@ CachingDijkstra::CachingDijkstra(const graph::GridGraph &graph) noexcept
         bar.displayIfChangedAtLeast(0.02);
     }
     bar.done();
+
+    //cleanup everything to save memory
+    distances_.clear();
+    settled_.clear();
+    pq_ = DijkstraQueue{DijkstraQueueComparer{}};
+    touched_.clear();
+    last_source_ = std::nullopt;
 }
 
 auto CachingDijkstra::findDistance(const graph::Node &source,
