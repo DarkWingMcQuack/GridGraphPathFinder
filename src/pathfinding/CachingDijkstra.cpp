@@ -90,6 +90,17 @@ auto CachingDijkstra::queryCache(graph::Node first, graph::Node second) const no
     return distance_cache_[first_cache_idx][second_cache_idx];
 }
 
+auto CachingDijkstra::destroy() noexcept
+    -> void
+{
+    distances_.clear();
+    settled_.clear();
+    touched_.clear();
+    pq_ = DijkstraQueue{DijkstraQueueComparer{}};
+    cache_index_.clear();
+    distance_cache_.clear();
+}
+
 auto CachingDijkstra::findTrivialDistance(const graph::Node &source,
                                           const graph::Node &target) const noexcept
     -> graph::Distance

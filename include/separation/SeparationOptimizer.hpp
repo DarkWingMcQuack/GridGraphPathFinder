@@ -28,6 +28,12 @@ public:
     auto optimizeAll(std::vector<Separation> seps) noexcept
         -> std::vector<Separation>
     {
+        // std::vector<Separation> seps;
+        // for(auto from : graph_) {
+        //     for(auto to: graph_) {
+		// 	  auto distance = path_finder_.findDistance(from, to);
+        //     }
+        // }
         separations_ = std::move(seps);
 
         fmt::print("optimizing the separations...\n");
@@ -62,6 +68,8 @@ private:
         auto left = getFirstCluster(current_optimum);
         auto right = getSecondCluster(current_optimum);
 
+        auto current_optimal_weight = weight(current_optimum);
+
         auto [all_left_clusters, all_right_clusters] =
             graph_.getAllPossibleSeparationCells(left, right);
 
@@ -69,7 +77,7 @@ private:
         for(auto left_cluster : all_left_clusters) {
             for(auto right_cluster : all_right_clusters) {
 
-                if(this->weight(current_optimum) >= weight(left_cluster, right_cluster)) {
+                if(current_optimal_weight >= weight(left_cluster, right_cluster)) {
                     continue;
                 }
 
@@ -80,6 +88,7 @@ private:
 
                 if(auto separation = checkSeparation(path_finder_, left_cluster, right_cluster)) {
                     current_optimum = separation.value();
+                    current_optimal_weight = weight(current_optimum);
                 }
             }
         }

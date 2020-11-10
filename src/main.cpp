@@ -37,7 +37,9 @@ auto runSeparation(const graph::GridGraph& graph,
                                               dijkstra,
                                               std::move(cache)};
 
+
     separations = optimizer.optimizeAll(std::move(separations));
+    dijkstra.destroy();
 
     auto message = fmt::format("runtime: {}, before optimization: |S| = {}, after |S| = {}",
                                t.elapsed(),
@@ -54,6 +56,16 @@ auto runSeparation(const graph::GridGraph& graph,
 
     auto optimized_distribution_file = fmt::format("{}/optimized_distribution", result_folder);
     separation::sizeDistribution3DToFile(separations, optimized_distribution_file);
+
+
+    std::sort(std::begin(separations),
+              std::end(separations),
+              [](auto lhs, auto rhs) {
+                  return separation::weight(lhs) > separation::weight(rhs);
+              });
+
+    auto separation_file = fmt::format("{}/result.seg", result_folder);
+    separation::toFile(graph.unclip(separations[0]), separation_file);
 
     separation::SeparationDistanceOracle oracle{graph, separations};
 

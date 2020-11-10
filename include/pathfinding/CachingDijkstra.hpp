@@ -35,7 +35,10 @@ public:
                                            const graph::Node &target) const noexcept
         -> graph::Distance;
 
-    [[nodiscard]] auto getGraph() const noexcept -> const graph::GridGraph &;
+    [[nodiscard]] auto getGraph() const noexcept
+        -> const graph::GridGraph &;
+
+    auto destroy() noexcept -> void;
 
 private:
     [[nodiscard]] auto getDistanceTo(const graph::Node &n) const noexcept

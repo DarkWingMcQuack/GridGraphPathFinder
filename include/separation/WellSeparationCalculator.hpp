@@ -17,7 +17,7 @@ namespace separation {
 namespace impl {
 
 template<class PathFinder>
-[[nodiscard]] auto calculateSeparation(PathFinder& path_finder,
+[[nodiscard]] auto calculateSeparation(const PathFinder& path_finder,
                                        graph::GridCell first,
                                        graph::GridCell second,
                                        WellSeparationCalculatorCache& already_visited) noexcept
@@ -98,7 +98,7 @@ namespace test {
 
 template<class PathFinder>
 [[nodiscard]] auto calculateSeparation(const graph::GridGraph& graph,
-                                       PathFinder path_finder) noexcept
+                                       const PathFinder& path_finder) noexcept
     -> std::pair<std::vector<Separation>, WellSeparationCalculatorCache>
 {
     auto root = graph.wrapGraphInCell();
@@ -106,7 +106,8 @@ template<class PathFinder>
     WellSeparationCalculatorCache cache;
     auto result = impl::calculateSeparation(path_finder, root, root, cache);
 
-    return std::pair{std::move(result), std::move(cache)};
+    return std::pair{std::move(result),
+                     std::move(cache)};
 }
 
 } // namespace separation

@@ -44,5 +44,4 @@ if __name__ == '__main__':
     path = args.file
     x, y, z = read_csv(path)
 
-    plot3D(x, y, z)
     plotBar(x, y, z)

@@ -21,6 +21,9 @@ public:
     GridCell(GridCorner top_left,
              GridCorner bottom_right) noexcept;
 
+    // wrap a single node in a gridcell
+    GridCell(Node node) noexcept;
+
     GridCell(GridCell&&) noexcept = default;
     GridCell(const GridCell&) noexcept = default;
 

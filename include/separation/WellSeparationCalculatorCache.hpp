@@ -13,7 +13,7 @@ public:
                                  graph::GridCell second)
         -> bool
     {
-        std::lock_guard lock{*mtx_};
+        // std::lock_guard lock{*mtx_};
         auto inserted =
             cache_.find(std::pair{first, second}) != std::end(cache_)
             or cache_.find(std::pair{second, first}) != std::end(cache_);

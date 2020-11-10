@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <cstdint>
+#include <iostream>
 
 namespace graph {
 
@@ -12,13 +12,16 @@ struct GridCorner
     GridCorner(GridCorner&&) = default;
     GridCorner(const GridCorner&) = default;
 
-    auto operator=(GridCorner &&) -> GridCorner& = default;
+    auto operator=(GridCorner&&) -> GridCorner& = default;
     auto operator=(const GridCorner&) -> GridCorner& = default;
 
 
     auto operator==(const GridCorner& other) const noexcept
         -> bool;
     auto operator!=(const GridCorner& other) const noexcept
+        -> bool;
+
+    auto operator<(const GridCorner& other) const noexcept
         -> bool;
 
     auto getRow() const noexcept
@@ -40,4 +43,4 @@ private:
 auto operator<<(std::ostream& os, const GridCorner& c) noexcept
     -> std::ostream&;
 
-} // namespace grid
+} // namespace graph

@@ -1,6 +1,6 @@
 #include <cstdint>
-#include <iostream>
 #include <graph/GridCorner.hpp>
+#include <iostream>
 
 using graph::GridCorner;
 
@@ -20,6 +20,12 @@ auto GridCorner::operator!=(const GridCorner& other) const noexcept
     -> bool
 {
     return !(*this == other);
+}
+
+auto GridCorner::operator<(const GridCorner& other) const noexcept
+    -> bool
+{
+    return row_ < other.row_ || column_ < other.column_;
 }
 
 

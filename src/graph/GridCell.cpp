@@ -23,6 +23,11 @@ GridCell::GridCell(GridCorner top_left,
     : top_left_(top_left),
       bottom_right_(bottom_right) {}
 
+GridCell::GridCell(Node node) noexcept
+    : top_left_(static_cast<int64_t>(node.row), static_cast<int64_t>(node.column)),
+      bottom_right_(static_cast<int64_t>(node.row + 1), static_cast<int64_t>(node.column + 1)) {}
+
+
 auto GridCell::operator==(const GridCell& other) const noexcept
     -> bool
 {

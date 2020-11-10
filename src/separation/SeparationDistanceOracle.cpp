@@ -1,3 +1,4 @@
+#include <fmt/ostream.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
 #include <separation/Separation.hpp>
@@ -18,30 +19,32 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
 {
     for(auto sep : separations) {
         auto left = getFirstCluster(sep);
-
         for(auto n : left) {
             auto idx = getIndex(n);
             separation_lookup_[idx].emplace_back(sep);
         }
 
         auto right = getSecondCluster(sep);
-        sep = switchSides(sep);
+        auto switched_sep = switchSides(sep);
         for(auto n : right) {
             auto idx = getIndex(n);
-            separation_lookup_[idx].emplace_back(sep);
+            separation_lookup_[idx].emplace_back(switched_sep);
         }
     }
 
-    for(auto& vec : separation_lookup_) {
-        std::sort(std::begin(vec),
-                  std::end(vec),
-                  [](const auto& lhs, const auto& rhs) {
-                      auto left = getSecondCluster(lhs);
-                      auto right = getSecondCluster(rhs);
+    // for(auto& vec : separation_lookup_) {
+    // fmt::print("size: {}\n", vec.size());
+    // std::sort(std::begin(vec),
+    //           std::end(vec),
+    //           [](auto lhs, auto rhs) {
+    //               auto left = getSecondCluster(lhs);
+    //               auto right = getSecondCluster(rhs);
+    //               auto left_corner = left.getTopLeft();
+    //               auto right_corner = right.getTopLeft();
 
-                      return left.size() < right.size();
-                  });
-    }
+    //               return left_corner < right_corner;
+    //           });
+    // }
 }
 
 [[nodiscard]] auto SeparationDistanceOracle::findDistance(graph::Node from, graph::Node to) const noexcept
@@ -55,15 +58,20 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
         return 1;
     }
 
+    fmt::print("{} : {}\n", from, to);
+
     auto from_idx = getIndex(from);
     const auto& from_separations = separation_lookup_[from_idx];
 
-    auto separation = *std::find_if(std::cbegin(from_separations),
-                                    std::end(from_separations),
-                                    [&](auto sep) {
-                                        auto right = getSecondCluster(sep);
-                                        return right.isInCell(to);
-                                    });
+    auto separation = *std::lower_bound(std::cbegin(from_separations),
+                                        std::cend(from_separations),
+                                        TrivialSeparation{graph::GridCell{to},
+                                                          graph::GridCell{to}},
+                                        [](auto lhs, auto rhs) {
+                                            auto left = getSecondCluster(lhs).getTopLeft();
+                                            auto right = getSecondCluster(rhs).getTopLeft();
+                                            return left < right;
+                                        });
 
     if(std::holds_alternative<ComplexSeparation>(separation)) {
         const auto& sep = std::get<ComplexSeparation>(separation);
