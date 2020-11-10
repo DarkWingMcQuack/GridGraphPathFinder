@@ -284,6 +284,18 @@ auto GridCell::hasCommonNodeWith(const GridCell& other) const noexcept
 }
 
 
+auto GridCell::wrapInCell(Node n) noexcept
+    -> GridCell
+{
+    GridCorner top_left{static_cast<int64_t>(n.row),
+                        static_cast<int64_t>(n.column)};
+    GridCorner bottom_right{static_cast<int64_t>(n.row + 1),
+                            static_cast<int64_t>(n.column + 1)};
+
+    return GridCell{top_left, bottom_right};
+}
+
+
 
 
 auto graph::operator<<(std::ostream& os, const GridCell& c) noexcept

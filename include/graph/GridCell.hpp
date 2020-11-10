@@ -100,6 +100,9 @@ public:
     [[nodiscard]] auto to_string() const noexcept
         -> std::string;
 
+    [[nodiscard]] static auto wrapInCell(Node n) noexcept
+        -> GridCell;
+
 private:
     friend auto operator<<(std::ostream& os, const GridCell& c) noexcept
         -> std::ostream&;
