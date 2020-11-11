@@ -11,7 +11,6 @@
 
 namespace separation {
 
-
 template<class PathFinder>
 class SeparationOptimizer
 {
@@ -28,12 +27,6 @@ public:
     auto optimizeAll(std::vector<Separation> seps) noexcept
         -> std::vector<Separation>
     {
-        // std::vector<Separation> seps;
-        // for(auto from : graph_) {
-        //     for(auto to: graph_) {
-		// 	  auto distance = path_finder_.findDistance(from, to);
-        //     }
-        // }
         separations_ = std::move(seps);
 
         fmt::print("optimizing the separations...\n");
@@ -73,7 +66,6 @@ private:
         auto [all_left_clusters, all_right_clusters] =
             graph_.getAllPossibleSeparationCells(left, right);
 
-
         for(auto left_cluster : all_left_clusters) {
             for(auto right_cluster : all_right_clusters) {
 
@@ -108,6 +100,15 @@ private:
             std::end(separations_));
 
         optimized_.emplace_back(sep);
+    }
+
+    auto isAlreadySolved(graph::Node from, graph::Node to)
+    {
+        return std::any_of(std::begin(optimized_),
+                           std::end(optimized_),
+                           [&](auto sep) {
+                               return canAnswer(sep, from, to);
+                           });
     }
 
     auto weight(graph::GridCell first, graph::GridCell second) const noexcept

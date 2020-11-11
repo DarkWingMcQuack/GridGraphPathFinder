@@ -22,7 +22,6 @@ private:
 private:
     const graph::GridGraph& graph_;
     std::vector<std::vector<Separation>> separation_lookup_;
-    // std::unordered_map<std::pair<graph::Node, graph::Node>, graph::Distance> all_to_all_lookup_;
 };
 
 } // namespace separation
