@@ -80,6 +80,44 @@ auto ComplexSeparation::toFile(std::string_view path) const noexcept
     file << "center: (" << second_center_.row << ", " << second_center_.column << ")\n";
 }
 
+auto ComplexSeparation::toSmallFile(std::string_view path) const noexcept
+    -> void
+{
+    std::ofstream file{path.data()};
+    file << "type: complex\n";
+    file << "first: ("
+         << first_.getTopLeft().getRow()
+         << ", "
+         << first_.getTopLeft().getColumn()
+         << "), ("
+         << first_.getBottomRight().getRow()
+         << ", "
+         << first_.getBottomRight().getColumn()
+         << ")\n"
+         << "second: ("
+         << second_.getTopLeft().getRow()
+         << ", "
+         << second_.getTopLeft().getColumn()
+         << "), ("
+         << second_.getBottomRight().getRow()
+         << ", "
+         << second_.getBottomRight().getColumn()
+         << ")\n"
+         << "first center: ("
+         << first_center_.row
+         << ", "
+         << first_center_.column
+         << ")\n"
+         << "second center: ("
+         << second_center_.row
+         << ", "
+         << second_center_.column
+         << ")\n"
+         << "center to center distance: "
+         << center_distance_
+         << "\n";
+}
+
 
 TrivialSeparation::TrivialSeparation(graph::GridCell first,
                                      graph::GridCell second)
@@ -116,6 +154,31 @@ auto TrivialSeparation::toFile(std::string_view path) const noexcept
     for(auto node : second_) {
         file << "1: (" << node.row << ", " << node.column << ")\n";
     }
+}
+
+auto TrivialSeparation::toSmallFile(std::string_view path) const noexcept
+    -> void
+{
+    std::ofstream file{path.data()};
+    file << "type: trivial\n";
+    file << "first: ("
+         << first_.getTopLeft().getRow()
+         << ", "
+         << first_.getTopLeft().getColumn()
+         << "), ("
+         << first_.getBottomRight().getRow()
+         << ", "
+         << first_.getBottomRight().getColumn()
+         << ")\n"
+         << "second: ("
+         << second_.getTopLeft().getRow()
+         << ", "
+         << second_.getTopLeft().getColumn()
+         << "), ("
+         << second_.getBottomRight().getRow()
+         << ", "
+         << second_.getBottomRight().getColumn()
+         << ")\n";
 }
 
 
