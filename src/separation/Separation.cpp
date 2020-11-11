@@ -278,6 +278,15 @@ auto separation::toFile(const Separation& sep, std::string_view path) noexcept
         sep);
 }
 
+auto separation::toSmallFile(const Separation& sep, std::string_view path) noexcept
+    -> void
+{
+    std::visit(
+        [=](const auto& separation) {
+            return separation.toSmallFile(path);
+        },
+        sep);
+}
 
 auto separation::weight(const Separation& sep) noexcept
     -> std::size_t
