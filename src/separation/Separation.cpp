@@ -1,5 +1,7 @@
 #include <fstream>
+#include <graph/GridGraph.hpp>
 #include <map>
+#include <numeric>
 #include <pathfinding/Distance.hpp>
 #include <pathfinding/Path.hpp>
 #include <separation/Separation.hpp>
@@ -245,6 +247,36 @@ auto separation::switchSides(const Separation& sep) noexcept
         sep);
 }
 
+auto separation::smallestDistance(const Separation& sep,
+                                  const graph::GridGraph& graph) noexcept
+    -> graph::Distance
+{
+    if(std::holds_alternative<ComplexSeparation>(sep)) {
+        const auto complex_sep = std::get<ComplexSeparation>(sep);
+        return complex_sep.getCenterDistance();
+    }
+
+    auto left = getFirstCluster(sep);
+    auto right = getSecondCluster(sep);
+
+    return std::accumulate(std::begin(left),
+                           std::end(left),
+                           graph::UNREACHABLE,
+                           [&](auto init, auto next) {
+                               auto min_dist =
+                                   std::accumulate(
+                                       std::begin(right),
+                                       std::end(right),
+                                       graph::UNREACHABLE,
+                                       [&](auto init, auto next_r) {
+                                           auto dist = graph.getTrivialDistance(next, next_r);
+                                           return std::min(init, dist);
+                                       });
+
+                               return std::min(init, min_dist);
+                           });
+}
+
 
 auto separation::sizeDistribution3DToFile(const std::vector<Separation>& separations,
                                           std::string_view file_path) noexcept
@@ -266,5 +298,28 @@ auto separation::sizeDistribution3DToFile(const std::vector<Separation>& separat
     for(auto [pair, amount] : sep_distribution) {
         auto [smaller, larger] = pair;
         file << smaller << ", " << larger << ", " << amount << "\n";
+    }
+}
+
+auto separation::sizeToDistanceToFile(const std::vector<Separation>& separations,
+                                      const graph::GridGraph& graph,
+                                      std::string_view file_path) noexcept
+    -> void
+{
+    std::unordered_map<std::size_t, std::vector<graph::Distance>> sep_dist;
+
+    for(const auto& sep : separations) {
+        const auto w = weight(sep);
+        const auto dist = smallestDistance(sep, graph);
+        sep_dist[w].emplace_back(dist);
+    }
+
+    std::ofstream file{file_path.data()};
+    for(auto [w, dist] : sep_dist) {
+        auto avg_dist = std::accumulate(std::begin(dist),
+                                        std::end(dist),
+                                        0l)
+            / static_cast<double>(dist.size());
+        file << w << ", " << avg_dist << "\n";
     }
 }

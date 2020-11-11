@@ -57,6 +57,11 @@ auto runSeparation(const graph::GridGraph& graph,
     auto optimized_distribution_file = fmt::format("{}/optimized_distribution", result_folder);
     separation::sizeDistribution3DToFile(separations, optimized_distribution_file);
 
+	
+    auto distance_file = fmt::format("{}/distance_distribution", result_folder);
+
+	sizeToDistanceToFile(separations, graph, distance_file);
+
 
     std::sort(std::begin(separations),
               std::end(separations),

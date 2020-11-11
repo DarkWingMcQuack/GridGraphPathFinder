@@ -5,6 +5,10 @@
 #include <pathfinding/Path.hpp>
 #include <variant>
 
+namespace graph {
+class GridGraph;
+}
+
 namespace separation {
 
 class ComplexSeparation
@@ -103,6 +107,10 @@ auto toString(const Separation& sep) noexcept
 auto switchSides(const Separation& sep) noexcept
     -> Separation;
 
+auto smallestDistance(const Separation& sep,
+                      const graph::GridGraph& graph) noexcept
+    -> graph::Distance;
+
 auto operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool;
 
@@ -118,6 +126,11 @@ auto toFile(const Separation& sep, std::string_view path) noexcept
 
 auto sizeDistribution3DToFile(const std::vector<Separation>& separations,
                               std::string_view file_path) noexcept
+    -> void;
+
+auto sizeToDistanceToFile(const std::vector<Separation>& separations,
+                          const graph::GridGraph& graph,
+                          std::string_view file_path) noexcept
     -> void;
 
 

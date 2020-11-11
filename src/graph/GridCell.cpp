@@ -289,8 +289,10 @@ auto GridCell::wrapInCell(Node n) noexcept
 {
     GridCorner top_left{static_cast<int64_t>(n.row),
                         static_cast<int64_t>(n.column)};
-    GridCorner bottom_right{static_cast<int64_t>(n.row + 1),
-                            static_cast<int64_t>(n.column + 1)};
+    GridCorner bottom_right{static_cast<int64_t>(n.row),
+                            static_cast<int64_t>(n.column)};
+
+	
 
     return GridCell{top_left, bottom_right};
 }
