@@ -41,11 +41,10 @@ auto SelectionBucket::isSubSetOf(const std::vector<NodeSelection>& other) const 
     return std::all_of(std::begin(selections_),
                        std::end(selections_),
                        [&](const auto& selection) {
-                           return std::find_if(std::begin(other),
-                                               std::end(other),
-                                               [&](const auto& elem) {
-                                                   return elem.getIndex() == selection.getIndex();
-                                               })
+                           return std::find(
+                                      std::begin(other),
+                                      std::end(other),
+                                      selection)
                                != std::end(other);
                        });
 }
@@ -69,11 +68,9 @@ auto SelectionBucket::isSuperSetOf(const std::vector<NodeSelection>& other) cons
 auto SelectionBucket::contains(const NodeSelection& other) const noexcept
     -> bool
 {
-    return std::find_if(std::begin(selections_),
-                        std::end(selections_),
-                        [&](const auto& elem) {
-                            return elem.getIndex() == other.getIndex();
-                        })
+    return std::find(std::begin(selections_),
+                     std::end(selections_),
+                     other)
         != std::end(selections_);
 }
 
