@@ -3,6 +3,7 @@
 #include <selection/NodeSelection.hpp>
 
 using selection::NodeSelection;
+using graph::Node;
 
 
 NodeSelection::NodeSelection(std::vector<graph::Node> left_selection,
@@ -29,13 +30,13 @@ auto NodeSelection::weight() const noexcept
 }
 
 auto NodeSelection::getLeftSelection() const noexcept
-    -> const std::vector<graph::Node>&
+    -> const std::vector<Node>&
 {
     return left_selection_;
 }
 
 auto NodeSelection::getRightSelection() const noexcept
-    -> const std::vector<graph::Node>&
+    -> const std::vector<Node>&
 {
     return right_selection_;
 }
@@ -52,21 +53,21 @@ auto NodeSelection::getIndex() const noexcept
     return index_;
 }
 
-auto NodeSelection::canAnswer(graph::Node from, graph::Node to) const noexcept
+auto NodeSelection::canAnswer(Node from, Node to) const noexcept
     -> bool
 {
     return (std::binary_search(std::begin(left_selection_),
                                std::end(left_selection_),
                                from)
-            and std::binary_search(std::begin(left_selection_),
-                                   std::end(left_selection_),
+            and std::binary_search(std::begin(right_selection_),
+                                   std::end(right_selection_),
                                    to))
 
         or (std::binary_search(std::begin(left_selection_),
                                std::end(left_selection_),
                                to)
-            and std::binary_search(std::begin(left_selection_),
-                                   std::end(left_selection_),
+            and std::binary_search(std::begin(right_selection_),
+                                   std::end(right_selection_),
                                    from));
 }
 
