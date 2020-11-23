@@ -8,11 +8,14 @@
 using selection::SelectionBucket;
 using selection::NodeSelection;
 
-SelectionBucket::SelectionBucket(std::vector<NodeSelection> selections)
+SelectionBucket::SelectionBucket(std::vector<NodeSelection> selections,
+                                 bool sort)
     : selections_(std::move(selections))
 {
-    std::sort(std::begin(selections_),
-              std::end(selections_));
+    if(sort) {
+        std::sort(std::begin(selections_),
+                  std::end(selections_));
+    }
 }
 
 auto SelectionBucket::weight() const noexcept
@@ -90,7 +93,7 @@ auto SelectionBucket::merge(const SelectionBucket& other) const noexcept
 {
     auto merged = utils::intersect(selections_,
                                    other.selections_);
-    return SelectionBucket{std::move(merged)};
+    return SelectionBucket{std::move(merged), false};
 }
 
 auto SelectionBucket::getSelections() const noexcept

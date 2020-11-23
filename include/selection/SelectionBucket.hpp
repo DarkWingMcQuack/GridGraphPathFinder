@@ -8,7 +8,8 @@ namespace selection {
 
 class SelectionBucket
 {
-    SelectionBucket(std::vector<NodeSelection> selections);
+    SelectionBucket(std::vector<NodeSelection> selections,
+                    bool sort = true);
 
     [[nodiscard]] auto weight() const noexcept
         -> std::size_t;
