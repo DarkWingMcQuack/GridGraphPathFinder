@@ -16,13 +16,16 @@ class SelectionBucket
     [[nodiscard]] auto isSubSetOf(const SelectionBucket& other) const noexcept
         -> bool;
 
+    [[nodiscard]] auto isSubSetOf(const std::vector<NodeSelection>& other) const noexcept
+        -> bool;
+
     [[nodiscard]] auto isSuperSetOf(const SelectionBucket& other) const noexcept
         -> bool;
 
-    [[nodiscard]] auto contains(const NodeSelection& other) const noexcept
+    [[nodiscard]] auto isSuperSetOf(const std::vector<NodeSelection>& other) const noexcept
         -> bool;
 
-    [[nodiscard]] auto containsAll(const std::vector<NodeSelection>& other) const noexcept
+    [[nodiscard]] auto contains(const NodeSelection& other) const noexcept
         -> bool;
 
     [[nodiscard]] auto canAnswer(const graph::Node& from,
