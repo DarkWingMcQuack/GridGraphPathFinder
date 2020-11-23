@@ -18,7 +18,7 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
                                  std::vector<NodeSelection> selections)
     : graph_(graph),
       selections_(std::move(selections)),
-      selection_lookup_(graph.countWalkableNodes())
+      selection_lookup_(graph.getWidth() * graph.getHeight())
 {
     for(auto& selection : selections_) {
         for(auto node : selection.getLeftSelection()) {
@@ -34,8 +34,10 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
 
     for(auto& selections : selection_lookup_) {
         std::sort(std::begin(selections),
-                  std::end(selections));
-        fmt::print("number of selections {}\n", selections.size());
+                  std::end(selections),
+                  [](auto lhs, auto rhs) {
+                      return lhs->getIndex() < rhs->getIndex();
+                  });
     }
 }
 
