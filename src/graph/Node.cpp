@@ -33,6 +33,7 @@ auto Node::operator<(const Node& other) const noexcept
 	//gleiche row, dann vergleiche column
     return column < other.column;
 }
+
 auto Node::operator>(const Node& other) const noexcept
     -> bool
 {
@@ -49,7 +50,6 @@ auto Node::operator>=(const Node& other) const noexcept
     return (*this > other) || *this == other;
 }
 
-
 auto Node::isManhattanNeigbourOf(const Node& other) const noexcept
     -> bool
 {
@@ -58,7 +58,6 @@ auto Node::isManhattanNeigbourOf(const Node& other) const noexcept
     or other == Node{row - 1, column}
     or other == Node{row + 1, column};
 }
-
 
 auto graph::operator<<(std::ostream& os, Node n) noexcept
     -> std::ostream&
