@@ -33,11 +33,20 @@ class SelectionBucket
                                  const graph::Node& to) const noexcept
         -> bool;
 
+    [[nodiscard]] auto getCommonSelection(const SelectionBucket& other) const noexcept
+        -> std::optional<std::reference_wrapper<const NodeSelection>>;
+
     [[nodiscard]] auto merge(const SelectionBucket& other) const noexcept
         -> SelectionBucket;
 
     [[nodiscard]] auto getSelections() const noexcept
         -> const std::vector<NodeSelection>&;
+
+    [[nodiscard]] auto getFirstIndex() const noexcept
+        -> std::optional<std::size_t>;
+
+    [[nodiscard]] auto getLastIndex() const noexcept
+        -> std::optional<std::size_t>;
 
 private:
     std::vector<NodeSelection> selections_;

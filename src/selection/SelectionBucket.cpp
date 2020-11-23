@@ -88,6 +88,26 @@ auto SelectionBucket::canAnswer(const graph::Node& from,
                        });
 }
 
+auto SelectionBucket::getCommonSelection(const SelectionBucket& other) const noexcept
+    -> std::optional<std::reference_wrapper<const NodeSelection>>
+{
+    auto iter1 = std::begin(selections_);
+    auto iter2 = std::begin(other.selections_);
+    auto iter1_end = std::end(selections_);
+    auto iter2_end = std::end(other.selections_);
+
+    while(iter1 != iter1_end && iter2 != iter2_end) {
+        if(iter1->getIndex() < iter2->getIndex()) {
+            ++iter1;
+        } else if(iter2->getIndex() < iter1->getIndex()) {
+            ++iter2;
+        } else {
+            return std::cref(*iter2);
+        }
+    }
+    return std::nullopt;
+}
+
 auto SelectionBucket::merge(const SelectionBucket& other) const noexcept
     -> SelectionBucket
 {
@@ -100,4 +120,24 @@ auto SelectionBucket::getSelections() const noexcept
     -> const std::vector<NodeSelection>&
 {
     return selections_;
+}
+
+auto SelectionBucket::getFirstIndex() const noexcept
+    -> std::optional<std::size_t>
+{
+    if(selections_.empty()) {
+        return std::nullopt;
+    }
+
+    return selections_.front().getIndex();
+}
+
+auto SelectionBucket::getLastIndex() const noexcept
+    -> std::optional<std::size_t>
+{
+    if(selections_.empty()) {
+        return std::nullopt;
+    }
+
+    return selections_.back().getIndex();
 }
