@@ -7,16 +7,18 @@ using selection::NodeSelection;
 
 NodeSelection::NodeSelection(std::vector<graph::Node> left_selection,
                              std::vector<graph::Node> right_selection,
-                             graph::Node center)
+                             graph::Node center,
+                             std::size_t index)
     : left_selection_(std::move(left_selection)),
       right_selection_(std::move(right_selection)),
-      center_(center) {}
+      center_(center),
+      index_(index) {}
 
-auto NodeSelection::operator<(const NodeSelection& other) const noexcept
-    -> bool
+
+auto NodeSelection::weight() const noexcept
+    -> std::size_t
 {
-    return left_selection_.size() * right_selection_.size()
-        < other.left_selection_.size() * other.right_selection_.size();
+    return left_selection_.size() * right_selection_.size();
 }
 
 auto NodeSelection::getLeftSelection() const noexcept
@@ -37,6 +39,12 @@ auto NodeSelection::getCenter() const noexcept
     return center_;
 }
 
+auto NodeSelection::getIndex() const noexcept
+    -> std::size_t
+{
+    return index_;
+}
+
 auto NodeSelection::toFile(std::string_view path) const noexcept
     -> void
 {
@@ -47,6 +55,6 @@ auto NodeSelection::toFile(std::string_view path) const noexcept
     for(auto node : right_selection_) {
         file << "1: (" << node.row << ", " << node.column << ")\n";
     }
-
     file << "center: (" << center_.row << ", " << center_.column << ")\n";
+    file << "index: " << index_ << "\n";
 }

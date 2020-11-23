@@ -137,7 +137,7 @@ auto runSeparation(const graph::GridGraph& graph,
 }
 
 auto runSelection(const graph::GridGraph& graph,
-                  std::string_view /*result_folder*/)
+                  std::string_view result_folder)
 {
     utils::Timer t;
     FullNodeSelectionCalculator<Dijkstra> selection_calculator{graph};
@@ -147,12 +147,18 @@ auto runSelection(const graph::GridGraph& graph,
     fmt::print("selections calculated: {}\n", selections.size());
 
     std::sort(std::rbegin(selections),
-              std::rend(selections));
+              std::rend(selections),
+			  [](const auto& lhs, const auto& rhs){
+				return lhs.weight() < rhs.weight();
+			  });
 
+
+	auto selection_folder = fmt::format("{}/selections", result_folder);
+	fs::create_directories(selection_folder);
 
     for(std::size_t i{0}; i < selections.size(); i++) {
         const auto& sel = selections[i];
-        const auto path = fmt::format("result-{}.seg", i);
+        const auto path = fmt::format("{}/selection-{}", selection_folder, i);
         sel.toFile(path);
     }
 

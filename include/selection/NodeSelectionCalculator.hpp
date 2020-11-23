@@ -105,7 +105,8 @@ public:
 
         NodeSelection selection{std::move(left),
                                 std::move(right),
-                                center};
+                                center,
+                                current_selection_idx_++};
 
         //cleanup and reset the state of the calculator
         cleanup();
@@ -269,6 +270,8 @@ private:
 
     std::vector<std::pair<graph::Node, graph::Distance>> left_selection_;
     std::vector<std::pair<graph::Node, graph::Distance>> right_selection_;
+
+    std::size_t current_selection_idx_ = 0;
 };
 
 } // namespace selection
