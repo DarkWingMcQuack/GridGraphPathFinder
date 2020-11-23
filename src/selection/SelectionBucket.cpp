@@ -105,11 +105,11 @@ auto SelectionBucket::getCommonSelection(const SelectionBucket& other) const noe
     return std::nullopt;
 }
 
-auto SelectionBucket::merge(const SelectionBucket& other) const noexcept
+auto SelectionBucket::merge(SelectionBucket other) && noexcept
     -> SelectionBucket
 {
-    auto merged = utils::intersect(selections_,
-                                   other.selections_);
+    auto merged = utils::intersect(std::move(selections_),
+                                   std::move(other.selections_));
     return SelectionBucket{std::move(merged), false};
 }
 
@@ -117,6 +117,18 @@ auto SelectionBucket::getSelections() const noexcept
     -> const std::vector<NodeSelection>&
 {
     return selections_;
+}
+
+auto SelectionBucket::exclude(const NodeSelection& selection) && noexcept
+    -> SelectionBucket
+{
+    selections_.erase(std::remove(std::begin(selections_),
+                                  std::end(selections_),
+                                  selection),
+                      std::end(selections_));
+
+    return SelectionBucket{std::move(selections_),
+                           false};
 }
 
 auto SelectionBucket::getFirstIndex() const noexcept

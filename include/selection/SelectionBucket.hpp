@@ -33,11 +33,9 @@ class SelectionBucket
                                  const graph::Node& to) const noexcept
         -> bool;
 
+    //the result reference lives as long as the given object other
     [[nodiscard]] auto getCommonSelection(const SelectionBucket& other) const noexcept
         -> std::optional<std::reference_wrapper<const NodeSelection>>;
-
-    [[nodiscard]] auto merge(const SelectionBucket& other) const noexcept
-        -> SelectionBucket;
 
     [[nodiscard]] auto getSelections() const noexcept
         -> const std::vector<NodeSelection>&;
@@ -47,6 +45,12 @@ class SelectionBucket
 
     [[nodiscard]] auto getLastIndex() const noexcept
         -> std::optional<std::size_t>;
+
+    [[nodiscard]] auto exclude(const NodeSelection& selection) && noexcept
+        -> SelectionBucket;
+
+    [[nodiscard]] auto merge(SelectionBucket other) && noexcept
+        -> SelectionBucket;
 
 private:
     std::vector<NodeSelection> selections_;
