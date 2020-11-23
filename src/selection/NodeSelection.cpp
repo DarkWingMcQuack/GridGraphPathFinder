@@ -45,6 +45,13 @@ auto NodeSelection::getIndex() const noexcept
     return index_;
 }
 
+
+auto NodeSelection::operator<(const NodeSelection& other) const noexcept
+    -> bool
+{
+    return index_ < other.index_;
+}
+
 auto NodeSelection::toFile(std::string_view path) const noexcept
     -> void
 {

@@ -21,6 +21,9 @@ public:
     [[nodiscard]] auto getRightSelection() const noexcept
         -> const std::vector<graph::Node>&;
 
+    [[nodiscard]] auto canAnswer(graph::Node from, graph::Node to) const noexcept
+        -> bool;
+
     [[nodiscard]] auto getCenter() const noexcept
         -> graph::Node;
 
@@ -29,6 +32,10 @@ public:
 
     [[nodiscard]] auto getIndex() const noexcept
         -> std::size_t;
+
+    [[nodiscard]] auto operator<(const NodeSelection& other) const noexcept
+        -> bool;
+
 
     auto toFile(std::string_view path) const noexcept
         -> void;
