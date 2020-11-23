@@ -35,6 +35,10 @@ public:
 
     [[nodiscard]] auto operator<(const NodeSelection& other) const noexcept
         -> bool;
+    [[nodiscard]] auto operator==(const NodeSelection& other) const noexcept
+        -> bool;
+    [[nodiscard]] auto operator!=(const NodeSelection& other) const noexcept
+        -> bool;
 
 
     auto toFile(std::string_view path) const noexcept
