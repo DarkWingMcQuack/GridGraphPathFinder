@@ -4,9 +4,9 @@
 #include <pathfinding/Distance.hpp>
 #include <queue>
 #include <random>
-#include <selection/SelectionLookup.hpp>
 #include <selection/NodeSelection.hpp>
 #include <selection/NodeSelectionCalculator.hpp>
+#include <selection/SelectionLookup.hpp>
 #include <unordered_set>
 #include <utils/Utils.hpp>
 #include <vector>
@@ -14,20 +14,25 @@
 using selection::SelectionLookup;
 using selection::NodeSelection;
 
-SelectionLookup::SelectionLookup(std::vector<NodeSelection> selections)
-    : selections_(std::move(selections))
+SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
+                                 std::vector<NodeSelection> selections)
+    : graph_(graph),
+      selections_(std::move(selections)),
+      selection_lookup_(graph.countWalkableNodes())
 {
     for(auto& selection : selections_) {
         for(auto node : selection.getLeftSelection()) {
-            node_selections_map_[node].emplace_back(&selection);
+            auto idx = getNodeIndex(node);
+            selection_lookup_[idx].emplace_back(&selection);
         }
 
         for(auto node : selection.getRightSelection()) {
-            node_selections_map_[node].emplace_back(&selection);
+            auto idx = getNodeIndex(node);
+            selection_lookup_[idx].emplace_back(&selection);
         }
     }
 
-    for(auto& [_, selections] : node_selections_map_) {
+    for(auto& selections : selection_lookup_) {
         std::sort(std::begin(selections),
                   std::end(selections));
         fmt::print("number of selections {}\n", selections.size());
@@ -36,7 +41,7 @@ SelectionLookup::SelectionLookup(std::vector<NodeSelection> selections)
 
 
 auto SelectionLookup::getOneCommonSelection(const graph::Node& first,
-                                                    const graph::Node& second) const noexcept
+                                            const graph::Node& second) const noexcept
     -> std::optional<std::reference_wrapper<const NodeSelection>>
 {
     auto [first_selections, second_selections] = getSelections(first, second);
@@ -46,7 +51,7 @@ auto SelectionLookup::getOneCommonSelection(const graph::Node& first,
 }
 
 auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
-                                                    const graph::Node& second) const noexcept
+                                            const graph::Node& second) const noexcept
     -> std::vector<NodeSelection*>
 {
     auto [first_selections, second_selections] = getSelections(first, second);
@@ -57,14 +62,17 @@ auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
 
 
 auto SelectionLookup::getSelections(const graph::Node& first,
-                                            const graph::Node& second) const noexcept
+                                    const graph::Node& second) const noexcept
     -> std::pair<
         std::reference_wrapper<const std::vector<NodeSelection*>>,
         std::reference_wrapper<const std::vector<NodeSelection*>>>
 {
-    return std::pair{
-        node_selections_map_.at(first),
-        node_selections_map_.at(second)};
+    auto first_idx = getNodeIndex(first);
+    auto second_idx = getNodeIndex(second);
+    auto first_selections = std::cref(selection_lookup_[first_idx]);
+    auto second_selections = std::cref(selection_lookup_[second_idx]);
+
+    return std::pair{first_selections, second_selections};
 }
 
 
@@ -90,6 +98,12 @@ auto SelectionLookup::getOneCommonSelection(
     return std::nullopt;
 }
 
+auto SelectionLookup::getNodeIndex(const graph::Node& n) const noexcept
+    -> std::size_t
+{
+    return n.row * graph_.getWidth() + n.column;
+}
+
 auto SelectionLookup::getAllCommonSelection(
     const std::vector<NodeSelection*>& first,
     const std::vector<NodeSelection*>& second) const noexcept
@@ -97,11 +111,3 @@ auto SelectionLookup::getAllCommonSelection(
 {
     return utils::intersect(first, second);
 }
-
-
-
-
-
-
-
-

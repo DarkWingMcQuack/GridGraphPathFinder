@@ -16,7 +16,8 @@ namespace selection {
 class SelectionLookup
 {
 public:
-    SelectionLookup(std::vector<NodeSelection> selections);
+    SelectionLookup(const graph::GridGraph& graph,
+                    std::vector<NodeSelection> selections);
 
 
     [[nodiscard]] auto getOneCommonSelection(const graph::Node& first,
@@ -45,11 +46,14 @@ private:
         const std::vector<NodeSelection*>& second) const noexcept
         -> std::vector<NodeSelection*>;
 
+
+    [[nodiscard]] auto getNodeIndex(const graph::Node& n) const noexcept
+        -> std::size_t;
+
 private:
+    const graph::GridGraph& graph_;
     std::vector<NodeSelection> selections_;
-    std::unordered_map<graph::Node,
-                       std::vector<NodeSelection*>>
-        node_selections_map_;
+    std::vector<std::vector<NodeSelection*>> selection_lookup_;
 };
 
 } // namespace selection

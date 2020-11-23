@@ -156,7 +156,7 @@ auto runSelection(const graph::GridGraph& graph,
         sel.toFile(path);
     }
 
-    selection::SelectionLookup lookup{std::move(selections)};
+    selection::SelectionLookup lookup{graph, std::move(selections)};
 }
 
 auto main(int argc, char* argv[])
