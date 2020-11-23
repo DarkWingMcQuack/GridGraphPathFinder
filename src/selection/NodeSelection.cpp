@@ -45,6 +45,32 @@ auto NodeSelection::getIndex() const noexcept
     return index_;
 }
 
+auto NodeSelection::canAnswer(graph::Node from, graph::Node to) const noexcept
+    -> bool
+{
+    auto first_iter = std::find(std::begin(left_selection_),
+                                std::end(left_selection_),
+                                from);
+
+    auto second_iter = std::find(std::begin(right_selection_),
+                                 std::end(right_selection_),
+                                 to);
+
+    if(first_iter != std::end(left_selection_)
+       and second_iter != std::end(right_selection_)) {
+        return true;
+    }
+
+    first_iter = std::find(std::begin(right_selection_),
+                           std::end(right_selection_),
+                           from);
+
+    second_iter = std::find(std::begin(left_selection_),
+                            std::end(left_selection_),
+                            to);
+    return first_iter != std::end(left_selection_)
+        and second_iter != std::end(right_selection_);
+}
 
 auto NodeSelection::operator<(const NodeSelection& other) const noexcept
     -> bool
