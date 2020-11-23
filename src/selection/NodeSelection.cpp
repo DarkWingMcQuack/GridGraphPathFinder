@@ -12,7 +12,14 @@ NodeSelection::NodeSelection(std::vector<graph::Node> left_selection,
     : left_selection_(std::move(left_selection)),
       right_selection_(std::move(right_selection)),
       center_(center),
-      index_(index) {}
+      index_(index)
+{
+    std::sort(std::begin(left_selection_),
+              std::end(left_selection_));
+
+    std::sort(std::begin(right_selection_),
+              std::end(right_selection_));
+}
 
 
 auto NodeSelection::weight() const noexcept
@@ -48,28 +55,19 @@ auto NodeSelection::getIndex() const noexcept
 auto NodeSelection::canAnswer(graph::Node from, graph::Node to) const noexcept
     -> bool
 {
-    auto first_iter = std::find(std::begin(left_selection_),
-                                std::end(left_selection_),
-                                from);
+    return (std::binary_search(std::begin(left_selection_),
+                               std::end(left_selection_),
+                               from)
+            and std::binary_search(std::begin(left_selection_),
+                                   std::end(left_selection_),
+                                   to))
 
-    auto second_iter = std::find(std::begin(right_selection_),
-                                 std::end(right_selection_),
-                                 to);
-
-    if(first_iter != std::end(left_selection_)
-       and second_iter != std::end(right_selection_)) {
-        return true;
-    }
-
-    first_iter = std::find(std::begin(right_selection_),
-                           std::end(right_selection_),
-                           from);
-
-    second_iter = std::find(std::begin(left_selection_),
-                            std::end(left_selection_),
-                            to);
-    return first_iter != std::end(left_selection_)
-        and second_iter != std::end(right_selection_);
+        or (std::binary_search(std::begin(left_selection_),
+                               std::end(left_selection_),
+                               to)
+            and std::binary_search(std::begin(left_selection_),
+                                   std::end(left_selection_),
+                                   from));
 }
 
 auto NodeSelection::operator<(const NodeSelection& other) const noexcept
