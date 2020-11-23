@@ -32,7 +32,7 @@ class SelectionBucket
                                  const graph::Node& to) const noexcept
         -> bool;
 
-    [[nodiscard]] auto merge(SelectionBucket other) const noexcept
+    [[nodiscard]] auto merge(const SelectionBucket& other) const noexcept
         -> SelectionBucket;
 
     [[nodiscard]] auto getSelections() const noexcept
