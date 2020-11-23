@@ -35,7 +35,7 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
     for(auto& selections : selection_lookup_) {
         std::sort(std::begin(selections),
                   std::end(selections),
-                  [](auto lhs, auto rhs) {
+                  [](const auto* lhs, const auto* rhs) {
                       return lhs->getIndex() < rhs->getIndex();
                   });
     }
@@ -48,8 +48,8 @@ auto SelectionLookup::getOneCommonSelection(const graph::Node& first,
 {
     auto [first_selections, second_selections] = getSelections(first, second);
 
-    return getOneCommonSelection(first_selections.get(),
-                                 second_selections.get());
+    return getOneCommonSelection(first_selections,
+                                 second_selections);
 }
 
 auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
@@ -58,8 +58,8 @@ auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
 {
     auto [first_selections, second_selections] = getSelections(first, second);
 
-    return getAllCommonSelection(first_selections.get(),
-                                 second_selections.get());
+    return getAllCommonSelection(first_selections,
+                                 second_selections);
 }
 
 
@@ -89,9 +89,9 @@ auto SelectionLookup::getOneCommonSelection(
     auto iter2_end = std::end(second);
 
     while(iter1 != iter1_end && iter2 != iter2_end) {
-        if(*iter1 < *iter2) {
+        if((*iter1)->getIndex() < (*iter2)->getIndex()) {
             ++iter1;
-        } else if(*iter2 < *iter1) {
+        } else if((*iter2)->getIndex() < (*iter1)->getIndex()) {
             ++iter2;
         } else {
             return std::cref(**iter1);
