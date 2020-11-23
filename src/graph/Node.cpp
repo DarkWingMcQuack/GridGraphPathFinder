@@ -20,7 +20,18 @@ auto Node::operator!=(const Node& other) const noexcept
 auto Node::operator<(const Node& other) const noexcept
     -> bool
 {
-    return row < other.row || column < other.column;
+    //weiter oben?
+    if(row < other.row) {
+        return true;
+    }
+
+	//weiter unten?
+    if(row > other.row) {
+        return false;
+    }
+
+	//gleiche row, dann vergleiche column
+    return column < other.column;
 }
 auto Node::operator>(const Node& other) const noexcept
     -> bool
