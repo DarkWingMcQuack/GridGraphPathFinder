@@ -18,14 +18,14 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
 
 {
     for(auto sep : separations) {
-        auto left = getFirstCluster(sep);
+        auto left = sep.getFirstCluster();
         for(auto n : left) {
             auto idx = getIndex(n);
             separation_lookup_[idx].emplace_back(sep);
         }
 
-        auto right = getSecondCluster(sep);
-        auto switched_sep = switchSides(sep);
+        auto right = sep.getSecondCluster();
+        auto switched_sep = sep.switchSides();
         for(auto n : right) {
             auto idx = getIndex(n);
             separation_lookup_[idx].emplace_back(switched_sep);
@@ -33,11 +33,10 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
     }
 
     for(auto& vec : separation_lookup_) {
-        // fmt::print("size: {}\n", vec.size());
         std::sort(std::begin(vec),
                   std::end(vec),
                   [](auto lhs, auto rhs) {
-                      return weight(lhs) < weight(rhs);
+                      return lhs.weight() < rhs.weight();
                   });
     }
 }
@@ -60,18 +59,17 @@ auto SeparationDistanceOracle::findDistance(graph::Node from, graph::Node to) co
     auto separation = *std::find_if(std::cbegin(from_separations),
                                     std::cend(from_separations),
                                     [&](auto separation) {
-                                        auto second = getSecondCluster(separation);
+                                        auto second = separation.getSecondCluster();
                                         return second.isInCell(to);
                                     });
 
-    if(std::holds_alternative<ComplexSeparation>(separation)) {
-        const auto& sep = std::get<ComplexSeparation>(separation);
-        auto left_center = sep.getFirstClusterCenter();
-        auto right_center = sep.getSecondClusterCenter();
-        auto center_distance = sep.getCenterDistance();
+    if(separation.isComplex()) {
+        auto left_center = separation.getFirstClusterCenter();
+        auto right_center = separation.getSecondClusterCenter();
+        auto center_distance = separation.getCenterDistance();
 
         if(left_center == from and right_center == to) {
-            return sep.getCenterDistance();
+            return separation.getCenterDistance();
         }
 
         if(left_center == from) {

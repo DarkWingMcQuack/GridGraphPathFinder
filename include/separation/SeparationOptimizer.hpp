@@ -58,10 +58,10 @@ private:
     auto findOptimalSeparation(Separation current_optimum) noexcept
         -> Separation
     {
-        auto left = getFirstCluster(current_optimum);
-        auto right = getSecondCluster(current_optimum);
+        auto left = current_optimum.getFirstCluster();
+        auto right = current_optimum.getSecondCluster();
 
-        auto current_optimal_weight = weight(current_optimum);
+        auto current_optimal_weight = current_optimum.weight();
 
         auto [all_left_clusters, all_right_clusters] =
             graph_.getAllPossibleSeparationCells(left, right);
@@ -80,7 +80,7 @@ private:
 
                 if(auto separation = checkSeparation(path_finder_, left_cluster, right_cluster)) {
                     current_optimum = separation.value();
-                    current_optimal_weight = weight(current_optimum);
+                    current_optimal_weight = current_optimum.weight();
                 }
             }
         }
@@ -95,7 +95,7 @@ private:
             std::remove_if(std::begin(separations_),
                            std::end(separations_),
                            [&](auto elem) {
-                               return isSuperSetOf(sep, elem);
+                               return sep.isSuperSetOf(elem);
                            }),
             std::end(separations_));
 
@@ -107,7 +107,7 @@ private:
         return std::any_of(std::begin(optimized_),
                            std::end(optimized_),
                            [&](auto sep) {
-                               return canAnswer(sep, from, to);
+                               return sep.canAnswer(from, to);
                            });
     }
 
@@ -129,8 +129,8 @@ private:
     auto weight(const Separation& sep) const noexcept
         -> std::size_t
     {
-        auto first = getFirstCluster(sep);
-        auto second = getSecondCluster(sep);
+        auto first = sep.getFirstCluster();
+        auto second = sep.getSecondCluster();
 
         return weight(first, second);
     }

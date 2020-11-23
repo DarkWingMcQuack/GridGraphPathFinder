@@ -4,17 +4,17 @@
 #include <pathfinding/Distance.hpp>
 #include <queue>
 #include <random>
-#include <selection/HubLabelSelectionLookup.hpp>
+#include <selection/SelectionLookup.hpp>
 #include <selection/NodeSelection.hpp>
 #include <selection/NodeSelectionCalculator.hpp>
 #include <unordered_set>
 #include <utils/Utils.hpp>
 #include <vector>
 
-using selection::HubLabelSelectionLookup;
+using selection::SelectionLookup;
 using selection::NodeSelection;
 
-HubLabelSelectionLookup::HubLabelSelectionLookup(std::vector<NodeSelection> selections)
+SelectionLookup::SelectionLookup(std::vector<NodeSelection> selections)
     : selections_(std::move(selections))
 {
     for(auto& selection : selections_) {
@@ -35,7 +35,7 @@ HubLabelSelectionLookup::HubLabelSelectionLookup(std::vector<NodeSelection> sele
 }
 
 
-auto HubLabelSelectionLookup::getOneCommonSelection(const graph::Node& first,
+auto SelectionLookup::getOneCommonSelection(const graph::Node& first,
                                                     const graph::Node& second) const noexcept
     -> std::optional<std::reference_wrapper<const NodeSelection>>
 {
@@ -45,7 +45,7 @@ auto HubLabelSelectionLookup::getOneCommonSelection(const graph::Node& first,
                                  second_selections.get());
 }
 
-auto HubLabelSelectionLookup::getAllCommonSelection(const graph::Node& first,
+auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
                                                     const graph::Node& second) const noexcept
     -> std::vector<NodeSelection*>
 {
@@ -56,7 +56,7 @@ auto HubLabelSelectionLookup::getAllCommonSelection(const graph::Node& first,
 }
 
 
-auto HubLabelSelectionLookup::getSelections(const graph::Node& first,
+auto SelectionLookup::getSelections(const graph::Node& first,
                                             const graph::Node& second) const noexcept
     -> std::pair<
         std::reference_wrapper<const std::vector<NodeSelection*>>,
@@ -68,7 +68,7 @@ auto HubLabelSelectionLookup::getSelections(const graph::Node& first,
 }
 
 
-auto HubLabelSelectionLookup::getOneCommonSelection(
+auto SelectionLookup::getOneCommonSelection(
     const std::vector<NodeSelection*>& first,
     const std::vector<NodeSelection*>& second) const noexcept
     -> std::optional<std::reference_wrapper<const NodeSelection>>
@@ -90,10 +90,18 @@ auto HubLabelSelectionLookup::getOneCommonSelection(
     return std::nullopt;
 }
 
-auto HubLabelSelectionLookup::getAllCommonSelection(
+auto SelectionLookup::getAllCommonSelection(
     const std::vector<NodeSelection*>& first,
     const std::vector<NodeSelection*>& second) const noexcept
     -> std::vector<NodeSelection*>
 {
     return utils::intersect(first, second);
 }
+
+
+
+
+
+
+
+

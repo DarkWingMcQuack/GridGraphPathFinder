@@ -71,7 +71,7 @@ template<class PathFinder>
           is_trivial_separation] = findCenterCandidates(path_finder, first, second);
 
     if(is_trivial_separation) {
-        return TrivialSeparation(first, second);
+        return Separation(first, second);
     }
 
     //calculate all distances from the clusters to its centers
@@ -127,12 +127,11 @@ template<class PathFinder>
         }
     }
 
-    return ComplexSeparation{first,
+    return Separation{first,
                              second,
                              first_center,
                              second_center,
                              center_to_center_distance};
 }
-
 
 } // namespace separation

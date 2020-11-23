@@ -7,13 +7,12 @@
 #include <separation/Separation.hpp>
 #include <sstream>
 
-using separation::ComplexSeparation;
-using separation::TrivialSeparation;
+using separation::Separation;
 using graph::Distance;
 using graph::Node;
 using graph::GridCell;
 
-ComplexSeparation::ComplexSeparation(GridCell first,
+Separation::Separation(GridCell first,
                                      GridCell second,
                                      Node first_center,
                                      Node second_center,
@@ -25,48 +24,60 @@ ComplexSeparation::ComplexSeparation(GridCell first,
       center_distance_(center_distance) {}
 
 
-auto ComplexSeparation::getCenterDistance() const noexcept
+auto Separation::getCenterDistance() const noexcept
     -> Distance
 {
     return center_distance_;
 }
 
-auto ComplexSeparation::getFirstCluster() const noexcept
+auto Separation::getFirstCluster() const noexcept
     -> GridCell
 {
     return first_;
 }
 
-auto ComplexSeparation::getSecondCluster() const noexcept
+auto Separation::getSecondCluster() const noexcept
     -> GridCell
 {
     return second_;
 }
 
-auto ComplexSeparation::getFirstClusterCenter() const noexcept
+auto Separation::getFirstClusterCenter() const noexcept
     -> Node
 {
     return first_center_;
 }
 
-auto ComplexSeparation::switchSides() const noexcept
-    -> ComplexSeparation
+auto Separation::isComplex() const noexcept
+    -> bool
 {
-    return ComplexSeparation{second_,
+    return center_distance_ != -1;
+}
+
+auto Separation::isTrivial() const noexcept
+    -> bool
+{
+    return center_distance_ == -1;
+}
+
+auto Separation::switchSides() const noexcept
+    -> Separation
+{
+    return Separation{second_,
                              first_,
                              second_center_,
                              first_center_,
                              center_distance_};
 }
 
-auto ComplexSeparation::getSecondClusterCenter() const noexcept
+auto Separation::getSecondClusterCenter() const noexcept
     -> Node
 {
     return second_center_;
 }
 
 
-auto ComplexSeparation::toFile(std::string_view path) const noexcept
+auto Separation::toFile(std::string_view path) const noexcept
     -> void
 {
     std::ofstream file{path.data()};
@@ -75,94 +86,23 @@ auto ComplexSeparation::toFile(std::string_view path) const noexcept
     }
     for(auto node : second_) {
         file << "1: (" << node.row << ", " << node.column << ")\n";
+    }
+
+    if(isTrivial()) {
+        return;
     }
 
     file << "center: (" << first_center_.row << ", " << first_center_.column << ")\n";
     file << "center: (" << second_center_.row << ", " << second_center_.column << ")\n";
 }
 
-auto ComplexSeparation::toSmallFile(std::string_view path) const noexcept
+auto Separation::toSmallFile(std::string_view path) const noexcept
     -> void
 {
     std::ofstream file{path.data()};
-    file << "type: complex\n";
-    file << "first: ("
-         << first_.getTopLeft().getRow()
-         << ", "
-         << first_.getTopLeft().getColumn()
-         << "), ("
-         << first_.getBottomRight().getRow()
-         << ", "
-         << first_.getBottomRight().getColumn()
-         << ")\n"
-         << "second: ("
-         << second_.getTopLeft().getRow()
-         << ", "
-         << second_.getTopLeft().getColumn()
-         << "), ("
-         << second_.getBottomRight().getRow()
-         << ", "
-         << second_.getBottomRight().getColumn()
-         << ")\n"
-         << "first center: ("
-         << first_center_.row
-         << ", "
-         << first_center_.column
-         << ")\n"
-         << "second center: ("
-         << second_center_.row
-         << ", "
-         << second_center_.column
-         << ")\n"
-         << "center to center distance: "
-         << center_distance_
-         << "\n";
-}
-
-
-TrivialSeparation::TrivialSeparation(graph::GridCell first,
-                                     graph::GridCell second)
-    : first_(first),
-      second_(second) {}
-
-auto TrivialSeparation::getFirstCluster() const noexcept
-    -> graph::GridCell
-{
-    return first_;
-}
-
-auto TrivialSeparation::getSecondCluster() const noexcept
-    -> graph::GridCell
-{
-    return second_;
-}
-
-auto TrivialSeparation::switchSides() const noexcept
-    -> TrivialSeparation
-{
-    return TrivialSeparation{second_,
-                             first_};
-}
-
-
-auto TrivialSeparation::toFile(std::string_view path) const noexcept
-    -> void
-{
-    std::ofstream file{path.data()};
-    for(auto node : first_) {
-        file << "0: (" << node.row << ", " << node.column << ")\n";
-    }
-    for(auto node : second_) {
-        file << "1: (" << node.row << ", " << node.column << ")\n";
-    }
-}
-
-auto TrivialSeparation::toSmallFile(std::string_view path) const noexcept
-    -> void
-{
-    std::ofstream file{path.data()};
-    file << "type: trivial\n";
-    file << "first: ("
+    file << "type: "
+         << (isComplex() ? "complex\n" : "trivial\n")
+         << "first: ("
          << first_.getTopLeft().getRow()
          << ", "
          << first_.getTopLeft().getColumn()
@@ -180,79 +120,80 @@ auto TrivialSeparation::toSmallFile(std::string_view path) const noexcept
          << ", "
          << second_.getBottomRight().getColumn()
          << ")\n";
+
+    if(isTrivial()) {
+        return;
+    }
+
+    file << "first center: ("
+         << first_center_.row
+         << ", "
+         << first_center_.column
+         << ")\n"
+         << "second center: ("
+         << second_center_.row
+         << ", "
+         << second_center_.column
+         << ")\n"
+         << "center to center distance: "
+         << center_distance_
+         << "\n";
 }
 
-
-auto separation::getFirstCluster(const Separation& sep) noexcept
-    -> graph::GridCell
-{
-    return std::visit(
-        [](const auto& separation) {
-            return separation.getFirstCluster();
-        },
-        sep);
-}
-
-auto separation::getSecondCluster(const Separation& sep) noexcept
-    -> graph::GridCell
-{
-    return std::visit(
-        [](const auto& separation) {
-            return separation.getSecondCluster();
-        },
-        sep);
-}
-
-auto separation::isSuperSetOf(const Separation& first, const Separation& second) noexcept
+auto Separation::isSuperSetOf(const Separation& other) const noexcept
     -> bool
 {
-    auto first_left = getFirstCluster(first);
-    auto first_right = getSecondCluster(first);
-
-    auto second_left = getFirstCluster(second);
-    auto second_right = getSecondCluster(second);
-
-    return (first_left.isSuperSetOf(second_left) and first_right.isSuperSetOf(second_right))
-        or (first_left.isSuperSetOf(second_right) and first_right.isSuperSetOf(second_left));
+    return (first_.isSuperSetOf(other.second_) and second_.isSuperSetOf(other.second_))
+        or (first_.isSuperSetOf(other.second_) and second_.isSuperSetOf(other.second_));
 }
 
-auto separation::isSubSetOf(const Separation& first, const Separation& second) noexcept
+auto Separation::isSubSetOf(const Separation& other) const noexcept
     -> bool
 {
-    auto first_left = getFirstCluster(first);
-    auto first_right = getSecondCluster(first);
-
-    auto second_left = getFirstCluster(second);
-    auto second_right = getSecondCluster(second);
-
-    return (first_left.isSubSetOf(second_left) and first_right.isSubSetOf(second_right))
-        or (first_left.isSubSetOf(second_right) and first_right.isSubSetOf(second_left));
+    return (first_.isSubSetOf(other.first_) and second_.isSubSetOf(other.second_))
+        or (first_.isSubSetOf(other.second_) and second_.isSubSetOf(other.first_));
 }
 
-auto separation::canAnswer(const Separation& sep, graph::Node from, graph::Node to) noexcept
+auto Separation::canAnswer(graph::Node from, graph::Node to) const noexcept
     -> bool
 {
-    auto left = getFirstCluster(sep);
-    auto right = getSecondCluster(sep);
+    auto left_from_iter = std::find(std::begin(first_), std::end(first_), from);
+    auto left_to_iter = std::find(std::begin(first_), std::end(first_), to);
 
-    auto left_from_iter = std::find(std::begin(left), std::end(left), from);
-    auto left_to_iter = std::find(std::begin(left), std::end(left), to);
+    auto right_from_iter = std::find(std::begin(second_), std::end(second_), from);
+    auto right_to_iter = std::find(std::begin(second_), std::end(second_), to);
 
-    auto right_from_iter = std::find(std::begin(right), std::end(right), from);
-    auto right_to_iter = std::find(std::begin(right), std::end(right), to);
-
-    return (left_from_iter != std::end(left) and right_to_iter != std::end(right))
-        or (right_from_iter != std::end(right) and left_to_iter != std::end(left));
+    return (left_from_iter != std::end(first_) and right_to_iter != std::end(second_))
+        or (right_from_iter != std::end(second_) and left_to_iter != std::end(first_));
 }
 
+auto Separation::weight() const noexcept
+    -> std::size_t
+{
+    return first_.size() * second_.size();
+}
+
+auto Separation::toString() const noexcept
+    -> std::string
+{
+    std::stringstream ss;
+    ss << first_
+       << ":"
+       << second_
+       << "("
+       << weight()
+       << ")";
+
+    return ss.str();
+}
 
 auto separation::operator==(const Separation& lhs, const Separation& rhs) noexcept
     -> bool
 {
-    return (getFirstCluster(lhs) == getFirstCluster(rhs)
-            and getSecondCluster(lhs) == getSecondCluster(rhs))
-        or (getFirstCluster(lhs) == getSecondCluster(rhs)
-            and getSecondCluster(lhs) == getFirstCluster(rhs));
+    return (lhs.getFirstCluster() == rhs.getFirstCluster()
+            and lhs.getSecondCluster() == rhs.getSecondCluster())
+        or (lhs.getFirstCluster() == rhs.getSecondCluster()
+            and lhs.getSecondCluster() == rhs.getFirstCluster());
 }
 
 auto separation::operator!=(const Separation& lhs, const Separation& rhs) noexcept
@@ -261,32 +202,35 @@ auto separation::operator!=(const Separation& lhs, const Separation& rhs) noexce
     return !(lhs == rhs);
 }
 
-
 auto separation::operator<(const Separation& lhs, const Separation& rhs) noexcept
     -> bool
 {
-    return weight(lhs) < weight(rhs);
+    return lhs.weight() < rhs.weight();
 }
 
-auto separation::toFile(const Separation& sep, std::string_view path) noexcept
-    -> void
-
+auto Separation::smallestDistance(const graph::GridGraph& graph) const noexcept
+    -> graph::Distance
 {
-    std::visit(
-        [=](const auto& separation) {
-            return separation.toFile(path);
-        },
-        sep);
-}
+    if(isComplex()) {
+        return center_distance_;
+    }
 
-auto separation::toSmallFile(const Separation& sep, std::string_view path) noexcept
-    -> void
-{
-    std::visit(
-        [=](const auto& separation) {
-            return separation.toSmallFile(path);
-        },
-        sep);
+    return std::accumulate(std::begin(first_),
+                           std::end(first_),
+                           graph::UNREACHABLE,
+                           [&](auto init, auto next) {
+                               auto min_dist =
+                                   std::accumulate(
+                                       std::begin(second_),
+                                       std::end(second_),
+                                       graph::UNREACHABLE,
+                                       [&](auto init, auto next_r) {
+                                           auto dist = graph.getTrivialDistance(next, next_r);
+                                           return std::min(init, dist);
+                                       });
+
+                               return std::min(init, min_dist);
+                           });
 }
 
 namespace {
@@ -371,7 +315,7 @@ auto separation::fromFile(std::string_view path) noexcept
 
     auto splitted = split_string(str);
     auto type = splitted[0];
-    type.erase(type.find("type: "), 6);
+	type = eraseAllSubStr(type, "type: ");
 
     auto first_str = splitted[1];
     auto second_str = splitted[2];
@@ -390,7 +334,7 @@ auto separation::fromFile(std::string_view path) noexcept
     auto second_cluster = parseCluster(second_str);
 
     if(type == "trivial") {
-        return TrivialSeparation{first_cluster, second_cluster};
+        return Separation{first_cluster, second_cluster};
     }
 
     if(type == "complex") {
@@ -414,7 +358,7 @@ auto separation::fromFile(std::string_view path) noexcept
         auto second_center = parseNode(second_center_str);
         auto distance = std::stol(distance_str);
 
-        return ComplexSeparation{first_cluster,
+        return Separation{first_cluster,
                                  second_cluster,
                                  first_center,
                                  second_center,
@@ -424,68 +368,6 @@ auto separation::fromFile(std::string_view path) noexcept
     return std::nullopt;
 }
 
-auto separation::weight(const Separation& sep) noexcept
-    -> std::size_t
-{
-    return getFirstCluster(sep).size()
-        * getSecondCluster(sep).size();
-}
-
-auto separation::toString(const Separation& sep) noexcept
-    -> std::string
-{
-    std::stringstream ss;
-    ss << getFirstCluster(sep)
-       << ":"
-       << getSecondCluster(sep)
-       << "("
-       << weight(sep)
-       << ")";
-
-    return ss.str();
-}
-
-auto separation::switchSides(const Separation& sep) noexcept
-    -> Separation
-{
-    return std::visit(
-        [](const auto& sep) -> Separation {
-            return sep.switchSides();
-        },
-        sep);
-}
-
-auto separation::smallestDistance(const Separation& sep,
-                                  const graph::GridGraph& graph) noexcept
-    -> graph::Distance
-{
-    if(std::holds_alternative<ComplexSeparation>(sep)) {
-        const auto complex_sep = std::get<ComplexSeparation>(sep);
-        return complex_sep.getCenterDistance();
-    }
-
-    auto left = getFirstCluster(sep);
-    auto right = getSecondCluster(sep);
-
-    return std::accumulate(std::begin(left),
-                           std::end(left),
-                           graph::UNREACHABLE,
-                           [&](auto init, auto next) {
-                               auto min_dist =
-                                   std::accumulate(
-                                       std::begin(right),
-                                       std::end(right),
-                                       graph::UNREACHABLE,
-                                       [&](auto init, auto next_r) {
-                                           auto dist = graph.getTrivialDistance(next, next_r);
-                                           return std::min(init, dist);
-                                       });
-
-                               return std::min(init, min_dist);
-                           });
-}
-
-
 auto separation::sizeDistribution3DToFile(const std::vector<Separation>& separations,
                                           std::string_view file_path) noexcept
     -> void
@@ -493,8 +375,8 @@ auto separation::sizeDistribution3DToFile(const std::vector<Separation>& separat
     std::map<std::pair<std::int64_t, std::int64_t>, std::int64_t> sep_distribution;
 
     for(const auto& sep : separations) {
-        auto first = getFirstCluster(sep).size();
-        auto second = getSecondCluster(sep).size();
+        auto first = sep.getFirstCluster().size();
+        auto second = sep.getSecondCluster().size();
 
         auto smaller = std::min(first, second);
         auto larger = std::max(first, second);
@@ -517,8 +399,8 @@ auto separation::sizeToDistanceToFile(const std::vector<Separation>& separations
     std::unordered_map<std::size_t, std::vector<graph::Distance>> sep_dist;
 
     for(const auto& sep : separations) {
-        const auto w = weight(sep);
-        const auto dist = smallestDistance(sep, graph);
+        const auto w = sep.weight();
+        const auto dist = sep.smallestDistance(graph);
         sep_dist[w].emplace_back(dist);
     }
 
@@ -531,3 +413,4 @@ auto separation::sizeToDistanceToFile(const std::vector<Separation>& separations
         file << w << ", " << avg_dist << "\n";
     }
 }
+

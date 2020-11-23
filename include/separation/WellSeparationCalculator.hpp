@@ -82,7 +82,7 @@ namespace test {
             auto valid = std::any_of(std::begin(separations),
                                      std::end(separations),
                                      [&](auto sep) {
-                                         return canAnswer(sep, first, second);
+                                         return sep.canAnswer(first, second);
                                      });
 
             if(!valid) {
@@ -111,3 +111,6 @@ template<class PathFinder>
 }
 
 } // namespace separation
+
+
+

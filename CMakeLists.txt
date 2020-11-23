@@ -65,7 +65,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelection.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelectionCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/FullNodeSelectionCalculator.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/selection/HubLabelSelectionLookup.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionLookup.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Path.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Dijkstra.hpp
@@ -88,7 +88,7 @@ target_sources(GridGraphPathFinderSrc
   src/separation/SeparationDistanceOracle.cpp
 
   src/selection/NodeSelection.cpp
-  src/selection/HubLabelSelectionLookup.cpp
+  src/selection/SelectionLookup.cpp
 
   src/utils/ProgramOptions.cpp
 

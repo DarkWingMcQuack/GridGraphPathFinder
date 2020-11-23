@@ -13,10 +13,10 @@
 
 namespace selection {
 
-class HubLabelSelectionLookup
+class SelectionLookup
 {
 public:
-    HubLabelSelectionLookup(std::vector<NodeSelection> selections);
+    SelectionLookup(std::vector<NodeSelection> selections);
 
 
     [[nodiscard]] auto getOneCommonSelection(const graph::Node& first,
