@@ -36,7 +36,6 @@ public:
         -> bool;
     [[nodiscard]] auto operator!=(const GridCell& other) const noexcept
         -> bool;
-
     [[nodiscard]] auto operator<(const GridCell& other) const noexcept
         -> bool;
 

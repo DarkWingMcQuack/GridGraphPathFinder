@@ -24,8 +24,10 @@ GridCell::GridCell(GridCorner top_left,
       bottom_right_(bottom_right) {}
 
 GridCell::GridCell(Node node) noexcept
-    : top_left_(static_cast<int64_t>(node.row), static_cast<int64_t>(node.column)),
-      bottom_right_(static_cast<int64_t>(node.row + 1), static_cast<int64_t>(node.column + 1)) {}
+    : top_left_(static_cast<int64_t>(node.row),
+                static_cast<int64_t>(node.column)),
+      bottom_right_(static_cast<int64_t>(node.row + 1),
+                    static_cast<int64_t>(node.column + 1)) {}
 
 
 auto GridCell::operator==(const GridCell& other) const noexcept
@@ -44,7 +46,18 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
 auto GridCell::operator<(const GridCell& other) const noexcept
     -> bool
 {
-    return size() < other.size();
+    //weiter oben?
+    if(top_left_.row_ < other.top_left_.row_) {
+        return true;
+    }
+
+	//weiter unten?
+    if(top_left_.row_ > other.top_left_.row_) {
+        return false;
+    }
+
+	//gleiche row, dann vergleiche column
+    return top_left_.column_ < other.top_left_.column_;
 }
 
 auto GridCell::operator[](std::size_t idx) const noexcept
@@ -292,7 +305,7 @@ auto GridCell::wrapInCell(Node n) noexcept
     GridCorner bottom_right{static_cast<int64_t>(n.row),
                             static_cast<int64_t>(n.column)};
 
-	
+
 
     return GridCell{top_left, bottom_right};
 }
