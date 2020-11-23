@@ -5,6 +5,7 @@
 #include <pathfinding/Distance.hpp>
 #include <pathfinding/Path.hpp>
 #include <separation/Separation.hpp>
+#include <sstream>
 
 using separation::ComplexSeparation;
 using separation::TrivialSeparation;
@@ -286,6 +287,141 @@ auto separation::toSmallFile(const Separation& sep, std::string_view path) noexc
             return separation.toSmallFile(path);
         },
         sep);
+}
+
+namespace {
+
+auto split_string(const std::string& str)
+    -> std::vector<std::string>
+{
+    std::vector<std::string> strings;
+
+    std::string::size_type pos = 0;
+    std::string::size_type prev = 0;
+    while((pos = str.find('\n', prev)) != std::string::npos) {
+        strings.push_back(str.substr(prev, pos - prev));
+        prev = pos + 1;
+    }
+
+    strings.push_back(str.substr(prev));
+
+    return strings;
+}
+auto eraseAllSubStr(std::string main_str, const std::string& to_erase)
+    -> std::string
+{
+    size_t pos = std::string::npos;
+    // Search for the substring in string in a loop untill nothing is found
+    while((pos = main_str.find(to_erase)) != std::string::npos) {
+        // If found then erase it from string
+        main_str.erase(pos, to_erase.length());
+    }
+
+    return main_str;
+}
+
+auto parseCluster(std::string_view str)
+    -> GridCell
+{
+    std::vector<std::int64_t> vect;
+
+    std::stringstream ss(str.data());
+
+    for(std::int64_t i; ss >> i;) {
+        vect.push_back(i);
+        if(ss.peek() == ',')
+            ss.ignore();
+    }
+
+    std::int64_t top_left_row = vect[0];
+    std::int64_t top_left_column = vect[1];
+    std::int64_t bottom_right_row = vect[2];
+    std::int64_t bottom_right_column = vect[3];
+
+    graph::GridCorner top_left{top_left_row, top_left_column};
+    graph::GridCorner bottom_right{bottom_right_row, bottom_right_column};
+
+    return GridCell{top_left, bottom_right};
+}
+
+auto parseNode(std::string_view str)
+    -> Node
+{
+    std::vector<std::size_t> vect;
+
+    std::stringstream ss(str.data());
+
+    for(std::size_t i; ss >> i;) {
+        vect.push_back(i);
+        if(ss.peek() == ',')
+            ss.ignore();
+    }
+
+    return Node{vect[0], vect[1]};
+}
+
+} // namespace
+
+auto separation::fromFile(std::string_view path) noexcept
+    -> std::optional<Separation>
+{
+    std::ifstream istream(path.data());
+    std::string str((std::istreambuf_iterator<char>(istream)),
+                    std::istreambuf_iterator<char>());
+
+    auto splitted = split_string(str);
+    auto type = splitted[0];
+    type.erase(type.find("type: "), 6);
+
+    auto first_str = splitted[1];
+    auto second_str = splitted[2];
+
+    first_str = eraseAllSubStr(first_str, "(");
+    first_str = eraseAllSubStr(first_str, ")");
+    first_str = eraseAllSubStr(first_str, " ");
+    first_str = eraseAllSubStr(first_str, "first:");
+
+    second_str = eraseAllSubStr(second_str, "(");
+    second_str = eraseAllSubStr(second_str, ")");
+    second_str = eraseAllSubStr(second_str, " ");
+    second_str = eraseAllSubStr(second_str, "second:");
+
+    auto first_cluster = parseCluster(first_str);
+    auto second_cluster = parseCluster(second_str);
+
+    if(type == "trivial") {
+        return TrivialSeparation{first_cluster, second_cluster};
+    }
+
+    if(type == "complex") {
+        auto first_center_str = splitted[3];
+        auto second_center_str = splitted[4];
+        auto distance_str = splitted[5];
+
+        first_center_str = eraseAllSubStr(first_center_str, "(");
+        first_center_str = eraseAllSubStr(first_center_str, " ");
+        first_center_str = eraseAllSubStr(first_center_str, ")");
+        first_center_str = eraseAllSubStr(first_center_str, "firstcenter:");
+
+        second_center_str = eraseAllSubStr(second_center_str, "(");
+        second_center_str = eraseAllSubStr(second_center_str, " ");
+        second_center_str = eraseAllSubStr(second_center_str, ")");
+        second_center_str = eraseAllSubStr(second_center_str, "secondcenter:");
+
+        distance_str = eraseAllSubStr(distance_str, "center to center distance: ");
+
+        auto first_center = parseNode(first_center_str);
+        auto second_center = parseNode(second_center_str);
+        auto distance = std::stol(distance_str);
+
+        return ComplexSeparation{first_cluster,
+                                 second_cluster,
+                                 first_center,
+                                 second_center,
+                                 distance};
+    }
+
+    return std::nullopt;
 }
 
 auto separation::weight(const Separation& sep) noexcept

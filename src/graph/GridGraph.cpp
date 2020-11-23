@@ -433,6 +433,15 @@ auto GridGraph::unclip(separation::TrivialSeparation g) const noexcept
                                          unclip(right)};
 }
 
+auto GridGraph::toClipped(separation::TrivialSeparation g) const noexcept
+    -> separation::TrivialSeparation
+{
+    auto first = toClipped(g.getFirstCluster());
+    auto second = toClipped(g.getSecondCluster());
+
+    return separation::TrivialSeparation{first, second};
+}
+
 auto GridGraph::unclip(separation::ComplexSeparation g) const noexcept
     -> separation::ComplexSeparation
 {
@@ -448,12 +457,35 @@ auto GridGraph::unclip(separation::ComplexSeparation g) const noexcept
                                          g.getCenterDistance()};
 }
 
+auto GridGraph::toClipped(separation::ComplexSeparation g) const noexcept
+    -> separation::ComplexSeparation
+{
+    auto first = toClipped(g.getFirstCluster());
+    auto second = toClipped(g.getSecondCluster());
+
+    return separation::ComplexSeparation{first,
+                                         second,
+                                         toClipped(g.getFirstClusterCenter()),
+                                         toClipped(g.getSecondClusterCenter()),
+                                         g.getCenterDistance()};
+}
+
 auto GridGraph::unclip(separation::Separation g) const noexcept
     -> separation::Separation
 {
     return std::visit(
         [&](auto sep) -> separation::Separation {
             return unclip(sep);
+        },
+        g);
+}
+
+auto GridGraph::toClipped(separation::Separation g) const noexcept
+    -> separation::Separation
+{
+    return std::visit(
+        [&](auto sep) -> separation::Separation {
+            return toClipped(sep);
         },
         g);
 }

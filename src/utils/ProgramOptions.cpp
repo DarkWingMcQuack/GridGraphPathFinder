@@ -12,10 +12,12 @@ using std::string_literals::operator""s;
 
 ProgramOptions::ProgramOptions(std::string graph_file,
                                NeigbourMetric neigbour_mode,
-                               RunningMode running_mode)
+                               RunningMode running_mode,
+                               std::optional<std::string> separation_folder)
     : graph_file_(std::move(graph_file)),
       neigbour_mode_(neigbour_mode),
-      running_mode_(running_mode) {}
+      running_mode_(running_mode),
+      separation_folder_(std::move(separation_folder)) {}
 
 auto ProgramOptions::getGraphFile() const noexcept
     -> std::string_view
@@ -40,6 +42,18 @@ auto ProgramOptions::getNeigbourCalculator() const noexcept
     }
 }
 
+auto ProgramOptions::hasSeparationFolder() const noexcept
+    -> bool
+{
+    return !!separation_folder_;
+}
+
+auto ProgramOptions::getSeparationFolder() const noexcept
+    -> std::string_view
+{
+    return separation_folder_.value();
+}
+
 
 auto utils::parseArguments(int argc, char* argv[])
     -> ProgramOptions
@@ -52,6 +66,7 @@ auto utils::parseArguments(int argc, char* argv[])
                                                  std::pair{"all-sourounding"s, NeigbourMetric::ALL_SURROUNDING}};
 
     std::string graph_file;
+    std::string separation_folder;
     auto mode = RunningMode::SEPARATION;
     auto neigbours = NeigbourMetric::MANHATTAN;
 
@@ -60,6 +75,11 @@ auto utils::parseArguments(int argc, char* argv[])
                    "file containing the grid graph structure")
         ->check(CLI::ExistingFile)
         ->required();
+
+    app.add_option("-s,--separations",
+                   separation_folder,
+                   "folder containing the separations")
+        ->check(CLI::ExistingDirectory);
 
     app.add_option("-m,--mode",
                    mode,
@@ -80,5 +100,8 @@ auto utils::parseArguments(int argc, char* argv[])
 
     return ProgramOptions{std::move(graph_file),
                           neigbours,
-                          mode};
+                          mode,
+                          separation_folder.empty()
+                              ? std::optional<std::string>()
+                              : std::optional<std::string>(separation_folder)};
 }

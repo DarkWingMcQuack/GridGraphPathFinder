@@ -20,8 +20,23 @@ using pathfinding::CachingDijkstra;
 using selection::FullNodeSelectionCalculator;
 namespace fs = std::filesystem;
 
-auto runSeparation(const graph::GridGraph& graph,
-                   std::string_view result_folder)
+auto saveSeparations(const std::vector<separation::Separation>& separations,
+                     const graph::GridGraph& graph,
+                     std::string_view path)
+{
+    auto result_path = fmt::format("{}/seps", path);
+    fs::create_directories(result_path);
+
+    for(std::size_t i{0}; i < separations.size(); i++) {
+        auto file = fmt::format("{}/separation-{}", result_path, i);
+        auto sep = graph.unclip(separations[i]);
+        separation::toSmallFile(sep, file);
+    }
+}
+
+auto calculateSeparation(const graph::GridGraph& graph,
+                         std::string_view result_folder)
+    -> std::vector<separation::Separation>
 {
     utils::Timer t;
 
@@ -54,23 +69,43 @@ auto runSeparation(const graph::GridGraph& graph,
         message,
         80);
 
+    return separations;
+}
+
+
+auto loadSeparations(const graph::GridGraph& graph,
+                     std::string_view folder)
+    -> std::vector<separation::Separation>
+{
+    std::vector<separation::Separation> separations;
+    fmt::print("{}\n", folder);
+    for(const auto& entry : fs::directory_iterator(folder)) {
+
+        if(entry.is_regular_file()) {
+            const auto filename_str = entry.path().string();
+            fmt::print("{}\n", filename_str);
+
+            auto sep_opt = separation::fromFile(filename_str);
+            auto sep = graph.toClipped(sep_opt.value());
+            separations.emplace_back(sep);
+        }
+    }
+
+    return separations;
+}
+
+auto runSeparation(const graph::GridGraph& graph,
+                   std::vector<separation::Separation> separations,
+                   std::string_view result_folder)
+{
     auto optimized_distribution_file = fmt::format("{}/optimized_distribution", result_folder);
     separation::sizeDistribution3DToFile(separations, optimized_distribution_file);
 
-	
+
     auto distance_file = fmt::format("{}/distance_distribution", result_folder);
+    sizeToDistanceToFile(separations, graph, distance_file);
 
-	sizeToDistanceToFile(separations, graph, distance_file);
-
-
-    std::sort(std::begin(separations),
-              std::end(separations),
-              [](auto lhs, auto rhs) {
-                  return separation::weight(lhs) > separation::weight(rhs);
-              });
-
-    auto separation_file = fmt::format("{}/result.seg", result_folder);
-    separation::toFile(graph.unclip(separations[0]), separation_file);
+    saveSeparations(separations, graph, result_folder);
 
     separation::SeparationDistanceOracle oracle{graph, separations};
 
@@ -78,6 +113,8 @@ auto runSeparation(const graph::GridGraph& graph,
     separations.clear();
 
     Dijkstra compare{graph};
+    utils::Timer t;
+
     for(std::size_t i{0}; i < 5; i++) {
         auto from = graph.getRandomWalkableNode();
         auto to = graph.getRandomWalkableNode();
@@ -125,7 +162,6 @@ auto runSelection(const graph::GridGraph& graph,
     selection::HubLabelSelectionLookup lookup{std::move(selections)};
 }
 
-
 auto main(int argc, char* argv[])
     -> int
 {
@@ -136,6 +172,7 @@ auto main(int argc, char* argv[])
     auto running_mode = options.getRunningMode();
     auto graph_filename = utils::unquote(fs::path(graph_file).filename());
     auto result_folder = fmt::format("./results/{}/", graph_filename);
+
 
     fs::create_directories(result_folder);
 
@@ -164,7 +201,17 @@ auto main(int argc, char* argv[])
     switch(running_mode) {
 
     case utils::RunningMode::SEPARATION: {
-        runSeparation(graph, result_folder);
+
+        auto separations = [&] {
+            if(options.hasSeparationFolder()) {
+                return loadSeparations(graph, options.getSeparationFolder());
+            }
+            return calculateSeparation(graph, result_folder);
+        }();
+
+        runSeparation(graph,
+                      std::move(separations),
+                      result_folder);
         break;
     }
     case utils::RunningMode::SELECTION: {

@@ -132,6 +132,9 @@ auto toFile(const Separation& sep, std::string_view path) noexcept
 auto toSmallFile(const Separation& sep, std::string_view path) noexcept
     -> void;
 
+auto fromFile(std::string_view path) noexcept
+  -> std::optional<Separation>;
+
 auto sizeDistribution3DToFile(const std::vector<Separation>& separations,
                               std::string_view file_path) noexcept
     -> void;

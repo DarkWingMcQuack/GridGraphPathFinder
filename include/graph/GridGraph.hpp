@@ -94,10 +94,19 @@ public:
     [[nodiscard]] auto unclip(separation::TrivialSeparation g) const noexcept
         -> separation::TrivialSeparation;
 
+    [[nodiscard]] auto toClipped(separation::TrivialSeparation g) const noexcept
+        -> separation::TrivialSeparation;
+
     [[nodiscard]] auto unclip(separation::ComplexSeparation g) const noexcept
         -> separation::ComplexSeparation;
 
+    [[nodiscard]] auto toClipped(separation::ComplexSeparation g) const noexcept
+        -> separation::ComplexSeparation;
+
     [[nodiscard]] auto unclip(separation::Separation g) const noexcept
+        -> separation::Separation;
+
+    [[nodiscard]] auto toClipped(separation::Separation g) const noexcept
         -> separation::Separation;
 
     [[nodiscard]] auto getHeight() const noexcept
