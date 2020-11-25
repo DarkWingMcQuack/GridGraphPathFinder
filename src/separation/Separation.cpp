@@ -13,10 +13,10 @@ using graph::Node;
 using graph::GridCell;
 
 Separation::Separation(GridCell first,
-                                     GridCell second,
-                                     Node first_center,
-                                     Node second_center,
-                                     Distance center_distance)
+                       GridCell second,
+                       Node first_center,
+                       Node second_center,
+                       Distance center_distance)
     : first_(first),
       second_(second),
       first_center_(first_center),
@@ -64,10 +64,10 @@ auto Separation::switchSides() const noexcept
     -> Separation
 {
     return Separation{second_,
-                             first_,
-                             second_center_,
-                             first_center_,
-                             center_distance_};
+                      first_,
+                      second_center_,
+                      first_center_,
+                      center_distance_};
 }
 
 auto Separation::getSecondClusterCenter() const noexcept
@@ -143,8 +143,8 @@ auto Separation::toSmallFile(std::string_view path) const noexcept
 auto Separation::isSuperSetOf(const Separation& other) const noexcept
     -> bool
 {
-    return (first_.isSuperSetOf(other.second_) and second_.isSuperSetOf(other.second_))
-        or (first_.isSuperSetOf(other.second_) and second_.isSuperSetOf(other.second_));
+    return (first_.isSuperSetOf(other.first_) and second_.isSuperSetOf(other.second_))
+        or (first_.isSuperSetOf(other.second_) and second_.isSuperSetOf(other.first_));
 }
 
 auto Separation::isSubSetOf(const Separation& other) const noexcept
@@ -315,7 +315,7 @@ auto separation::fromFile(std::string_view path) noexcept
 
     auto splitted = split_string(str);
     auto type = splitted[0];
-	type = eraseAllSubStr(type, "type: ");
+    type = eraseAllSubStr(type, "type: ");
 
     auto first_str = splitted[1];
     auto second_str = splitted[2];
@@ -359,10 +359,10 @@ auto separation::fromFile(std::string_view path) noexcept
         auto distance = std::stol(distance_str);
 
         return Separation{first_cluster,
-                                 second_cluster,
-                                 first_center,
-                                 second_center,
-                                 distance};
+                          second_cluster,
+                          first_center,
+                          second_center,
+                          distance};
     }
 
     return std::nullopt;
@@ -413,4 +413,3 @@ auto separation::sizeToDistanceToFile(const std::vector<Separation>& separations
         file << w << ", " << avg_dist << "\n";
     }
 }
-

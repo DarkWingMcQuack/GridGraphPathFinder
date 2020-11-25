@@ -61,7 +61,7 @@ private:
         auto left = current_optimum.getFirstCluster();
         auto right = current_optimum.getSecondCluster();
 
-        auto current_optimal_weight = current_optimum.weight();
+        auto current_optimal_weight = weight(current_optimum);
 
         auto [all_left_clusters, all_right_clusters] =
             graph_.getAllPossibleSeparationCells(left, right);
@@ -73,14 +73,14 @@ private:
                     continue;
                 }
 
+
                 if(calc_mem_.checkAndMarkCalculation(left_cluster, right_cluster)) {
                     continue;
                 }
 
-
                 if(auto separation = checkSeparation(path_finder_, left_cluster, right_cluster)) {
                     current_optimum = separation.value();
-                    current_optimal_weight = current_optimum.weight();
+                    current_optimal_weight = weight(current_optimum);
                 }
             }
         }
