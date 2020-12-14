@@ -8,6 +8,7 @@ namespace selection {
 
 class SelectionBucket
 {
+public:
     SelectionBucket(std::vector<NodeSelection> selections,
                     bool sort = true);
 
