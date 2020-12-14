@@ -48,6 +48,12 @@ public:
     [[nodiscard]] auto hasBarrier(const graph::GridCell& cell) const noexcept
         -> bool;
 
+    [[nodiscard]] auto nodeToIndex(const graph::Node& n) const noexcept
+        -> std::size_t;
+
+    [[nodiscard]] auto indexToNode(std::size_t idx) const noexcept
+        -> Node;
+
     [[nodiscard]] auto wrapGraphInCell() const noexcept
         -> graph::GridCell;
 

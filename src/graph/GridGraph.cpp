@@ -152,6 +152,23 @@ auto GridGraph::isWalkableNode(Node n) const noexcept
     return grid_[index];
 }
 
+auto GridGraph::nodeToIndex(const graph::Node& n) const noexcept
+    -> std::size_t
+{
+    return n.row * width_ + n.column;
+}
+
+auto GridGraph::indexToNode(std::size_t idx) const noexcept
+    -> Node
+{
+    const auto row = static_cast<std::size_t>(
+        std::floor(static_cast<double>(idx)
+                   / static_cast<double>(width_)));
+    const auto column = idx % (width_);
+
+    return graph::Node{row, column};
+}
+
 auto GridGraph::getAllCellsContaining(Node node) const noexcept
     -> std::vector<graph::GridCell>
 {
