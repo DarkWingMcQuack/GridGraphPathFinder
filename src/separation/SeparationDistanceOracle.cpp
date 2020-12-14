@@ -114,10 +114,9 @@ auto PrivateBinarySearch(const std::vector<Separation>& vec, int l, int r, int i
     return PrivateBinarySearch(vec, l, index - 1, (index - 1 + l) / 2, value);
 }
 
-
 auto BinarySearch(const std::vector<Separation>& vec, int l, int r, Node value) -> Separation
 {
-    for(int i = 0; i < vec.size(); i++) {
+  for(std::size_t i = 0; i < vec.size(); i++) {
         if(vec[i].getSecondCluster().isInCell(value)) {
             fmt::print("searched cluster is: {}, at index: {}\n", vec[i].getSecondCluster(), i);
         }
