@@ -24,8 +24,8 @@ SelectionBucketCreator::SelectionBucketCreator(const graph::GridGraph& graph,
 auto SelectionBucketCreator::getIncompleteNodeIdx() const noexcept
     -> std::optional<std::size_t>
 {
-    for(std::size_t i{0}; i < node_complete_.size(); i++) {
-        if(!node_complete_[i]) {
+    for(std::size_t i{0}; i < selections_per_node_.size(); i++) {
+        if(!selections_per_node_[i].empty()) {
             return i;
         }
     }

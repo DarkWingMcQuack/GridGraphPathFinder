@@ -6,6 +6,7 @@
 #include <pathfinding/Distance.hpp>
 #include <selection/NodeSelection.hpp>
 #include <selection/SelectionBucket.hpp>
+#include <selection/SelectionBucketLookup.hpp>
 #include <vector>
 
 namespace selection {
@@ -15,6 +16,11 @@ class SelectionBucketCreator
     SelectionBucketCreator(const graph::GridGraph& graph,
                            std::vector<NodeSelection> selections,
                            std::vector<std::vector<NodeSelection*>> selections_per_node);
+
+
+    auto createBucketLookup() && noexcept
+        -> SelectionBucketLookup;
+
 
 private:
     auto getIncompleteNodeIdx() const noexcept
@@ -42,8 +48,6 @@ private:
 
     std::vector<NodeSelection> selections_;
     std::vector<std::vector<NodeSelection*>> selections_per_node_;
-
-    std::vector<bool> node_complete_;
 };
 
 } // namespace selection
