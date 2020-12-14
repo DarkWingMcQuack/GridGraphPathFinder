@@ -63,13 +63,14 @@ auto SelectionBucket::isSuperSetOf(const std::vector<NodeSelection>& other) cons
                        });
 }
 
-auto SelectionBucket::isSuperSetOf(const std::vector<NodeSelection*>& other) const noexcept
+
+auto SelectionBucket::isSuperSetOf(const utils::RefVec<NodeSelection>& other) const noexcept
     -> bool
 {
     return std::all_of(std::begin(other),
                        std::end(other),
-                       [&](const auto* selection) {
-                           return contains(*selection);
+                       [&](const auto& selection) {
+                           return contains(selection);
                        });
 }
 
