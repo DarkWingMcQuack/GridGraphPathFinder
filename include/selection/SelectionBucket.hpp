@@ -27,7 +27,7 @@ public:
     [[nodiscard]] auto isSuperSetOf(const std::vector<NodeSelection>& other) const noexcept
         -> bool;
 
-    [[nodiscard]] auto isSuperSetOf(const std::vector<NodeSelection*>& other) const noexcept
+    [[nodiscard]] auto isSuperSetOf(const utils::RefVec<NodeSelection>& other) const noexcept
         -> bool;
 
     [[nodiscard]] auto contains(const NodeSelection& other) const noexcept
