@@ -15,7 +15,7 @@ class SelectionBucketCreator
 {
     SelectionBucketCreator(const graph::GridGraph& graph,
                            std::vector<NodeSelection> selections,
-                           std::vector<std::vector<NodeSelection*>> selections_per_node);
+                           std::vector<utils::RefVec<NodeSelection>> selections_per_node);
 
 
     auto createBucketLookup() && noexcept
@@ -26,11 +26,21 @@ private:
     auto getIncompleteNodeIdx() const noexcept
         -> std::optional<std::size_t>;
 
+    auto getIncompleteNeigboursOf(std::size_t idx) const noexcept
+        -> std::vector<std::size_t>;
+
     auto addBucket(SelectionBucket bucket) noexcept
         -> void;
 
+    auto buildBuckedContainingAllOfNode(std::size_t idx) const noexcept
+        -> SelectionBucket;
+
     auto countNodesAbleToUseBucketWith(const SelectionBucket& bucket,
                                        const NodeSelection& selection) const noexcept
+        -> std::size_t;
+
+    auto countNodesAbleToUseBucketWithout(SelectionBucket bucket,
+                                          const std::vector<NodeSelection>& selections) const noexcept
         -> std::size_t;
 
     auto countNodesAbleToUseBucket(const SelectionBucket& bucket) const noexcept
@@ -39,15 +49,25 @@ private:
     auto countNodesUsing(const NodeSelection& selection) const noexcept
         -> std::size_t;
 
+    auto isComplete(std::size_t idx) const noexcept
+        -> bool;
+
+    auto optimizeBucket(SelectionBucket bucket) const noexcept
+        -> SelectionBucket;
+
+    auto calculateConflictingSelections(const SelectionBucket& bucket,
+                                        const utils::RefVec<NodeSelection>& selections) const noexcept
+        -> std::vector<NodeSelection>;
+
 
 
 private:
     const graph::GridGraph& graph_;
     std::vector<SelectionBucket> buckets_;
-    std::vector<std::vector<SelectionBucket*>> bucket_lookup_;
+    std::vector<utils::RefVec<SelectionBucket>> bucket_lookup_;
 
     std::vector<NodeSelection> selections_;
-    std::vector<std::vector<NodeSelection*>> selections_per_node_;
+    std::vector<utils::RefVec<NodeSelection>> selections_per_node_;
 };
 
 } // namespace selection
