@@ -154,6 +154,58 @@ auto intersect(const std::vector<T>& head0,
     }
 }
 
+template<class T, class F, class... Tail>
+auto intersect(std::vector<T>&& head0,
+               std::vector<T>&& head1,
+               Tail&&... tail,
+               F&& func) noexcept
+    -> std::vector<T>
+{
+    if constexpr(sizeof...(tail) == 0) {
+        std::vector<T> intersection;
+        std::set_intersection(std::make_move_iterator(std::begin(head0)),
+                              std::make_move_iterator(std::end(head0)),
+                              std::make_move_iterator(std::begin(head1)),
+                              std::make_move_iterator(std::end(head1)),
+                              std::back_inserter(intersection),
+                              std::forward<F>(func));
+        return intersection;
+    } else {
+        return intersect(
+            intersect(std::move(head0),
+                      std::move(head1),
+                      std::forward<F>(func)),
+            std::forward<Tail>(tail)...,
+            std::forward<F>(func));
+    }
+}
+
+template<class T, class F, class... Tail>
+auto intersect(const std::vector<T>& head0,
+               const std::vector<T>& head1,
+               Tail&&... tail,
+               F&& func) noexcept
+    -> std::vector<T>
+{
+    if constexpr(sizeof...(tail) == 0) {
+        std::vector<T> intersection;
+        std::set_intersection(std::begin(head0),
+                              std::end(head0),
+                              std::begin(head1),
+                              std::end(head1),
+                              std::back_inserter(intersection),
+                              std::forward<F>(func));
+        return intersection;
+    } else {
+        return intersect(
+            intersect(head0,
+                      head1,
+                      std::forward<F>(func)),
+            std::forward<Tail>(tail)...,
+            std::forward<F>(func));
+    }
+}
+
 template<class Head0, class Head1, class... Tail>
 auto hashCombine(Head0&& head0, Head1&& head1, Tail&&... tail)
 {
