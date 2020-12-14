@@ -11,6 +11,34 @@
 
 namespace utils {
 
+template<class T>
+using Ref = std::reference_wrapper<T>;
+
+template<class T>
+using CRef = std::reference_wrapper<const T>;
+
+template<class T>
+using RefVec = std::vector<Ref<T>>;
+
+template<class T>
+using CRefVec = std::vector<CRef<T>>;
+
+template<class T>
+struct is_ref : std::false_type
+{
+};
+template<class T>
+struct is_ref<Ref<T>> : std::true_type
+{
+};
+template<class T>
+struct is_ref<CRef<T>> : std::true_type
+{
+};
+
+template<class T>
+constexpr auto is_ref_v = is_ref<T>::value;
+
 template<class Head0, class Head1, class... Tail>
 constexpr auto min(Head0&& head0, Head1&& head1, Tail&&... tail) noexcept
 {
@@ -159,8 +187,6 @@ struct Overloaded : Ts...
 
 template<class... Ts>
 Overloaded(Ts...) -> Overloaded<Ts...>;
-
-
 
 
 } // namespace utils
