@@ -22,29 +22,29 @@ public:
 
     [[nodiscard]] auto getOneCommonSelection(const graph::Node& first,
                                              const graph::Node& second) const noexcept
-        -> std::optional<std::reference_wrapper<const NodeSelection>>;
+        -> std::optional<utils::CRef<NodeSelection>>;
 
     [[nodiscard]] auto getAllCommonSelection(const graph::Node& first,
                                              const graph::Node& second) const noexcept
-        -> std::vector<NodeSelection*>;
+        -> utils::RefVec<NodeSelection>;
 
 private:
     [[nodiscard]] auto getSelections(const graph::Node& first,
                                      const graph::Node& second) const noexcept
         -> std::pair<
-            std::reference_wrapper<const std::vector<NodeSelection*>>,
-            std::reference_wrapper<const std::vector<NodeSelection*>>>;
+            utils::CRef<utils::RefVec<NodeSelection>>,
+            utils::CRef<utils::RefVec<NodeSelection>>>;
 
 
     [[nodiscard]] auto getOneCommonSelection(
-        const std::vector<NodeSelection*>& first,
-        const std::vector<NodeSelection*>& second) const noexcept
-        -> std::optional<std::reference_wrapper<const NodeSelection>>;
+        const utils::RefVec<NodeSelection>& first,
+        const utils::RefVec<NodeSelection>& second) const noexcept
+        -> std::optional<utils::CRef<NodeSelection>>;
 
     [[nodiscard]] auto getAllCommonSelection(
-        const std::vector<NodeSelection*>& first,
-        const std::vector<NodeSelection*>& second) const noexcept
-        -> std::vector<NodeSelection*>;
+        const utils::RefVec<NodeSelection>& first,
+        const utils::RefVec<NodeSelection>& second) const noexcept
+        -> utils::RefVec<NodeSelection>;
 
 
     [[nodiscard]] auto getNodeIndex(const graph::Node& n) const noexcept
@@ -53,7 +53,7 @@ private:
 private:
     const graph::GridGraph& graph_;
     std::vector<NodeSelection> selections_;
-    std::vector<std::vector<NodeSelection*>> selection_lookup_;
+    std::vector<utils::RefVec<NodeSelection>> selection_lookup_;
 };
 
 } // namespace selection

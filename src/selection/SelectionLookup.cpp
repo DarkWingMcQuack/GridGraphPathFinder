@@ -23,20 +23,20 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
     for(auto& selection : selections_) {
         for(auto node : selection.getLeftSelection()) {
             auto idx = getNodeIndex(node);
-            selection_lookup_[idx].emplace_back(&selection);
+            selection_lookup_[idx].emplace_back(std::ref(selection));
         }
 
         for(auto node : selection.getRightSelection()) {
             auto idx = getNodeIndex(node);
-            selection_lookup_[idx].emplace_back(&selection);
+            selection_lookup_[idx].emplace_back(std::ref(selection));
         }
     }
 
     for(auto& selections : selection_lookup_) {
         std::sort(std::begin(selections),
                   std::end(selections),
-                  [](const auto* lhs, const auto* rhs) {
-                      return lhs->getIndex() < rhs->getIndex();
+                  [](const auto& lhs, const auto& rhs) {
+                      return lhs.get().getIndex() < rhs.get().getIndex();
                   });
     }
 }
@@ -54,7 +54,7 @@ auto SelectionLookup::getOneCommonSelection(const graph::Node& first,
 
 auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
                                             const graph::Node& second) const noexcept
-    -> std::vector<NodeSelection*>
+    -> utils::RefVec<NodeSelection>
 {
     auto [first_selections, second_selections] = getSelections(first, second);
 
@@ -66,8 +66,8 @@ auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
 auto SelectionLookup::getSelections(const graph::Node& first,
                                     const graph::Node& second) const noexcept
     -> std::pair<
-        std::reference_wrapper<const std::vector<NodeSelection*>>,
-        std::reference_wrapper<const std::vector<NodeSelection*>>>
+        utils::CRef<utils::RefVec<NodeSelection>>,
+        utils::CRef<utils::RefVec<NodeSelection>>>
 {
     auto first_idx = getNodeIndex(first);
     auto second_idx = getNodeIndex(second);
@@ -79,9 +79,9 @@ auto SelectionLookup::getSelections(const graph::Node& first,
 
 
 auto SelectionLookup::getOneCommonSelection(
-    const std::vector<NodeSelection*>& first,
-    const std::vector<NodeSelection*>& second) const noexcept
-    -> std::optional<std::reference_wrapper<const NodeSelection>>
+    const utils::RefVec<NodeSelection>& first,
+    const utils::RefVec<NodeSelection>& second) const noexcept
+    -> std::optional<utils::CRef<NodeSelection>>
 {
     auto iter1 = std::begin(first);
     auto iter2 = std::begin(second);
@@ -89,12 +89,12 @@ auto SelectionLookup::getOneCommonSelection(
     auto iter2_end = std::end(second);
 
     while(iter1 != iter1_end && iter2 != iter2_end) {
-        if((*iter1)->getIndex() < (*iter2)->getIndex()) {
+        if(iter1->get().getIndex() < iter2->get().getIndex()) {
             ++iter1;
-        } else if((*iter2)->getIndex() < (*iter1)->getIndex()) {
+        } else if(iter2->get().getIndex() < iter1->get().getIndex()) {
             ++iter2;
         } else {
-            return std::cref(**iter1);
+            return std::cref(*iter1);
         }
     }
     return std::nullopt;
@@ -107,9 +107,12 @@ auto SelectionLookup::getNodeIndex(const graph::Node& n) const noexcept
 }
 
 auto SelectionLookup::getAllCommonSelection(
-    const std::vector<NodeSelection*>& first,
-    const std::vector<NodeSelection*>& second) const noexcept
-    -> std::vector<NodeSelection*>
+    const utils::RefVec<NodeSelection>& first,
+    const utils::RefVec<NodeSelection>& second) const noexcept
+    -> utils::RefVec<NodeSelection>
 {
-    return utils::intersect(first, second);
+    return utils::intersect(first, second,
+                            [](const auto& lhs, const auto& rhs) {
+                                return lhs.get() < rhs.get();
+                            });
 }
