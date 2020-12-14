@@ -33,29 +33,11 @@ SeparationDistanceOracle::SeparationDistanceOracle(const graph::GridGraph& graph
     }
 
     for(auto& vec : separation_lookup_) {
-        std::vector<Separation> new_vec;
-        std::copy_if(std::begin(vec),
-                     std::end(vec),
-                     std::back_inserter(new_vec),
-                     [&](const auto& sep) {
-                         return std::find_if(
-                                    std::begin(vec),
-                                    std::end(vec),
-                                    [&](const auto& other) {
-                                        auto sep_second = sep.getSecondCluster();
-                                        auto other_second = other.getSecondCluster();
-                                        return sep_second.isSubSetOf(other_second) and sep != other;
-                                    })
-                             == std::end(vec);
-                     });
-
-        std::sort(std::begin(new_vec),
-                  std::end(new_vec),
+        std::sort(std::begin(vec),
+                  std::end(vec),
                   [](const auto& lhs, const auto& rhs) {
                       return lhs.getSecondCluster() < rhs.getSecondCluster();
                   });
-
-        vec = std::move(new_vec);
     }
 }
 
@@ -119,8 +101,8 @@ auto PrivateBinarySearch(const std::vector<Separation>& vec, int l, int r, int i
         return vec[r];
     }
 
-	fmt::print("node z: {}\n", value.zScore());
-	fmt::print("grid z: {}\n", vec[index].getSecondCluster().getTopLeft().zScore());
+    fmt::print("node z: {}\n", value.zScore());
+    fmt::print("grid z: {}\n", vec[index].getSecondCluster().getTopLeft().zScore());
     fmt::print("(2)l: {}, r:{}, idx:{}, node:{}, grid:{}\n", l, r, index, value, vec[index].getSecondCluster());
 
     auto wrapped = graph::GridCell::wrapInCell(value);
@@ -149,14 +131,12 @@ auto SeparationDistanceOracle::findSeparationContaining(const std::vector<Separa
                                                         const graph::Node& n) const noexcept
     -> Separation
 {
-    // return *std::find_if(std::cbegin(separations),
-    //                      std::cend(separations),
-    //                      [&](auto separation) {
-    //                          auto second = separation.getSecondCluster();
-    //                          return second.isInCell(n);
-    //                      });
-
-    return BinarySearch(separations, 0, separations.size() - 1, n);
+    return *std::find_if(std::cbegin(separations),
+                         std::cend(separations),
+                         [&](auto separation) {
+                             auto second = separation.getSecondCluster();
+                             return second.isInCell(n);
+                         });
 }
 
 auto SeparationDistanceOracle::getIndex(graph::Node n) const noexcept
