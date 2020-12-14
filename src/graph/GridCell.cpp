@@ -43,21 +43,20 @@ auto GridCell::operator!=(const GridCell& other) const noexcept
     return !(*this == other);
 }
 
+auto GridCell::getZScoreRange() const noexcept
+    -> std::pair<std::int64_t, std::int64_t>
+{
+    return std::pair{top_left_.zScore(),
+                     bottom_right_.zScore()};
+}
+
 auto GridCell::operator<(const GridCell& other) const noexcept
     -> bool
 {
-    //weiter oben?
-    if(top_left_.row_ < other.top_left_.row_) {
-        return true;
-    }
+    auto tl1 = top_left_.zScore();
+    auto tl2 = other.top_left_.zScore();
 
-	//weiter unten?
-    if(top_left_.row_ > other.top_left_.row_) {
-        return false;
-    }
-
-	//gleiche row, dann vergleiche column
-    return top_left_.column_ < other.top_left_.column_;
+    return tl1 < tl2;
 }
 
 auto GridCell::operator[](std::size_t idx) const noexcept

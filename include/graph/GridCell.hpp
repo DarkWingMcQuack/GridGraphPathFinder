@@ -60,6 +60,9 @@ public:
     [[nodiscard]] auto getWidth() const noexcept
         -> std::size_t;
 
+    [[nodiscard]] auto getZScoreRange() const noexcept
+        -> std::pair<std::int64_t, std::int64_t>;
+
     [[nodiscard]] auto getHeight() const noexcept
         -> std::size_t;
 

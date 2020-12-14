@@ -25,9 +25,12 @@ struct GridCorner
         -> bool;
 
     auto getRow() const noexcept
-        -> std::int64_t;
+        -> std::int32_t;
     auto getColumn() const noexcept
-        -> std::int64_t;
+        -> std::int32_t;
+
+    auto zScore() const noexcept
+        -> std::uint64_t;
 
 
 private:
@@ -36,8 +39,8 @@ private:
 
     friend class GridCell;
 
-    std::int64_t row_;
-    std::int64_t column_;
+    std::int32_t row_;
+    std::int32_t column_;
 };
 
 auto operator<<(std::ostream& os, const GridCorner& c) noexcept

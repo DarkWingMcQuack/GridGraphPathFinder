@@ -20,6 +20,9 @@ struct Node
 
     auto isManhattanNeigbourOf(const Node& other) const noexcept
         -> bool;
+
+    auto zScore() const noexcept
+        -> std::uint64_t;
 };
 
 auto operator<<(std::ostream& os, Node n) noexcept

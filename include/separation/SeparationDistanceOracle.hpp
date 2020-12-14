@@ -19,6 +19,12 @@ private:
     [[nodiscard]] auto getIndex(graph::Node n) const noexcept
         -> std::size_t;
 
+
+    [[nodiscard]] auto findSeparationContaining(const std::vector<Separation>& separations,
+                                                const graph::Node& n) const noexcept
+        -> Separation;
+
+
 private:
     const graph::GridGraph& graph_;
     std::vector<std::vector<Separation>> separation_lookup_;

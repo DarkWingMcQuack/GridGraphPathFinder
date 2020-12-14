@@ -30,7 +30,7 @@ auto saveSeparations(const std::vector<separation::Separation>& separations,
     for(std::size_t i{0}; i < separations.size(); i++) {
         auto file = fmt::format("{}/separation-{}", result_path, i);
         auto sep = graph.unclip(separations[i]);
-        sep.toSmallFile(file);
+        sep.toFile(file);
     }
 }
 
