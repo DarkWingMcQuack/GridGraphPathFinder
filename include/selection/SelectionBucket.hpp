@@ -27,6 +27,9 @@ public:
     [[nodiscard]] auto isSuperSetOf(const std::vector<NodeSelection>& other) const noexcept
         -> bool;
 
+    [[nodiscard]] auto isSuperSetOf(const std::vector<NodeSelection*>& other) const noexcept
+        -> bool;
+
     [[nodiscard]] auto contains(const NodeSelection& other) const noexcept
         -> bool;
 
@@ -34,7 +37,7 @@ public:
                                  const graph::Node& to) const noexcept
         -> bool;
 
-    //the result reference lives as long as the given object other
+    //the result referenced lives as long as the given object other
     [[nodiscard]] auto getCommonSelection(const SelectionBucket& other) const noexcept
         -> std::optional<std::reference_wrapper<const NodeSelection>>;
 
