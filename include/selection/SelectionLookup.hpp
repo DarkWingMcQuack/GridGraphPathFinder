@@ -54,6 +54,8 @@ private:
     const graph::GridGraph& graph_;
     std::vector<NodeSelection> selections_;
     std::vector<utils::RefVec<NodeSelection>> selection_lookup_;
+
+    friend class SelectionBucketCreator;
 };
 
 } // namespace selection
