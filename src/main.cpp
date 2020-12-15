@@ -1,3 +1,4 @@
+#include "selection/SelectionBucketCreator.hpp"
 #include <filesystem>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
@@ -163,6 +164,12 @@ auto runSelection(const graph::GridGraph& graph,
     }
 
     selection::SelectionLookup lookup{graph, std::move(selections)};
+
+	selection::SelectionBucketCreator optimizer{std::move(lookup)};
+
+	auto bucket_lookup = std::move(optimizer).createBucketLookup();
+
+	
 }
 
 auto main(int argc, char* argv[])
