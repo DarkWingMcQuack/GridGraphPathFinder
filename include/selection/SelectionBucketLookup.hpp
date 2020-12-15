@@ -15,12 +15,12 @@ class SelectionBucketLookup
 public:
     SelectionBucketLookup(const graph::GridGraph& graph,
                           std::vector<SelectionBucket> buckets,
-                          std::vector<utils::RefVec<SelectionBucket>> bucket_lookup);
+                          std::vector<std::vector<std::size_t>> bucket_lookup);
 
 private:
     const graph::GridGraph& graph_;
     std::vector<SelectionBucket> buckets_;
-    std::vector<utils::RefVec<SelectionBucket>> bucket_lookup_;
+    std::vector<std::vector<std::size_t>> bucket_lookup_;
 };
 
 } // namespace selection
