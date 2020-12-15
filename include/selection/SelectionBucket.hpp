@@ -21,6 +21,9 @@ public:
     [[nodiscard]] auto isSubSetOf(const std::vector<NodeSelection>& other) const noexcept
         -> bool;
 
+    [[nodiscard]] auto isSubSetOf(const utils::RefVec<NodeSelection>& other) const noexcept
+        -> bool;
+
     [[nodiscard]] auto isSuperSetOf(const SelectionBucket& other) const noexcept
         -> bool;
 

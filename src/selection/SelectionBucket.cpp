@@ -47,6 +47,22 @@ auto SelectionBucket::isSubSetOf(const std::vector<NodeSelection>& other) const 
                        });
 }
 
+auto SelectionBucket::isSubSetOf(const utils::RefVec<NodeSelection>& other) const noexcept
+    -> bool
+{
+    return std::all_of(std::begin(selections_),
+                       std::end(selections_),
+                       [&](const auto& selection) {
+                           return std::binary_search(
+                               std::begin(other),
+                               std::end(other),
+                               std::ref(selection),
+                               [](const auto& lhs, const auto& rhs) {
+                                   return lhs.get() < rhs.get();
+                               });
+                       });
+}
+
 auto SelectionBucket::isSuperSetOf(const SelectionBucket& other) const noexcept
     -> bool
 {
