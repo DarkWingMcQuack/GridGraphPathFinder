@@ -18,14 +18,20 @@ class FullNodeSelectionCalculator
 {
 public:
     FullNodeSelectionCalculator(const graph::GridGraph& graph)
-        : node_selector_(graph)
+        : graph_(graph),
+          all_to_all_(graph.size(), std::vector(graph.size(), true)),
+          done_(graph.size(), true),
+          node_selector_(graph)
     {
         for(auto first : graph) {
+            auto first_id = graph.nodeToIndex(first);
+            done_[first_id] = false;
             for(auto second : graph) {
+                auto second_id = graph.nodeToIndex(second);
                 if(first == second or graph.areNeighbours(first, second)) {
                     continue;
                 }
-                all_to_all_pairs_.emplace(std::pair{first, second});
+                all_to_all_[first_id][second_id] = false;
             }
         }
     }
@@ -34,7 +40,12 @@ public:
         -> std::vector<NodeSelection>
     {
         std::vector<NodeSelection> calculated_selections;
-        while(!all_to_all_pairs_.empty()) {
+
+        while(std::any_of(
+            std::begin(done_),
+            std::end(done_),
+            [](auto x) { return !x; })) {
+
             auto [first, second] = getRandomRemainingPair();
             auto selection = node_selector_.calculateFullSelection(first, second).value();
             eraseNodeSelection(selection);
@@ -47,13 +58,26 @@ public:
     [[nodiscard]] auto getRandomRemainingPair() const noexcept
         -> std::pair<graph::Node, graph::Node>
     {
-        static std::mt19937 engine{static_cast<std::bernoulli_distribution::result_type>(time(nullptr))};
-        std::uniform_int_distribution<std::size_t> dist(0, all_to_all_pairs_.size() - 1);
+        std::size_t first_idx;
+        for(std::size_t i = 0; i < done_.size(); i++) {
+            if(!done_[i]) {
+                fmt::print("start\n");
+                first_idx = i;
+                break;
+            }
+        }
 
-        auto iter = std::begin(all_to_all_pairs_);
-        std::advance(iter, dist(engine));
+        std::size_t second_idx;
+        for(std::size_t i = all_to_all_[first_idx].size() - 1; i >= 0; i--) {
+            if(!all_to_all_[first_idx][i]) {
+                fmt::print("end\n");
+                second_idx = i;
+                break;
+            }
+        }
 
-        return *iter;
+        return std::pair{graph_.indexToNode(first_idx),
+                         graph_.indexToNode(second_idx)};
     }
 
     auto eraseNodeSelection(const NodeSelection& selection) noexcept
@@ -61,19 +85,36 @@ public:
     {
         for(auto first : selection.getLeftSelection()) {
             for(auto second : selection.getRightSelection()) {
-                all_to_all_pairs_.erase(std::pair{first, second});
-                all_to_all_pairs_.erase(std::pair{second, first});
+                auto first_idx = graph_.nodeToIndex(first);
+                auto second_idx = graph_.nodeToIndex(second);
+
+                all_to_all_[first_idx][second_idx] = true;
+                all_to_all_[second_idx][first_idx] = true;
             }
         }
 
-        fmt::print("remaining size: {}\n",
-                   all_to_all_pairs_.size());
+        for(auto n : selection.getLeftSelection()) {
+            auto idx = graph_.nodeToIndex(n);
+
+            done_[idx] = std::all_of(std::begin(all_to_all_[idx]),
+                                     std::end(all_to_all_[idx]),
+                                     [](auto x) { return x; });
+        }
+
+        for(auto n : selection.getRightSelection()) {
+            auto idx = graph_.nodeToIndex(n);
+
+            done_[idx] = std::all_of(std::begin(all_to_all_[idx]),
+                                     std::end(all_to_all_[idx]),
+                                     [](auto x) { return x; });
+        }
     }
 
 private:
-    std::unordered_set<std::pair<graph::Node,
-                                 graph::Node>>
-        all_to_all_pairs_;
+    const graph::GridGraph& graph_;
+
+    std::vector<std::vector<bool>> all_to_all_;
+    std::vector<bool> done_;
 
     NodeSelectionCalculator<PathFinder> node_selector_;
 };
