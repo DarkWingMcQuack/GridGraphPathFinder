@@ -468,6 +468,13 @@ auto GridGraph::toClipped(separation::Separation g) const noexcept
                                   g.getCenterDistance()};
 }
 
+
+auto GridGraph::size() const noexcept
+    -> std::size_t
+{
+    return width_ * height_;
+}
+
 auto graph::parseFileToGridGraph(std::string_view path,
                                  NeigbourCalculator neigbour_calc) noexcept
     -> std::optional<GridGraph>

@@ -112,11 +112,16 @@ public:
     [[nodiscard]] auto getTrivialDistance(const Node& from, const Node& to) const noexcept
         -> Distance;
 
-    auto begin() const noexcept
+    [[nodiscard]] auto begin() const noexcept
         -> GridGraphIterator;
 
-    auto end() const noexcept
+    [[nodiscard]] auto end() const noexcept
         -> GridGraphIterator;
+
+    [[nodiscard]] auto size() const noexcept
+        -> std::size_t;
+
+
 
 
 private:
