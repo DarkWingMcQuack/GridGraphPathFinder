@@ -7,20 +7,22 @@
 #include <selection/NodeSelection.hpp>
 #include <selection/SelectionBucket.hpp>
 #include <selection/SelectionBucketLookup.hpp>
+#include <selection/SelectionLookup.hpp>
 #include <vector>
 
 namespace selection {
 
 class SelectionBucketCreator
 {
+public:
     SelectionBucketCreator(const graph::GridGraph& graph,
                            std::vector<NodeSelection> selections,
                            std::vector<utils::RefVec<NodeSelection>> selections_per_node);
 
+    SelectionBucketCreator(SelectionLookup&& lookup);
 
     auto createBucketLookup() && noexcept
         -> SelectionBucketLookup;
-
 
 private:
     auto getIncompleteNodeIdx() const noexcept
@@ -59,15 +61,19 @@ private:
                                         const utils::RefVec<NodeSelection>& selections) const noexcept
         -> std::vector<NodeSelection>;
 
+    auto pruneSelectionBuckets() noexcept
+        -> void;
+
 
 
 private:
     const graph::GridGraph& graph_;
     std::vector<SelectionBucket> buckets_;
-    std::vector<utils::RefVec<SelectionBucket>> bucket_lookup_;
+    std::vector<std::vector<std::size_t>> bucket_lookup_;
 
     std::vector<NodeSelection> selections_;
     std::vector<utils::RefVec<NodeSelection>> selections_per_node_;
+    std::vector<std::size_t> incomplete_nodes_;
 };
 
 } // namespace selection

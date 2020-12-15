@@ -18,6 +18,7 @@ SelectionBucketCreator::SelectionBucketCreator(const graph::GridGraph& graph,
                                                std::vector<NodeSelection> selections,
                                                std::vector<utils::RefVec<NodeSelection>> selections_per_node)
     : graph_(graph),
+      bucket_lookup_(graph_.size(), std::vector<std::size_t>{}),
       selections_(std::move(selections)),
       selections_per_node_(std::move(selections_per_node))
 {
@@ -28,24 +29,56 @@ SelectionBucketCreator::SelectionBucketCreator(const graph::GridGraph& graph,
                       return lhs.get() < rhs.get();
                   });
     }
+
+    std::transform(std::begin(graph_),
+                   std::end(graph_),
+                   std::back_inserter(incomplete_nodes_),
+                   [&](auto node) {
+                       return graph_.nodeToIndex(node);
+                   });
+}
+
+SelectionBucketCreator::SelectionBucketCreator(SelectionLookup&& lookup)
+    : SelectionBucketCreator::SelectionBucketCreator{lookup.graph_,
+                                                     std::move(lookup.selections_),
+                                                     std::move(lookup.selection_lookup_)}
+{
+    std::transform(std::begin(graph_),
+                   std::end(graph_),
+                   std::back_inserter(incomplete_nodes_),
+                   [&](auto node) {
+                       return graph_.nodeToIndex(node);
+                   });
 }
 
 auto SelectionBucketCreator::getIncompleteNodeIdx() const noexcept
     -> std::optional<std::size_t>
 {
-    for(auto i : utils::range(selections_per_node_.size())) {
-        if(!isComplete(i)) {
-            return i;
-        }
+    if(incomplete_nodes_.empty()) {
+        return std::nullopt;
     }
 
-    return std::nullopt;
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::size_t> dist(0u, incomplete_nodes_.size() - 1);
+
+    return incomplete_nodes_[dist(rng)];
 }
 
 
 auto SelectionBucketCreator::createBucketLookup() && noexcept
     -> SelectionBucketLookup
 {
+
+    fmt::print("number of selections: {}\n", selections_.size());
+
+    for(auto node : graph_) {
+        auto idx = graph_.nodeToIndex(node);
+        fmt::print("size: {}\n", selections_per_node_[idx].size());
+    }
+
+    fmt::print("-----------------------------------------------\n");
+
     while(auto current_idx_opt = getIncompleteNodeIdx()) {
         const auto current_idx = current_idx_opt.value();
         auto current_bucket = buildBuckedContainingAllOfNode(current_idx);
@@ -53,6 +86,22 @@ auto SelectionBucketCreator::createBucketLookup() && noexcept
 
         addBucket(std::move(current_bucket));
     }
+
+    fmt::print("number of buckets: {}\n", buckets_.size());
+
+    pruneSelectionBuckets();
+
+    for(auto node : graph_) {
+        auto idx = graph_.nodeToIndex(node);
+        fmt::print("size: {}\n", bucket_lookup_[idx].size());
+    }
+
+    fmt::print("BUCKET SIZED:\n");
+
+    for(const auto& bucket : buckets_) {
+        fmt::print("bucket size: {}\n", bucket.getSelections().size());
+    }
+
 
     return SelectionBucketLookup{graph_,
                                  std::move(buckets_),
@@ -79,9 +128,22 @@ auto SelectionBucketCreator::optimizeBucket(SelectionBucket bucket) const noexce
             auto conflicts = calculateConflictingSelections(bucket, selections);
 
             const auto number_of_conficts = conflicts.size();
+            if(number_of_conficts == 0) {
+                continue;
+            }
+
             auto nodes_using_new_bucket = countNodesAbleToUseBucketWithout(bucket, conflicts);
-            auto new_ratio = static_cast<double>(nodes_using_new_bucket)
-                / static_cast<double>(number_of_conficts);
+            auto nodes_using_old_bucket = countNodesAbleToUseBucket(bucket);
+
+            auto old_bucket_size = bucket.getSelections().size();
+
+            auto bucket_size_ratio = static_cast<double>(number_of_conficts)
+                / static_cast<double>(old_bucket_size);
+
+            auto useage_ratio = static_cast<double>(nodes_using_new_bucket - nodes_using_old_bucket)
+                / static_cast<double>(nodes_using_new_bucket);
+
+            auto new_ratio = useage_ratio / bucket_size_ratio;
 
             if(best_ratio < new_ratio) {
                 best_erase = std::move(conflicts);
@@ -95,6 +157,11 @@ auto SelectionBucketCreator::optimizeBucket(SelectionBucket bucket) const noexce
         }
     }
 
+    fmt::print("found bucket with size: {} which is used by {} nodes\n",
+               bucket.getSelections().size(),
+               countNodesAbleToUseBucket(bucket));
+
+    fmt::print("------------------------------------------------\n");
     return bucket;
 }
 
@@ -134,45 +201,57 @@ auto SelectionBucketCreator::addBucket(SelectionBucket bucket) noexcept
     -> void
 {
     buckets_.emplace_back(std::move(bucket));
-    auto& bucket_ref = buckets_.back();
+    const auto& bucket_ref = buckets_.back();
+    auto bucket_idx = buckets_.size() - 1;
 
     // TODO: do in parallel
-    for(std::size_t i{0}; i < selections_per_node_.size(); i++) {
+    // for(std::size_t i{0}; i < selections_per_node_.size(); i++) {
+    for(auto node : graph_) {
+        auto i = graph_.nodeToIndex(node);
         auto& selections = selections_per_node_[i];
 
-        if(bucket_ref.isSuperSetOf(selections)) {
+        if(!selections.empty() and bucket_ref.isSubSetOf(selections)) {
             selections.erase(
                 std::remove_if(std::begin(selections),
                                std::end(selections),
-                               [&](auto selection) {
+                               [&](const auto& selection) {
                                    return bucket_ref.contains(selection);
                                }),
                 std::end(selections));
 
-            bucket_lookup_[i].emplace_back(std::ref(bucket_ref));
+            bucket_lookup_[i].emplace_back(bucket_idx);
         }
     }
+
+    incomplete_nodes_.erase(
+        std::remove_if(std::begin(incomplete_nodes_),
+                       std::end(incomplete_nodes_),
+                       [&](auto id) {
+                           return selections_per_node_[id].empty();
+                       }),
+        std::end(incomplete_nodes_));
 }
 
 auto SelectionBucketCreator::countNodesAbleToUseBucketWith(const SelectionBucket& bucket,
                                                            const NodeSelection& selection) const noexcept
     -> std::size_t
 {
-    std::vector<std::size_t> indices;
-    const auto range = utils::range(selections_per_node_.size());
-    std::copy_if(std::begin(range),
-                 std::end(range),
-                 std::back_inserter(indices),
-                 [&](auto idx) {
+    std::vector<graph::Node> nodes;
+    std::copy_if(std::begin(graph_),
+                 std::end(graph_),
+                 std::back_inserter(nodes),
+                 [&](auto node) {
+                     auto idx = graph_.nodeToIndex(node);
                      const auto& selections = selections_per_node_[idx];
-                     return bucket.isSuperSetOf(selections);
+                     return !selections.empty() and bucket.isSubSetOf(selections);
                  });
 
-    indices.erase(
+    nodes.erase(
         std::remove_if(
-            std::begin(indices),
-            std::end(indices),
-            [&](auto idx) {
+            std::begin(nodes),
+            std::end(nodes),
+            [&](auto node) {
+                auto idx = graph_.nodeToIndex(node);
                 const auto& selections = selections_per_node_[idx];
                 return std::binary_search(
                     std::begin(selections),
@@ -182,18 +261,20 @@ auto SelectionBucketCreator::countNodesAbleToUseBucketWith(const SelectionBucket
                         return lhs.get() < rhs.get();
                     });
             }),
-        std::end(indices));
+        std::end(nodes));
 
-    return indices.size();
+    return nodes.size();
 }
 
 auto SelectionBucketCreator::countNodesAbleToUseBucket(const SelectionBucket& bucket) const noexcept
     -> std::size_t
 {
-    return std::count_if(std::begin(selections_per_node_),
-                         std::end(selections_per_node_),
-                         [&](const auto selections) {
-                             return bucket.isSuperSetOf(selections);
+    return std::count_if(std::begin(graph_),
+                         std::end(graph_),
+                         [&](auto node) {
+                             auto idx = graph_.nodeToIndex(node);
+                             const auto& selections = selections_per_node_[idx];
+                             return !selections.empty() and bucket.isSubSetOf(selections);
                          });
 }
 
@@ -249,6 +330,31 @@ auto SelectionBucketCreator::calculateConflictingSelections(const SelectionBucke
     return ret_vec;
 }
 
+auto SelectionBucketCreator::pruneSelectionBuckets() noexcept
+    -> void
+{
+    for(auto& bucket_ids : bucket_lookup_) {
+        auto before = bucket_ids.size();
+        bucket_ids.erase(
+            std::remove_if(std::begin(bucket_ids),
+                           std::end(bucket_ids),
+                           [&](auto outer_id) {
+                               return std::any_of(std::cbegin(bucket_ids),
+                                                  std::cend(bucket_ids),
+                                                  [&](auto inner_id) {
+                                                      const auto& outer = buckets_[outer_id];
+                                                      const auto& inner = buckets_[inner_id];
+                                                      if(outer_id == inner_id) {
+                                                          return false;
+                                                      }
+                                                      return outer.isSubSetOf(inner);
+                                                  });
+                           }),
+            std::end(bucket_ids));
+
+        fmt::print("pruned {} buckets\n", before - bucket_ids.size());
+    }
+}
 
 auto SelectionBucketCreator::countNodesAbleToUseBucketWithout(SelectionBucket bucket,
                                                               const std::vector<NodeSelection>& selections) const noexcept
