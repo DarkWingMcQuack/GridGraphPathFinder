@@ -17,33 +17,33 @@ using graph::UNREACHABLE;
 
 Dijkstra::Dijkstra(const graph::GridGraph& graph) noexcept
     : graph_(graph),
-      distances_(graph.getWidth() * graph.getHeight(),
-                 UNREACHABLE),
-      settled_(graph.getWidth() * graph.getHeight(), false),
-      pq_(DijkstraQueueComparer{}) {}
+      distances_(graph.size(), UNREACHABLE),
+      settled_(graph.size(), false),
+      pq_(DijkstraQueueComparer{}),
+      before_(graph.size(), graph::NOT_REACHABLE) {}
 
 
-auto Dijkstra::findAllRoutes(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findAllRoutes(graph::Node source, graph::Node target) noexcept
     -> std::vector<Path>
 {
     [[maybe_unused]] auto _ = computeDistance(source, target);
     return extractAllShortestPaths(source, target);
 }
 
-auto Dijkstra::findRoute(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findRoute(graph::Node source, graph::Node target) noexcept
     -> std::optional<Path>
 {
     [[maybe_unused]] auto _ = computeDistance(source, target);
     return extractShortestPath(source, target);
 }
 
-auto Dijkstra::findDistance(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findDistance(graph::Node source, graph::Node target) noexcept
     -> Distance
 {
     return computeDistance(source, target);
 }
 
-auto Dijkstra::findTrivialDistance(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::findTrivialDistance(graph::Node source, graph::Node target) noexcept
     -> graph::Distance
 {
     if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
@@ -61,7 +61,7 @@ auto Dijkstra::findTrivialDistance(const graph::Node& source, const graph::Node&
            - std::min(source_column, target_column));
 }
 
-auto Dijkstra::getIndex(const graph::Node& n) const noexcept
+auto Dijkstra::getIndex(graph::Node n) const noexcept
     -> std::optional<std::size_t>
 {
     auto row = n.row;
@@ -78,7 +78,7 @@ auto Dijkstra::getIndex(const graph::Node& n) const noexcept
     return n.row * graph_.get().getWidth() + n.column;
 }
 
-auto Dijkstra::getDistanceTo(const graph::Node& n) const noexcept
+auto Dijkstra::getDistanceTo(graph::Node n) const noexcept
     -> Distance
 {
     auto index_opt = getIndex(n);
@@ -91,7 +91,7 @@ auto Dijkstra::getDistanceTo(const graph::Node& n) const noexcept
 }
 
 
-auto Dijkstra::setDistanceTo(const graph::Node& n, Distance distance) noexcept
+auto Dijkstra::setDistanceTo(graph::Node n, Distance distance) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -101,7 +101,7 @@ auto Dijkstra::setDistanceTo(const graph::Node& n, Distance distance) noexcept
     }
 }
 
-auto Dijkstra::extractAllShortestPaths(const graph::Node& source, const graph::Node& target) const noexcept
+auto Dijkstra::extractAllShortestPaths(graph::Node source, graph::Node target) const noexcept
     -> std::vector<Path>
 {
     //check if a path exists
@@ -158,7 +158,7 @@ auto Dijkstra::extractAllShortestPaths(const graph::Node& source, const graph::N
     return complete_paths;
 }
 
-auto Dijkstra::extractShortestPath(const graph::Node& source, const graph::Node& target) const noexcept
+auto Dijkstra::extractShortestPath(graph::Node source, graph::Node target) const noexcept
     -> std::optional<Path>
 {
     //check if a path exists
@@ -170,28 +170,9 @@ auto Dijkstra::extractShortestPath(const graph::Node& source, const graph::Node&
 
     while(path.getSource() != source) {
         const auto& last_inserted = path.getSource();
-        auto neigbours = graph_.get().getWalkableNeigbours(last_inserted);
+        auto last_inserted_idx = graph_.get().nodeToIndex(last_inserted);
 
-        auto min_iter = std::min_element(
-            std::begin(neigbours),
-            std::end(neigbours),
-            [&](const auto& lhs, const auto& rhs) {
-                return getDistanceTo(lhs) < getDistanceTo(rhs);
-            });
-
-        //this can never happen
-        if(std::end(neigbours) == min_iter) {
-            return std::nullopt;
-        }
-
-        auto min_neig = *min_iter;
-
-        //this can also never happen
-        if(getDistanceTo(min_neig) == UNREACHABLE) {
-            return std::nullopt;
-        }
-
-        path.pushFront(min_neig);
+        path.pushFront(before_[last_inserted_idx]);
     }
 
     return path;
@@ -204,12 +185,14 @@ auto Dijkstra::reset() noexcept
     for(auto n : touched_) {
         unSettle(n);
         setDistanceTo(n, UNREACHABLE);
+        setBefore(n, graph::NOT_REACHABLE);
     }
+
     touched_.clear();
     pq_ = DijkstraQueue{DijkstraQueueComparer{}};
 }
 
-auto Dijkstra::unSettle(const graph::Node& n)
+auto Dijkstra::unSettle(graph::Node n)
     -> void
 {
     auto index_opt = getIndex(n);
@@ -219,7 +202,7 @@ auto Dijkstra::unSettle(const graph::Node& n)
     }
 }
 
-auto Dijkstra::settle(const graph::Node& n) noexcept
+auto Dijkstra::settle(graph::Node n) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -229,7 +212,7 @@ auto Dijkstra::settle(const graph::Node& n) noexcept
     }
 }
 
-auto Dijkstra::isSettled(const graph::Node& n)
+auto Dijkstra::isSettled(graph::Node n)
     -> bool
 {
     auto index_opt = getIndex(n);
@@ -275,7 +258,7 @@ auto Dijkstra::getMinDistanceIn(const graph::GridCell& cell) noexcept
                            });
 }
 
-auto Dijkstra::computeDistance(const graph::Node& source, const graph::Node& target) noexcept
+auto Dijkstra::computeDistance(graph::Node source, graph::Node target) noexcept
     -> Distance
 {
     using graph::UNREACHABLE;
@@ -321,11 +304,20 @@ auto Dijkstra::computeDistance(const graph::Node& source, const graph::Node& tar
                 touched_.emplace_back(neig);
                 setDistanceTo(neig, new_dist);
                 pq_.emplace(neig, new_dist);
+                setBefore(neig, current_node);
             }
         }
     }
 
     return getDistanceTo(target);
+}
+
+
+auto Dijkstra::setBefore(graph::Node n, graph::Node before) noexcept
+    -> void
+{
+    auto idx = graph_.get().nodeToIndex(n);
+    before_[idx] = before;
 }
 
 
