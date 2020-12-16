@@ -29,31 +29,23 @@ public:
         -> utils::RefVec<NodeSelection>;
 
 private:
-    [[nodiscard]] auto getSelections(const graph::Node& first,
-                                     const graph::Node& second) const noexcept
-        -> std::pair<
-            utils::CRef<utils::RefVec<NodeSelection>>,
-            utils::CRef<utils::RefVec<NodeSelection>>>;
-
-
     [[nodiscard]] auto getOneCommonSelection(
-        const utils::RefVec<NodeSelection>& first,
-        const utils::RefVec<NodeSelection>& second) const noexcept
-        -> std::optional<utils::CRef<NodeSelection>>;
+        const std::vector<std::size_t>& first,
+        const std::vector<std::size_t>& second) const noexcept
+        -> std::optional<std::size_t>;
 
     [[nodiscard]] auto getAllCommonSelection(
-        const utils::RefVec<NodeSelection>& first,
-        const utils::RefVec<NodeSelection>& second) const noexcept
-        -> utils::RefVec<NodeSelection>;
+        const std::vector<std::size_t>& first,
+        const std::vector<std::size_t>& second) const noexcept
+        -> std::vector<std::size_t>;
 
-
-    [[nodiscard]] auto getNodeIndex(const graph::Node& n) const noexcept
-        -> std::size_t;
 
 private:
     const graph::GridGraph& graph_;
     std::vector<NodeSelection> selections_;
-    std::vector<utils::RefVec<NodeSelection>> selection_lookup_;
+
+    std::vector<std::vector<std::size_t>> left_selections_;
+    std::vector<std::vector<std::size_t>> right_selections_;
 
     friend class SelectionBucketCreator;
 };

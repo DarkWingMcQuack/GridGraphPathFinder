@@ -1,3 +1,4 @@
+#include <execution>
 #include <fmt/core.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
@@ -8,6 +9,7 @@
 #include <selection/NodeSelectionCalculator.hpp>
 #include <selection/SelectionLookup.hpp>
 #include <unordered_set>
+#include <utils/Range.hpp>
 #include <utils/Utils.hpp>
 #include <vector>
 
@@ -18,101 +20,92 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
                                  std::vector<NodeSelection> selections)
     : graph_(graph),
       selections_(std::move(selections)),
-      selection_lookup_(graph.getWidth() * graph.getHeight())
+      left_selections_(graph_.size()),
+      right_selections_(graph_.size())
 {
-    for(auto& selection : selections_) {
+    for(const auto& [i, selection] : utils::enumerate(selections_)) {
         for(auto node : selection.getLeftSelection()) {
-            auto idx = getNodeIndex(node);
-            selection_lookup_[idx].emplace_back(std::ref(selection));
+            auto idx = graph_.nodeToIndex(node);
+            left_selections_[idx].emplace_back(i);
         }
 
         for(auto node : selection.getRightSelection()) {
-            auto idx = getNodeIndex(node);
-            selection_lookup_[idx].emplace_back(std::ref(selection));
+            auto idx = graph_.nodeToIndex(node);
+            right_selections_[idx].emplace_back(i);
         }
     }
 
-    for(auto& selections : selection_lookup_) {
-        std::sort(std::begin(selections),
-                  std::end(selections),
-                  [](const auto& lhs, const auto& rhs) {
-                      return lhs.get().getIndex() < rhs.get().getIndex();
-                  });
-    }
+	//no need to sort
+    // for(auto& s : left_selections_) {
+    //     std::sort(std::begin(s),
+    //               std::end(s));
+    // }
+
+    // for(auto& s : right_selections_) {
+    //     std::sort(std::begin(s),
+    //               std::end(s));
+    // }
 }
 
-
-auto SelectionLookup::getOneCommonSelection(const graph::Node& first,
-                                            const graph::Node& second) const noexcept
-    -> std::optional<std::reference_wrapper<const NodeSelection>>
-{
-    auto [first_selections, second_selections] = getSelections(first, second);
-
-    return getOneCommonSelection(first_selections,
-                                 second_selections);
-}
 
 auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
                                             const graph::Node& second) const noexcept
     -> utils::RefVec<NodeSelection>
 {
-    auto [first_selections, second_selections] = getSelections(first, second);
+    auto first_idx = graph_.nodeToIndex(first);
+    auto second_idx = graph_.nodeToIndex(second);
 
-    return getAllCommonSelection(first_selections,
-                                 second_selections);
+    const auto& first_left_selections = left_selections_[first_idx];
+    const auto& second_right_selections = right_selections_[second_idx];
+    const auto& first_right_selections = right_selections_[first_idx];
+    const auto& second_left_selections = left_selections_[second_idx];
+
+    auto left_to_right = getAllCommonSelection(first_left_selections, second_right_selections);
+    auto right_to_left = getAllCommonSelection(first_right_selections, second_left_selections);
+
+    auto all = utils::concat(std::move(left_to_right),
+                             std::move(right_to_left));
+
+    utils::RefVec<NodeSelection> all_refs;
+    all_refs.reserve(all.size());
+
+    std::transform(std::begin(all),
+                   std::end(all),
+                   std::back_inserter(all_refs),
+                   [&](auto idx) {
+                       return std::cref(selections_[idx]);
+                   });
+
+    return all_refs;
 }
-
-
-auto SelectionLookup::getSelections(const graph::Node& first,
-                                    const graph::Node& second) const noexcept
-    -> std::pair<
-        utils::CRef<utils::RefVec<NodeSelection>>,
-        utils::CRef<utils::RefVec<NodeSelection>>>
-{
-    auto first_idx = getNodeIndex(first);
-    auto second_idx = getNodeIndex(second);
-    auto first_selections = std::cref(selection_lookup_[first_idx]);
-    auto second_selections = std::cref(selection_lookup_[second_idx]);
-
-    return std::pair{first_selections, second_selections};
-}
-
 
 auto SelectionLookup::getOneCommonSelection(
-    const utils::RefVec<NodeSelection>& first,
-    const utils::RefVec<NodeSelection>& second) const noexcept
-    -> std::optional<utils::CRef<NodeSelection>>
+    const std::vector<std::size_t>& first,
+    const std::vector<std::size_t>& second) const noexcept
+    -> std::optional<std::size_t>
 {
-    auto iter1 = std::begin(first);
-    auto iter2 = std::begin(second);
-    auto iter1_end = std::end(first);
-    auto iter2_end = std::end(second);
+    auto iter1 = std::cbegin(first);
+    auto iter2 = std::cbegin(second);
+    auto iter1_end = std::cend(first);
+    auto iter2_end = std::cend(second);
 
-    while(iter1 != iter1_end && iter2 != iter2_end) {
-        if(iter1->get().getIndex() < iter2->get().getIndex()) {
+    while(iter1 != iter1_end and iter2 != iter2_end) {
+        if(*iter1 < *iter2) {
             ++iter1;
-        } else if(iter2->get().getIndex() < iter1->get().getIndex()) {
+        } else if(*iter2 < *iter1) {
             ++iter2;
         } else {
-            return std::cref(*iter1);
+            return *iter1;
         }
     }
+
     return std::nullopt;
 }
 
-auto SelectionLookup::getNodeIndex(const graph::Node& n) const noexcept
-    -> std::size_t
-{
-    return n.row * graph_.getWidth() + n.column;
-}
-
 auto SelectionLookup::getAllCommonSelection(
-    const utils::RefVec<NodeSelection>& first,
-    const utils::RefVec<NodeSelection>& second) const noexcept
-    -> utils::RefVec<NodeSelection>
+    const std::vector<std::size_t>& first,
+    const std::vector<std::size_t>& second) const noexcept
+    -> std::vector<std::size_t>
 {
-    return utils::intersect(first, second,
-                            [](const auto& lhs, const auto& rhs) {
-                                return lhs.get() < rhs.get();
-                            });
+    return utils::intersect(first, second);
 }
