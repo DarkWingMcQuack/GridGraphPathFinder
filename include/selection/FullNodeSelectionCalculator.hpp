@@ -61,7 +61,6 @@ public:
         std::size_t first_idx;
         for(std::size_t i = 0; i < done_.size(); i++) {
             if(!done_[i]) {
-                fmt::print("start\n");
                 first_idx = i;
                 break;
             }
@@ -70,7 +69,6 @@ public:
         std::size_t second_idx;
         for(std::size_t i = all_to_all_[first_idx].size() - 1; i >= 0; i--) {
             if(!all_to_all_[first_idx][i]) {
-                fmt::print("end\n");
                 second_idx = i;
                 break;
             }
