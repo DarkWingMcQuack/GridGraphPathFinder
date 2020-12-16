@@ -25,6 +25,9 @@ struct Node
         -> std::uint64_t;
 };
 
+constexpr static auto NOT_REACHABLE = Node{std::numeric_limits<std::size_t>::max(),
+                                           std::numeric_limits<std::size_t>::max()};
+
 auto operator<<(std::ostream& os, Node n) noexcept
     -> std::ostream&;
 } // namespace graph
