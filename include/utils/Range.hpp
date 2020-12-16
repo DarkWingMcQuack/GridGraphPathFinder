@@ -1,5 +1,6 @@
 #pragma once
 #include <iterator>
+#include <tuple>
 #include <type_traits>
 
 namespace utils::impl {
@@ -233,6 +234,53 @@ auto reverseRange(Counter from, Counter to)
     -> impl::RangeWrapper<Counter, false>
 {
     return {to, from};
+}
+
+
+template<typename T,
+         typename TIter = decltype(std::begin(std::declval<T>())),
+         typename = decltype(std::end(std::declval<T>()))>
+constexpr auto enumerate(T&& iterable)
+{
+    struct Iterator
+    {
+        size_t i_;
+        TIter iter_;
+
+        constexpr Iterator(std::size_t i, TIter iter) noexcept
+            : i_(i), iter_(iter) {}
+
+        constexpr auto operator!=(const Iterator& other) const noexcept
+            -> bool
+        {
+            return iter_ != other.iter_;
+        }
+        constexpr auto operator++() noexcept
+            -> void
+        {
+            ++i_;
+            ++iter_;
+        }
+        auto operator*() const noexcept
+        {
+            return std::tie(i_, *iter_);
+        }
+    };
+    struct IterableWrapper
+    {
+        T iterable_;
+
+        auto begin()
+        {
+            return Iterator{0, std::begin(iterable_)};
+        }
+        auto end()
+        {
+            return Iterator{0, std::end(iterable_)};
+        }
+    };
+
+    return IterableWrapper{std::forward<T>(iterable)};
 }
 
 } // namespace utils
