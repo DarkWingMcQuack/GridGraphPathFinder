@@ -72,6 +72,7 @@ target_sources(GridGraphPathFinderSrc
 
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Path.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Dijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/AStar.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/CachingDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/DijkstraQueue.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Distance.hpp
@@ -100,6 +101,7 @@ target_sources(GridGraphPathFinderSrc
 
   src/pathfinding/Path.cpp
   src/pathfinding/Dijkstra.cpp
+  src/pathfinding/AStar.cpp
   src/pathfinding/CachingDijkstra.cpp
   )
 
