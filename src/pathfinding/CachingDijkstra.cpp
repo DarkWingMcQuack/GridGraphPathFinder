@@ -18,10 +18,10 @@ using pathfinding::CachingDijkstra;
 
 CachingDijkstra::CachingDijkstra(const graph::GridGraph &graph) noexcept
     : graph_(graph),
-      distances_(graph.getWidth() * graph.getHeight(), UNREACHABLE),
-      settled_(graph.getWidth() * graph.getHeight(), false),
+      distances_(graph.size(), UNREACHABLE),
+      settled_(graph.size(), false),
       pq_(DijkstraQueueComparer{}),
-      cache_index_(graph.getWidth() * graph.getHeight(), 0),
+      cache_index_(graph.size(), 0),
       distance_cache_(graph.countWalkableNodes(),
                       std::vector(graph.countWalkableNodes(), UNREACHABLE))
 {
