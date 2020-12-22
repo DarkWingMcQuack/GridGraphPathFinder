@@ -9,43 +9,32 @@ namespace selection {
 class SelectionBucket
 {
 public:
-    SelectionBucket(std::vector<NodeSelection> selections,
+    SelectionBucket(std::vector<std::size_t> selections,
                     bool sort = true);
-
-    [[nodiscard]] auto weight() const noexcept
-        -> std::size_t;
 
     [[nodiscard]] auto isSubSetOf(const SelectionBucket& other) const noexcept
         -> bool;
 
-    [[nodiscard]] auto isSubSetOf(const std::vector<NodeSelection>& other) const noexcept
-        -> bool;
-
-    [[nodiscard]] auto isSubSetOf(const utils::RefVec<NodeSelection>& other) const noexcept
+    [[nodiscard]] auto isSubSetOf(const std::vector<std::size_t>& other) const noexcept
         -> bool;
 
     [[nodiscard]] auto isSuperSetOf(const SelectionBucket& other) const noexcept
         -> bool;
 
-    [[nodiscard]] auto isSuperSetOf(const std::vector<NodeSelection>& other) const noexcept
+    [[nodiscard]] auto isSuperSetOf(const std::vector<std::size_t>& other) const noexcept
         -> bool;
 
-    [[nodiscard]] auto isSuperSetOf(const utils::RefVec<NodeSelection>& other) const noexcept
+    [[nodiscard]] auto contains(const std::size_t& other) const noexcept
         -> bool;
 
-    [[nodiscard]] auto contains(const NodeSelection& other) const noexcept
-        -> bool;
+    [[nodiscard]] auto size() const noexcept
+        -> std::size_t;
 
-    [[nodiscard]] auto canAnswer(const graph::Node& from,
-                                 const graph::Node& to) const noexcept
-        -> bool;
-
-    //the result referenced lives as long as the given object other
     [[nodiscard]] auto getCommonSelection(const SelectionBucket& other) const noexcept
-        -> std::optional<std::reference_wrapper<const NodeSelection>>;
+        -> std::optional<std::size_t>;
 
     [[nodiscard]] auto getSelections() const noexcept
-        -> const std::vector<NodeSelection>&;
+        -> const std::vector<std::size_t>&;
 
     [[nodiscard]] auto getFirstIndex() const noexcept
         -> std::optional<std::size_t>;
@@ -53,14 +42,14 @@ public:
     [[nodiscard]] auto getLastIndex() const noexcept
         -> std::optional<std::size_t>;
 
-    [[nodiscard]] auto exclude(const NodeSelection& selection) && noexcept
+    [[nodiscard]] auto exclude(std::size_t selection) && noexcept
         -> SelectionBucket;
 
     [[nodiscard]] auto merge(SelectionBucket other) && noexcept
         -> SelectionBucket;
 
 private:
-    std::vector<NodeSelection> selections_;
+    std::vector<std::size_t> selections_;
 };
 
 } // namespace selection
