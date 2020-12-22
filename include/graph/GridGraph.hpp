@@ -5,6 +5,7 @@
 #include <graph/NeigbourCalculator.hpp>
 #include <graph/Node.hpp>
 #include <optional>
+#include <selection/NodeSelection.hpp>
 #include <separation/Separation.hpp>
 #include <string_view>
 #include <vector>
@@ -44,6 +45,9 @@ public:
 
     [[nodiscard]] auto areNeighbours(Node first, Node second) const noexcept
         -> bool;
+
+    [[nodiscard]] auto getManhattanNeigbours(Node node) const noexcept
+        -> std::array<Node, 4>;
 
     [[nodiscard]] auto hasBarrier(const graph::GridCell& cell) const noexcept
         -> bool;
@@ -102,6 +106,12 @@ public:
 
     [[nodiscard]] auto toClipped(separation::Separation g) const noexcept
         -> separation::Separation;
+
+    [[nodiscard]] auto unclip(selection::NodeSelection g) const noexcept
+        -> selection::NodeSelection;
+
+    [[nodiscard]] auto toClipped(selection::NodeSelection g) const noexcept
+        -> selection::NodeSelection;
 
     [[nodiscard]] auto getHeight() const noexcept
         -> std::size_t;

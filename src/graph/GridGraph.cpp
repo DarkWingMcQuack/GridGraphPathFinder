@@ -4,6 +4,7 @@
 #include <graph/GridGraph.hpp>
 #include <graph/NeigbourCalculator.hpp>
 #include <random>
+#include <selection/NodeSelection.hpp>
 #include <vector>
 
 using graph::GridGraph;
@@ -263,6 +264,15 @@ auto GridGraph::getWalkableNeigbours(Node n) const noexcept
     return neigs;
 }
 
+auto GridGraph::getManhattanNeigbours(Node node) const noexcept
+    -> std::array<Node, 4>
+{
+    return std::array{Node{node.row, node.column + 1},
+                      Node{node.row, node.column - 1},
+                      Node{node.row - 1, node.column},
+                      Node{node.row + 1, node.column}};
+}
+
 auto GridGraph::getTrivialDistance(const Node& from, const Node& to) const noexcept
     -> Distance
 {
@@ -466,6 +476,49 @@ auto GridGraph::toClipped(separation::Separation g) const noexcept
                                   toClipped(g.getFirstClusterCenter()),
                                   toClipped(g.getSecondClusterCenter()),
                                   g.getCenterDistance()};
+}
+
+
+auto GridGraph::unclip(selection::NodeSelection g) const noexcept
+    -> selection::NodeSelection
+{
+    auto left = std::move(g.getLeftSelection());
+    auto right = std::move(g.getRightSelection());
+
+    for(auto& i : left) {
+        i = unclip(i);
+    }
+
+    for(auto& i : right) {
+        i = unclip(i);
+    }
+
+    auto center = unclip(g.getCenter());
+
+    return selection::NodeSelection{std::move(left),
+                                    std::move(right),
+                                    center};
+}
+
+auto GridGraph::toClipped(selection::NodeSelection g) const noexcept
+    -> selection::NodeSelection
+{
+    auto left = std::move(g.getLeftSelection());
+    auto right = std::move(g.getRightSelection());
+
+    for(auto& i : left) {
+        i = toClipped(i);
+    }
+
+    for(auto& i : right) {
+        i = toClipped(i);
+    }
+
+    auto center = toClipped(g.getCenter());
+
+    return selection::NodeSelection{std::move(left),
+                                    std::move(right),
+                                    center};
 }
 
 
