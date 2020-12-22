@@ -61,44 +61,19 @@ auto Dijkstra::findTrivialDistance(graph::Node source, graph::Node target) noexc
            - std::min(source_column, target_column));
 }
 
-auto Dijkstra::getIndex(graph::Node n) const noexcept
-    -> std::optional<std::size_t>
-{
-    auto row = n.row;
-    auto column = n.column;
-
-    if(row >= graph_.get().getHeight() || row < 0) {
-        return std::nullopt;
-    }
-
-    if(column >= graph_.get().getWidth() || column < 0) {
-        return std::nullopt;
-    }
-
-    return n.row * graph_.get().getWidth() + n.column;
-}
-
 auto Dijkstra::getDistanceTo(graph::Node n) const noexcept
     -> Distance
 {
-    auto index_opt = getIndex(n);
-
-    if(index_opt) {
-        return distances_[index_opt.value()];
-    }
-
-    return UNREACHABLE;
+    auto index = graph_.get().nodeToIndex(n);
+    return distances_[index];
 }
 
 
 auto Dijkstra::setDistanceTo(graph::Node n, Distance distance) noexcept
     -> void
 {
-    auto index_opt = getIndex(n);
-
-    if(index_opt) {
-        distances_[index_opt.value()] = distance;
-    }
+    auto index = graph_.get().nodeToIndex(n);
+    distances_[index] = distance;
 }
 
 auto Dijkstra::extractAllShortestPaths(graph::Node source, graph::Node target) const noexcept
@@ -195,33 +170,22 @@ auto Dijkstra::reset() noexcept
 auto Dijkstra::unSettle(graph::Node n)
     -> void
 {
-    auto index_opt = getIndex(n);
-
-    if(index_opt) {
-        settled_[index_opt.value()] = false;
-    }
+    auto index = graph_.get().nodeToIndex(n);
+    settled_[index] = false;
 }
 
 auto Dijkstra::settle(graph::Node n) noexcept
     -> void
 {
-    auto index_opt = getIndex(n);
-
-    if(index_opt) {
-        settled_[index_opt.value()] = true;
-    }
+    auto index = graph_.get().nodeToIndex(n);
+    settled_[index] = true;
 }
 
 auto Dijkstra::isSettled(graph::Node n)
     -> bool
 {
-    auto index_opt = getIndex(n);
-
-    if(index_opt) {
-        return settled_[index_opt.value()];
-    }
-
-    return false;
+    auto index = graph_.get().nodeToIndex(n);
+    return settled_[index];
 }
 
 auto Dijkstra::getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
@@ -294,9 +258,13 @@ auto Dijkstra::computeDistance(graph::Node source, graph::Node target) noexcept
         //when reusing the pq
         pq_.pop();
 
-        auto neigbours = graph_.get().getWalkableNeigbours(current_node);
+        auto neigbours = graph_.get().getManhattanNeigbours(current_node);
 
-        for(auto&& neig : neigbours) {
+        for(auto neig : neigbours) {
+            if(graph_.get().isBarrier(neig)) {
+                continue;
+            }
+
             auto neig_dist = getDistanceTo(neig);
             auto new_dist = current_dist + 1;
 

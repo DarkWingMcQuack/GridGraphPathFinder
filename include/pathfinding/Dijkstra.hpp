@@ -67,9 +67,6 @@ protected:
     [[nodiscard]] auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
         -> graph::Distance;
 
-    [[nodiscard]] auto getIndex(graph::Node n) const noexcept
-        -> std::optional<std::size_t>;
-
     auto unSettle(graph::Node n)
         -> void;
 
