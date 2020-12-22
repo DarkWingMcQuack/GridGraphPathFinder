@@ -13,7 +13,7 @@ auto ManhattanNeigbourCalculator::calculateNeigbours(const Node& node) const noe
         Node{node.row, node.column + 1},
         Node{node.row, node.column - 1},
         Node{node.row - 1, node.column},
-        Node{node.row + 1, node.column},
+        Node{node.row + 1, node.column}
     };
 }
 
