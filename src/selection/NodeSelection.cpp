@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <fstream>
+#include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
 #include <selection/NodeSelection.hpp>
 
@@ -8,12 +10,10 @@ using graph::Node;
 
 NodeSelection::NodeSelection(std::vector<graph::Node> left_selection,
                              std::vector<graph::Node> right_selection,
-                             graph::Node center,
-                             std::size_t index)
+                             graph::Node center)
     : left_selection_(std::move(left_selection)),
       right_selection_(std::move(right_selection)),
-      center_(center),
-      index_(index)
+      center_(center)
 {
     std::sort(std::begin(left_selection_),
               std::end(left_selection_));
@@ -40,6 +40,17 @@ auto NodeSelection::getRightSelection() const noexcept
 {
     return right_selection_;
 }
+auto NodeSelection::getLeftSelection() noexcept
+    -> std::vector<Node>&
+{
+    return left_selection_;
+}
+
+auto NodeSelection::getRightSelection() noexcept
+    -> std::vector<Node>&
+{
+    return right_selection_;
+}
 
 auto NodeSelection::getCenter() const noexcept
     -> graph::Node
@@ -47,10 +58,44 @@ auto NodeSelection::getCenter() const noexcept
     return center_;
 }
 
-auto NodeSelection::getIndex() const noexcept
-    -> std::size_t
+auto NodeSelection::deleteFromLeft(const std::vector<graph::Node>& nodes) noexcept
+    -> void
 {
-    return index_;
+    for(auto n : nodes) {
+        auto iter = std::find(std::begin(left_selection_),
+                              std::end(left_selection_),
+                              n);
+        if(iter != std::end(left_selection_)) {
+            left_selection_.erase(iter);
+        }
+    }
+}
+auto NodeSelection::deleteFromRight(const std::vector<graph::Node>& nodes) noexcept
+    -> void
+{
+    for(auto n : nodes) {
+        auto iter = std::find(std::begin(right_selection_),
+                              std::end(right_selection_),
+                              n);
+        if(iter != std::end(right_selection_)) {
+            right_selection_.erase(iter);
+        }
+    }
+}
+
+
+auto NodeSelection::isSubSetOf(const NodeSelection& other) const noexcept
+    -> bool
+{
+    for(auto from : left_selection_) {
+        for(auto to : right_selection_) {
+            if(!other.canAnswer(from, to)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 auto NodeSelection::canAnswer(Node from, Node to) const noexcept
@@ -71,24 +116,6 @@ auto NodeSelection::canAnswer(Node from, Node to) const noexcept
                                    from));
 }
 
-auto NodeSelection::operator<(const NodeSelection& other) const noexcept
-    -> bool
-{
-    return index_ < other.index_;
-}
-
-auto NodeSelection::operator==(const NodeSelection& other) const noexcept
-    -> bool
-{
-    return index_ == other.index_;
-}
-
-auto NodeSelection::operator!=(const NodeSelection& other) const noexcept
-    -> bool
-{
-    return index_ != other.index_;
-}
-
 auto NodeSelection::toFile(std::string_view path) const noexcept
     -> void
 {
@@ -100,5 +127,4 @@ auto NodeSelection::toFile(std::string_view path) const noexcept
         file << "1: (" << node.row << ", " << node.column << ")\n";
     }
     file << "center: (" << center_.row << ", " << center_.column << ")\n";
-    file << "index: " << index_ << "\n";
 }

@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
+#include <pathfinding/AStar.hpp>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
 #include <pathfinding/CachingDijkstra.hpp>
@@ -141,35 +142,45 @@ auto runSelection(const graph::GridGraph& graph,
                   std::string_view result_folder)
 {
     utils::Timer t;
-    FullNodeSelectionCalculator<Dijkstra> selection_calculator{graph};
+    FullNodeSelectionCalculator<Dijkstra, CachingDijkstra> selection_calculator{graph};
     auto selections = selection_calculator.calculateFullNodeSelection();
 
     fmt::print("runtime: {}\n", t.elapsed());
     fmt::print("selections calculated: {}\n", selections.size());
+	t.reset();
+
+    FullNodeSelectionCalculator<pathfinding::AStar, CachingDijkstra> selection_calculator2{graph};
+    selections = selection_calculator2.calculateFullNodeSelection();
+
+    fmt::print("runtime: {}\n", t.elapsed());
+    fmt::print("selections calculated: {}\n", selections.size());
+
 
     std::sort(std::rbegin(selections),
               std::rend(selections),
-			  [](const auto& lhs, const auto& rhs){
-				return lhs.weight() < rhs.weight();
-			  });
+              [](const auto& lhs, const auto& rhs) {
+                  return lhs.weight() < rhs.weight();
+              });
 
 
-	auto selection_folder = fmt::format("{}/selections", result_folder);
-	fs::create_directories(selection_folder);
+    auto selection_folder = fmt::format("{}/selections", result_folder);
+    fs::create_directories(selection_folder);
 
     for(std::size_t i{0}; i < selections.size(); i++) {
-        const auto& sel = selections[i];
+        const auto sel = graph.unclip(selections[i]);
         const auto path = fmt::format("{}/selection-{}", selection_folder, i);
         sel.toFile(path);
     }
 
     selection::SelectionLookup lookup{graph, std::move(selections)};
 
-	selection::SelectionBucketCreator optimizer{std::move(lookup)};
+    for(auto [size, amount] : lookup.getSizeDistributionTotal()) {
+        fmt::print("{} : {},\n", size, amount);
+    }
 
-	auto bucket_lookup = std::move(optimizer).createBucketLookup();
+    selection::SelectionBucketCreator optimizer{std::move(lookup)};
 
-	
+    auto bucket_lookup = std::move(optimizer).createBucketLookup();
 }
 
 auto main(int argc, char* argv[])

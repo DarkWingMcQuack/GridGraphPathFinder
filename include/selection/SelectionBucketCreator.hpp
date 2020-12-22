@@ -17,7 +17,8 @@ class SelectionBucketCreator
 public:
     SelectionBucketCreator(const graph::GridGraph& graph,
                            std::vector<NodeSelection> selections,
-                           std::vector<utils::RefVec<NodeSelection>> selections_per_node);
+                           std::vector<std::vector<std::size_t>> left_selections,
+                           std::vector<std::vector<std::size_t>> right_selections);
 
     SelectionBucketCreator(SelectionLookup&& lookup);
 
@@ -25,41 +26,67 @@ public:
         -> SelectionBucketLookup;
 
 private:
-    auto getIncompleteNodeIdx() const noexcept
+    auto getIncompleteNodeIdxLeft() const noexcept
         -> std::optional<std::size_t>;
 
-    auto getIncompleteNeigboursOf(std::size_t idx) const noexcept
-        -> std::vector<std::size_t>;
+    auto getIncompleteNodeIdxRight() const noexcept
+        -> std::optional<std::size_t>;
 
-    auto addBucket(SelectionBucket bucket) noexcept
+    auto addBucketLeft(SelectionBucket bucket) noexcept
         -> void;
 
-    auto buildBuckedContainingAllOfNode(std::size_t idx) const noexcept
-        -> SelectionBucket;
+    auto addBucketRight(SelectionBucket bucket) noexcept
+        -> void;
 
-    auto countNodesAbleToUseBucketWith(const SelectionBucket& bucket,
-                                       const NodeSelection& selection) const noexcept
-        -> std::size_t;
-
-    auto countNodesAbleToUseBucketWithout(SelectionBucket bucket,
-                                          const std::vector<NodeSelection>& selections) const noexcept
-        -> std::size_t;
-
-    auto countNodesAbleToUseBucket(const SelectionBucket& bucket) const noexcept
-        -> std::size_t;
-
-    auto countNodesUsing(const NodeSelection& selection) const noexcept
-        -> std::size_t;
-
-    auto isComplete(std::size_t idx) const noexcept
+    auto bucketViableForLeft(const SelectionBucket& bucket,
+                             std::size_t node_idx) const noexcept
         -> bool;
 
-    auto optimizeBucket(SelectionBucket bucket) const noexcept
+    auto bucketViableForRight(const SelectionBucket& bucket,
+                              std::size_t node_idx) const noexcept
+        -> bool;
+
+    auto buildBuckedContainingAllOfNodeLeft(std::size_t idx) const noexcept
+        -> SelectionBucket;
+
+    auto buildBuckedContainingAllOfNodeRight(std::size_t idx) const noexcept
+        -> SelectionBucket;
+
+    auto countNodesAbleToUseBucketWithoutLeft(SelectionBucket bucket,
+                                              const std::vector<std::size_t>& indices) const noexcept
+        -> std::size_t;
+
+    auto countNodesAbleToUseBucketWithoutRight(SelectionBucket bucket,
+                                               const std::vector<std::size_t>& indices) const noexcept
+        -> std::size_t;
+
+    auto countNodesAbleToUseBucketLeft(const SelectionBucket& bucket) const noexcept
+        -> std::size_t;
+
+    auto countNodesAbleToUseBucketRight(const SelectionBucket& bucket) const noexcept
+        -> std::size_t;
+
+    auto countNodesUsingLeft(std::size_t selection_idx) const noexcept
+        -> std::size_t;
+
+    auto countNodesUsingRight(std::size_t selection_idx) const noexcept
+        -> std::size_t;
+
+    auto isCompleteLeft(std::size_t idx) const noexcept
+        -> bool;
+
+    auto isCompleteRight(std::size_t idx) const noexcept
+        -> bool;
+
+    auto optimizeBucketLeft(SelectionBucket bucket) const noexcept
+        -> SelectionBucket;
+
+    auto optimizeBucketRight(SelectionBucket bucket) const noexcept
         -> SelectionBucket;
 
     auto calculateConflictingSelections(const SelectionBucket& bucket,
-                                        const utils::RefVec<NodeSelection>& selections) const noexcept
-        -> std::vector<NodeSelection>;
+                                        const std::vector<std::size_t>& selection_indices) const noexcept
+        -> std::vector<std::size_t>;
 
     auto pruneSelectionBuckets() noexcept
         -> void;
@@ -70,10 +97,15 @@ private:
     const graph::GridGraph& graph_;
     std::vector<SelectionBucket> buckets_;
     std::vector<std::vector<std::size_t>> bucket_lookup_;
+    std::vector<std::vector<std::size_t>> left_buckets_;
+    std::vector<std::vector<std::size_t>> right_buckets_;
 
     std::vector<NodeSelection> selections_;
-    std::vector<utils::RefVec<NodeSelection>> selections_per_node_;
-    std::vector<std::size_t> incomplete_nodes_;
+    std::vector<std::vector<std::size_t>> left_selections_;
+    std::vector<std::vector<std::size_t>> right_selections_;
+
+    std::vector<std::size_t> incomplete_nodes_left_;
+    std::vector<std::size_t> incomplete_nodes_right_;
 };
 
 } // namespace selection

@@ -9,6 +9,7 @@
 #include <selection/NodeSelection.hpp>
 #include <selection/NodeSelectionCalculator.hpp>
 #include <unordered_set>
+#include <map>
 #include <vector>
 
 namespace selection {
@@ -26,7 +27,16 @@ public:
 
     [[nodiscard]] auto getAllCommonSelection(const graph::Node& first,
                                              const graph::Node& second) const noexcept
-        -> utils::RefVec<NodeSelection>;
+        -> utils::CRefVec<NodeSelection>;
+
+    [[nodiscard]] auto getSizeDistributionLeft() const noexcept
+        -> std::map<std::size_t, std::size_t>;
+
+    [[nodiscard]] auto getSizeDistributionRight() const noexcept
+        -> std::map<std::size_t, std::size_t>;
+
+    [[nodiscard]] auto getSizeDistributionTotal() const noexcept
+        -> std::map<std::size_t, std::size_t>;
 
 private:
     [[nodiscard]] auto getOneCommonSelection(
@@ -48,6 +58,7 @@ private:
     std::vector<std::vector<std::size_t>> right_selections_;
 
     friend class SelectionBucketCreator;
+    friend class SelectionLookupOptimizer;
 };
 
 } // namespace selection

@@ -11,17 +11,17 @@
 
 namespace selection {
 
-template<class PathFinder>
+template<class PathFinder,
+         class CachedPathFinder>
 class NodeSelectionCalculator
 {
 public:
     NodeSelectionCalculator(const graph::GridGraph& graph)
         : path_finder_(graph),
+		  cached_path_finder_(graph),
           graph_(graph),
-          left_settled_(graph_.getWidth() * graph_.getHeight(),
-                        false),
-          right_settled_(graph_.getWidth() * graph_.getHeight(),
-                         false) {}
+          left_settled_(graph_.size(), false),
+          right_settled_(graph_.size(), false) {}
 
 
     [[nodiscard]] auto calculateFullSelection(graph::Node left_start,
@@ -34,13 +34,13 @@ public:
         }
         auto center = center_opt.value();
 
-        auto left_to_center = path_finder_.findDistance(left_start, center);
+        auto left_to_center = cached_path_finder_.findDistance(left_start, center);
 
         std::deque<graph::Node> left_candidates;
         left_candidates.push_back(left_start);
         left_selection_.emplace_back(left_start, left_to_center);
 
-        auto right_to_center = path_finder_.findDistance(right_start, center);
+        auto right_to_center = cached_path_finder_.findDistance(right_start, center);
 
         std::deque<graph::Node> right_candidates;
         right_candidates.push_back(right_start);
@@ -105,8 +105,7 @@ public:
 
         NodeSelection selection{std::move(left),
                                 std::move(right),
-                                center,
-                                current_selection_idx_++};
+                                center};
 
         //cleanup and reset the state of the calculator
         cleanup();
@@ -119,10 +118,10 @@ public:
                                             const graph::Node& center) noexcept
         -> std::optional<graph::Distance>
     {
-        auto center_dist = path_finder_.findDistance(node, center);
+        auto center_dist = cached_path_finder_.findDistance(node, center);
 
         for(auto [target, center_target_dist] : right_selection_) {
-            auto opt_dist = path_finder_.findDistance(node, target);
+            auto opt_dist = cached_path_finder_.findDistance(node, target);
 
             if(center_target_dist == graph::UNREACHABLE
                or center_dist == graph::UNREACHABLE) {
@@ -143,10 +142,10 @@ public:
                                              const graph::Node& center) noexcept
         -> std::optional<graph::Distance>
     {
-        auto center_dist = path_finder_.findDistance(node, center);
+        auto center_dist = cached_path_finder_.findDistance(node, center);
 
         for(auto [target, center_target_dist] : left_selection_) {
-            auto opt_dist = path_finder_.findDistance(node, target);
+            auto opt_dist = cached_path_finder_.findDistance(node, target);
 
             if(center_target_dist == graph::UNREACHABLE
                or center_dist == graph::UNREACHABLE) {
@@ -178,73 +177,37 @@ private:
     auto unsettle(const graph::Node& node) noexcept
         -> void
     {
-        auto index_opt = getIndex(node);
-
-        if(index_opt) {
-            left_settled_[index_opt.value()] = false;
-            right_settled_[index_opt.value()] = false;
-        }
+        auto index = graph_.nodeToIndex(node);
+        left_settled_[index] = false;
+        right_settled_[index] = false;
     }
 
     auto settleLeft(const graph::Node& node) noexcept
         -> void
     {
-        auto index_opt = getIndex(node);
-
-        if(index_opt) {
-            left_settled_[index_opt.value()] = true;
-        }
+        auto index = graph_.nodeToIndex(node);
+        left_settled_[index] = true;
     }
 
     auto settleRight(const graph::Node& node) noexcept
         -> void
     {
-        auto index_opt = getIndex(node);
-
-        if(index_opt) {
-            right_settled_[index_opt.value()] = true;
-        }
+        auto index = graph_.nodeToIndex(node);
+        right_settled_[index] = true;
     }
 
     [[nodiscard]] auto isLeftSettled(const graph::Node& node) const noexcept
         -> bool
     {
-        auto index_opt = getIndex(node);
-
-        if(index_opt) {
-            return left_settled_[index_opt.value()];
-        }
-
-        return true;
+        auto index = graph_.nodeToIndex(node);
+        return left_settled_[index];
     }
 
     [[nodiscard]] auto isRightSettled(const graph::Node& node) const noexcept
         -> bool
     {
-        auto index_opt = getIndex(node);
-
-        if(index_opt) {
-            return right_settled_[index_opt.value()];
-        }
-
-        return true;
-    }
-
-    [[nodiscard]] auto getIndex(const graph::Node& n) const noexcept
-        -> std::optional<std::size_t>
-    {
-        auto row = n.row;
-        auto column = n.column;
-
-        if(row >= graph_.getHeight() || row < 0) {
-            return std::nullopt;
-        }
-
-        if(column >= graph_.getWidth() || column < 0) {
-            return std::nullopt;
-        }
-
-        return n.row * graph_.getWidth() + n.column;
+        auto index = graph_.nodeToIndex(node);
+        return right_settled_[index];
     }
 
     [[nodiscard]] auto calculateCenter(const graph::Node& left,
@@ -261,6 +224,7 @@ private:
 
 private:
     PathFinder path_finder_;
+    CachedPathFinder cached_path_finder_;
     const graph::GridGraph& graph_;
 
     std::vector<graph::Node> touched_;
@@ -270,8 +234,6 @@ private:
 
     std::vector<std::pair<graph::Node, graph::Distance>> left_selection_;
     std::vector<std::pair<graph::Node, graph::Distance>> right_selection_;
-
-    std::size_t current_selection_idx_ = 0;
 };
 
 } // namespace selection

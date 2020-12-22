@@ -2,6 +2,7 @@
 #include <fmt/core.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
+#include <map>
 #include <pathfinding/Distance.hpp>
 #include <queue>
 #include <random>
@@ -35,7 +36,16 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
         }
     }
 
-	//no need to sort
+    fmt::print("LOOKING FOR SUBSETS\n");
+    for(const auto& s1 : selections_) {
+        for(const auto& s2 : selections_) {
+            if(s1.weight() < s2.weight() and s1.isSubSetOf(s2)) {
+                fmt::print("FOUND A SUBSET WITH WEIGHT {}\n", s1.weight());
+            }
+        }
+    }
+
+    //no need to sort
     // for(auto& s : left_selections_) {
     //     std::sort(std::begin(s),
     //               std::end(s));
@@ -50,7 +60,7 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
 
 auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
                                             const graph::Node& second) const noexcept
-    -> utils::RefVec<NodeSelection>
+    -> utils::CRefVec<NodeSelection>
 {
     auto first_idx = graph_.nodeToIndex(first);
     auto second_idx = graph_.nodeToIndex(second);
@@ -66,7 +76,7 @@ auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
     auto all = utils::concat(std::move(left_to_right),
                              std::move(right_to_left));
 
-    utils::RefVec<NodeSelection> all_refs;
+    utils::CRefVec<NodeSelection> all_refs;
     all_refs.reserve(all.size());
 
     std::transform(std::begin(all),
@@ -108,4 +118,79 @@ auto SelectionLookup::getAllCommonSelection(
     -> std::vector<std::size_t>
 {
     return utils::intersect(first, second);
+}
+
+
+auto SelectionLookup::getSizeDistributionLeft() const noexcept
+    -> std::map<std::size_t, std::size_t>
+{
+    std::map<std::size_t, std::size_t> ret_map;
+    for(auto n : graph_) {
+        auto idx = graph_.nodeToIndex(n);
+        const auto& s = left_selections_[idx];
+
+        auto iter = ret_map.find(s.size());
+
+        if(iter == std::end(ret_map)) {
+            ret_map[s.size()] = 1;
+        } else {
+            iter->second++;
+        }
+    }
+
+    return ret_map;
+}
+
+auto SelectionLookup::getSizeDistributionRight() const noexcept
+    -> std::map<std::size_t, std::size_t>
+{
+    std::map<std::size_t, std::size_t> ret_map;
+    for(auto n : graph_) {
+        auto idx = graph_.nodeToIndex(n);
+        const auto& s = right_selections_[idx];
+
+        auto iter = ret_map.find(s.size());
+
+
+        if(iter == std::end(ret_map)) {
+            ret_map[s.size()] = 1;
+        } else {
+            iter->second++;
+        }
+    }
+
+    return ret_map;
+}
+
+auto SelectionLookup::getSizeDistributionTotal() const noexcept
+    -> std::map<std::size_t, std::size_t>
+{
+
+    std::map<std::size_t, std::size_t> ret_map;
+    for(auto n : graph_) {
+        auto idx = graph_.nodeToIndex(n);
+        const auto& s = left_selections_[idx];
+
+        auto iter = ret_map.find(s.size());
+
+        if(iter == std::end(ret_map)) {
+            ret_map[s.size()] = 1;
+        } else {
+            iter->second++;
+        }
+    }
+
+    for(auto n : graph_) {
+        auto idx = graph_.nodeToIndex(n);
+        const auto& s = right_selections_[idx];
+
+        auto iter = ret_map.find(s.size());
+
+        if(iter == std::end(ret_map)) {
+            ret_map[s.size()] = 1;
+        } else {
+            iter->second++;
+        }
+    }
+    return ret_map;
 }
