@@ -62,10 +62,10 @@ auto NodeSelection::deleteFromLeft(const std::vector<graph::Node>& nodes) noexce
     -> void
 {
     for(auto n : nodes) {
-        auto iter = std::find(std::begin(left_selection_),
-                              std::end(left_selection_),
-                              n);
-        if(iter != std::end(left_selection_)) {
+        auto iter = std::lower_bound(std::begin(left_selection_),
+                                     std::end(left_selection_),
+                                     n);
+        if(iter != std::end(left_selection_) and n == *iter) {
             left_selection_.erase(iter);
         }
     }
@@ -74,10 +74,10 @@ auto NodeSelection::deleteFromRight(const std::vector<graph::Node>& nodes) noexc
     -> void
 {
     for(auto n : nodes) {
-        auto iter = std::find(std::begin(right_selection_),
-                              std::end(right_selection_),
-                              n);
-        if(iter != std::end(right_selection_)) {
+        auto iter = std::lower_bound(std::begin(right_selection_),
+                                     std::end(right_selection_),
+                                     n);
+        if(iter != std::end(right_selection_) and n == *iter) {
             right_selection_.erase(iter);
         }
     }
@@ -87,15 +87,22 @@ auto NodeSelection::deleteFromRight(const std::vector<graph::Node>& nodes) noexc
 auto NodeSelection::isSubSetOf(const NodeSelection& other) const noexcept
     -> bool
 {
-    for(auto from : left_selection_) {
-        for(auto to : right_selection_) {
-            if(!other.canAnswer(from, to)) {
-                return false;
-            }
-        }
-    }
-
-    return true;
+    return (std::includes(std::begin(other.left_selection_),
+                          std::end(other.left_selection_),
+                          std::begin(left_selection_),
+                          std::end(left_selection_))
+            and std::includes(std::begin(other.right_selection_),
+                              std::end(other.right_selection_),
+                              std::begin(right_selection_),
+                              std::end(right_selection_)))
+        or (std::includes(std::begin(other.right_selection_),
+                          std::end(other.right_selection_),
+                          std::begin(left_selection_),
+                          std::end(left_selection_))
+            and std::includes(std::begin(other.left_selection_),
+                              std::end(other.left_selection_),
+                              std::begin(right_selection_),
+                              std::end(right_selection_)));
 }
 
 auto NodeSelection::canAnswer(Node from, Node to) const noexcept
