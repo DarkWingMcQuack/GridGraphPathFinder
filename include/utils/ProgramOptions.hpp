@@ -18,6 +18,8 @@ enum class RunningMode {
     SEPARATION
 };
 
+constexpr static inline auto PRETTY_PRINT = true;
+
 class ProgramOptions
 {
 public:
@@ -39,7 +41,7 @@ public:
         -> bool;
 
     auto getSeparationFolder() const noexcept
-	  -> std::string_view;
+        -> std::string_view;
 
 private:
     std::string graph_file_;
