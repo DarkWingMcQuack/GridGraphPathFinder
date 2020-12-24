@@ -1,3 +1,5 @@
+#include <fmt/core.h>
+#include <fmt/ostream.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
 #include <pathfinding/Distance.hpp>
@@ -128,7 +130,7 @@ auto SelectionLookupOptimizer::optimizeLeft(std::size_t node_idx) noexcept
         new_selection_set.emplace_back(idx);
     }
 
-    while(covered_nodes.size() != all_nodes.size()) {
+    while(covered_nodes.size() < all_nodes.size()) {
         auto next_selection_idx = getLeftOptimalGreedySelection(node_idx, covered_nodes);
         const auto& right_nodes = selections_[next_selection_idx].getRightSelection();
         covered_nodes.insert(std::begin(right_nodes),
@@ -145,6 +147,7 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
 {
     const auto& right_secs = right_selections_[node_idx];
     std::unordered_set<graph::Node> all_nodes;
+
 
     for(auto idx : right_secs) {
         const auto& left_nodes = selections_[idx].getLeftSelection();
@@ -165,13 +168,13 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
         new_selection_set.emplace_back(idx);
     }
 
-    while(covered_nodes.size() != all_nodes.size()) {
+    while(covered_nodes.size() < all_nodes.size()) {
         auto next_selection_idx = getRightOptimalGreedySelection(node_idx, covered_nodes);
         const auto& left_nodes = selections_[next_selection_idx].getLeftSelection();
         covered_nodes.insert(std::begin(left_nodes),
                              std::end(left_nodes));
         new_selection_set.emplace_back(next_selection_idx);
-        keep_list_left_.emplace(next_selection_idx);
+        keep_list_right_.emplace(next_selection_idx);
     }
 
     right_selections_[node_idx] = std::move(new_selection_set);
