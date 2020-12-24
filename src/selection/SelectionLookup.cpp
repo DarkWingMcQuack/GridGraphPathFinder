@@ -9,7 +9,6 @@
 #include <selection/NodeSelection.hpp>
 #include <selection/NodeSelectionCalculator.hpp>
 #include <selection/SelectionLookup.hpp>
-#include <selection/SelectionOptimizer.hpp>
 #include <unordered_set>
 #include <utils/Range.hpp>
 #include <utils/Utils.hpp>
