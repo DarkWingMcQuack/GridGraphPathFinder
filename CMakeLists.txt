@@ -66,6 +66,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelectionCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/FullNodeSelectionCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionLookup.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionLookupOptimizer.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionBucket.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionBucketLookup.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionBucketCreator.hpp
@@ -93,6 +94,7 @@ target_sources(GridGraphPathFinderSrc
 
   src/selection/NodeSelection.cpp
   src/selection/SelectionLookup.cpp
+  src/selection/SelectionLookupOptimizer.cpp
   src/selection/SelectionBucket.cpp
   src/selection/SelectionBucketLookup.cpp
   src/selection/SelectionBucketCreator.cpp
