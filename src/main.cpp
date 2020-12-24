@@ -1,10 +1,11 @@
 #include "selection/SelectionBucketCreator.hpp"
+#include "selection/SelectionLookupOptimizer.hpp"
 #include <filesystem>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
-#include <pathfinding/AStar.hpp>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
+#include <pathfinding/AStar.hpp>
 #include <pathfinding/CachingDijkstra.hpp>
 #include <pathfinding/Dijkstra.hpp>
 #include <selection/FullNodeSelectionCalculator.hpp>
@@ -147,14 +148,6 @@ auto runSelection(const graph::GridGraph& graph,
 
     fmt::print("runtime: {}\n", t.elapsed());
     fmt::print("selections calculated: {}\n", selections.size());
-	t.reset();
-
-    FullNodeSelectionCalculator<pathfinding::AStar, CachingDijkstra> selection_calculator2{graph};
-    selections = selection_calculator2.calculateFullNodeSelection();
-
-    fmt::print("runtime: {}\n", t.elapsed());
-    fmt::print("selections calculated: {}\n", selections.size());
-
 
     std::sort(std::rbegin(selections),
               std::rend(selections),
@@ -174,13 +167,25 @@ auto runSelection(const graph::GridGraph& graph,
 
     selection::SelectionLookup lookup{graph, std::move(selections)};
 
+    std::size_t unoptimized_total = 0;
     for(auto [size, amount] : lookup.getSizeDistributionTotal()) {
         fmt::print("{} : {},\n", size, amount);
+        unoptimized_total += size * amount;
     }
 
-    selection::SelectionBucketCreator optimizer{std::move(lookup)};
+    selection::SelectionLookupOptimizer optimizer{std::move(lookup)};
+    optimizer.optimize();
 
-    auto bucket_lookup = std::move(optimizer).createBucketLookup();
+    auto new_lookup = std::move(optimizer).getLookup();
+
+    std::size_t optimized_total = 0;
+    for(auto [size, amount] : new_lookup.getSizeDistributionTotal()) {
+        fmt::print("{} : {},\n", size, amount);
+        optimized_total += size * amount;
+    }
+
+    fmt::print("unoptimized: {}\n", unoptimized_total);
+    fmt::print("optimized: {}\n", optimized_total);
 }
 
 auto main(int argc, char* argv[])
