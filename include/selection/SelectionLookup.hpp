@@ -3,13 +3,13 @@
 #include <fmt/core.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
+#include <map>
 #include <pathfinding/Distance.hpp>
 #include <queue>
 #include <random>
 #include <selection/NodeSelection.hpp>
 #include <selection/NodeSelectionCalculator.hpp>
 #include <unordered_set>
-#include <map>
 #include <vector>
 
 namespace selection {
@@ -19,6 +19,11 @@ class SelectionLookup
 public:
     SelectionLookup(const graph::GridGraph& graph,
                     std::vector<NodeSelection> selections);
+
+    SelectionLookup(const graph::GridGraph& graph,
+                    std::vector<NodeSelection> selections,
+                    std::vector<std::vector<std::size_t>> left_selections,
+                    std::vector<std::vector<std::size_t>> right_selections);
 
 
     [[nodiscard]] auto getOneCommonSelection(const graph::Node& first,
