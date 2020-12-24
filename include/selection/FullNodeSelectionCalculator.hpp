@@ -56,6 +56,8 @@ public:
             eraseNodeSelection(selection);
             calculated_selections.emplace_back(std::move(selection));
 
+
+			//update progress bar
             auto new_done = countDoneNodes();
             auto diff = new_done - done_counter;
             bar += diff;
@@ -179,8 +181,8 @@ public:
                              return areAllSettledFor(right, n);
                          });
 
-            std::vector<graph::Node> to_delete_right;
 
+            std::vector<graph::Node> to_delete_right;
             std::copy_if(std::begin(right),
                          std::end(right),
                          std::back_inserter(to_delete_right),
@@ -201,7 +203,7 @@ public:
         -> bool
     {
         auto n_idx = graph_.nodeToIndex(node);
-        auto settle_vec = all_to_all_[n_idx];
+        const auto& settle_vec = all_to_all_[n_idx];
 
         if(settle_vec.empty()) {
             return true;
