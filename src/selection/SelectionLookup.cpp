@@ -9,6 +9,7 @@
 #include <selection/NodeSelection.hpp>
 #include <selection/NodeSelectionCalculator.hpp>
 #include <selection/SelectionLookup.hpp>
+#include <selection/SelectionOptimizer.hpp>
 #include <unordered_set>
 #include <utils/Range.hpp>
 #include <utils/Utils.hpp>
@@ -35,27 +36,16 @@ SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
             right_selections_[idx].emplace_back(i);
         }
     }
-
-    fmt::print("LOOKING FOR SUBSETS\n");
-    for(const auto& s1 : selections_) {
-        for(const auto& s2 : selections_) {
-            if(s1.weight() < s2.weight() and s1.isSubSetOf(s2)) {
-                fmt::print("FOUND A SUBSET WITH WEIGHT {}\n", s1.weight());
-            }
-        }
-    }
-
-    //no need to sort
-    // for(auto& s : left_selections_) {
-    //     std::sort(std::begin(s),
-    //               std::end(s));
-    // }
-
-    // for(auto& s : right_selections_) {
-    //     std::sort(std::begin(s),
-    //               std::end(s));
-    // }
 }
+
+SelectionLookup::SelectionLookup(const graph::GridGraph& graph,
+                                 std::vector<NodeSelection> selections,
+                                 std::vector<std::vector<std::size_t>> left_selections,
+                                 std::vector<std::vector<std::size_t>> right_selections)
+    : graph_(graph),
+      selections_(std::move(selections)),
+      left_selections_(std::move(left_selections)),
+      right_selections_(std::move(right_selections)) {}
 
 
 auto SelectionLookup::getAllCommonSelection(const graph::Node& first,
