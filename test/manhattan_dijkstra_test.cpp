@@ -26,13 +26,8 @@ TEST(ManhattanDijkstraTest, DijkstraWithoutBarriersTest)
 
     Dijkstra d{graph_test1};
 
-    auto paths = d.findAllRoutes({0, 0}, {0, 4});
-
-    for(auto& p : paths) {
-        EXPECT_EQ(p.getLength(), 4);
-    }
-
-    EXPECT_EQ(paths.size(), 1);
+    auto p = d.findRoute({0, 0}, {0, 4});
+    EXPECT_EQ(p.value().getLength(), 4);
 }
 
 TEST(ManhattanDijkstraTest, DijkstraSingleWithoutBarriersTest)
@@ -56,7 +51,6 @@ TEST(ManhattanDijkstraTest, DijkstraSingleWithoutBarriersTest)
     ASSERT_TRUE((bool)path_opt);
 
     EXPECT_EQ(path_opt.value().getLength(), 4);
-
 }
 
 TEST(ManhattanDijkstraTest, DijkstraWithBarrierTest)
@@ -75,13 +69,9 @@ TEST(ManhattanDijkstraTest, DijkstraWithBarrierTest)
 
     Dijkstra d{graph_test1};
 
-    auto paths = d.findAllRoutes({0, 0}, {0, 4});
+    auto p = d.findRoute({0, 0}, {0, 4});
 
-    for(auto& p : paths) {
-        EXPECT_EQ(p.getLength(), 6);
-    }
-
-    EXPECT_EQ(paths.size(), 4);
+    EXPECT_EQ(p.value().getLength(), 6);
 }
 
 TEST(ManhattanDijkstraTest, DijkstraSingleRouteWithBarrierTest)

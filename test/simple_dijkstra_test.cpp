@@ -26,13 +26,9 @@ TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
 
     Dijkstra d{graph_test1};
 
-    auto paths = d.findAllRoutes({0, 0}, {0, 4});
+    auto p = d.findRoute({0, 0}, {0, 4});
 
-    for(auto& p : paths) {
-        EXPECT_EQ(p.getLength(), 4);
-    }
-
-    EXPECT_EQ(paths.size(), 9);
+    EXPECT_EQ(p.value().getLength(), 4);
 }
 
 TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
@@ -51,13 +47,9 @@ TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
 
     Dijkstra d{graph_test1};
 
-    auto paths = d.findAllRoutes({0, 0}, {0, 4});
+    auto p = d.findRoute({0, 0}, {0, 4});
 
-    for(auto& p : paths) {
-        EXPECT_EQ(p.getLength(), 4);
-    }
-
-    EXPECT_EQ(paths.size(), 5);
+    EXPECT_EQ(p.value().getLength(), 6);
 }
 
 TEST(StraightDijkstraTest, DijkstraWithMoreBarriersTest)
@@ -76,11 +68,7 @@ TEST(StraightDijkstraTest, DijkstraWithMoreBarriersTest)
 
     Dijkstra d{graph_test1};
 
-    auto paths = d.findAllRoutes({0, 0}, {0, 4});
+    auto paths = d.findRoute({0, 0}, {0, 4});
 
-    for(auto& p : paths) {
-        EXPECT_EQ(p.getLength(), 8);
-    }
-
-    EXPECT_EQ(paths.size(), 4);
+    EXPECT_EQ(paths.value().getLength(), 12);
 }

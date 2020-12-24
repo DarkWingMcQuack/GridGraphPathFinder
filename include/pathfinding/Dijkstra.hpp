@@ -27,9 +27,6 @@ public:
     auto operator=(const Dijkstra&) -> Dijkstra& = delete;
     auto operator=(Dijkstra&&) -> Dijkstra& = delete;
 
-    [[nodiscard]] auto findAllRoutes(graph::Node source, graph::Node target) noexcept
-        -> std::vector<Path>;
-
     [[nodiscard]] auto findRoute(graph::Node source, graph::Node target) noexcept
         -> std::optional<Path>;
 
@@ -37,12 +34,6 @@ public:
         -> graph::Distance;
 
     [[nodiscard]] auto findTrivialDistance(graph::Node source, graph::Node target) noexcept
-        -> graph::Distance;
-
-    [[nodiscard]] auto getNodesWithMinDistanceIn(const graph::GridCell& cell) noexcept
-        -> std::vector<graph::Node>;
-
-    [[nodiscard]] auto getMinDistanceIn(const graph::GridCell& cell) noexcept
         -> graph::Distance;
 
     [[nodiscard]] auto getGraph() const noexcept
@@ -58,14 +49,8 @@ protected:
     [[nodiscard]] auto computeDistance(graph::Node source, graph::Node target) noexcept
         -> graph::Distance;
 
-    [[nodiscard]] auto extractAllShortestPaths(graph::Node source, graph::Node target) const noexcept
-        -> std::vector<Path>;
-
     [[nodiscard]] auto extractShortestPath(graph::Node source, graph::Node target) const noexcept
         -> std::optional<Path>;
-
-    [[nodiscard]] auto findSmallestDistance(const std::vector<graph::Node>& nodes) const noexcept
-        -> graph::Distance;
 
     auto unSettle(graph::Node n)
         -> void;
