@@ -33,6 +33,8 @@ auto SelectionLookupOptimizer::optimize() noexcept
         bar++;
         bar.displayIfChangedAtLeast(0.001);
     }
+
+    bar.done();
 }
 
 auto SelectionLookupOptimizer::getLookup() && noexcept
