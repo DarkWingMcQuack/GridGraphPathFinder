@@ -1,5 +1,6 @@
 #include <execution>
 #include <fmt/core.h>
+#include <fmt/ostream.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
 #include <map>
@@ -182,4 +183,39 @@ auto SelectionLookup::getSizeDistributionTotal() const noexcept
         }
     }
     return ret_map;
+}
+
+
+auto SelectionLookup::sanityCheck() const noexcept
+    -> bool
+{
+    for(auto n : graph_) {
+        auto n_idx = graph_.nodeToIndex(n);
+        const auto& left_selections = left_selections_[n_idx];
+        const auto& right_selections = right_selections_[n_idx];
+
+        std::unordered_set<graph::Node> target_nodes;
+
+        for(auto left_idx : left_selections) {
+            const auto& targets = selections_[left_idx].getRightSelection();
+            target_nodes.insert(std::begin(targets),
+                                std::end(targets));
+        }
+
+        for(auto right_idx : right_selections) {
+            const auto& targets = selections_[right_idx].getLeftSelection();
+            target_nodes.insert(std::begin(targets),
+                                std::end(targets));
+        }
+
+        auto should_have = graph_.countWalkableNodes() - graph_.getWalkableNeigbours(n).size() - 1;
+        auto has = target_nodes.size();
+
+        if(should_have > has) {
+            fmt::print("should have: {}, has: {}\n", should_have, has);
+            return false;
+        }
+    }
+
+    return true;
 }

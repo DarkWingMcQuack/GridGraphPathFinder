@@ -43,6 +43,9 @@ public:
     [[nodiscard]] auto getSizeDistributionTotal() const noexcept
         -> std::map<std::size_t, std::size_t>;
 
+    [[nodiscard]] auto sanityCheck() const noexcept
+        -> bool;
+
 private:
     [[nodiscard]] auto getOneCommonSelection(
         const std::vector<std::size_t>& first,
