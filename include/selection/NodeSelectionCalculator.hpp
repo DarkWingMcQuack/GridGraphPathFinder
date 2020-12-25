@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <execution>
 #include <fmt/core.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
@@ -18,7 +19,7 @@ class NodeSelectionCalculator
 public:
     NodeSelectionCalculator(const graph::GridGraph& graph)
         : path_finder_(graph),
-		  cached_path_finder_(graph),
+          cached_path_finder_(graph),
           graph_(graph),
           left_settled_(graph_.size(), false),
           right_settled_(graph_.size(), false) {}
@@ -118,45 +119,44 @@ public:
                                             const graph::Node& center) noexcept
         -> std::optional<graph::Distance>
     {
-        auto center_dist = cached_path_finder_.findDistance(node, center);
-
-        for(auto [target, center_target_dist] : right_selection_) {
-            auto opt_dist = cached_path_finder_.findDistance(node, target);
-
-            if(center_target_dist == graph::UNREACHABLE
-               or center_dist == graph::UNREACHABLE) {
-                if(opt_dist != graph::UNREACHABLE) {
-                    return std::nullopt;
-                }
-            }
-
-            if(center_dist + center_target_dist != opt_dist) {
-                return std::nullopt;
-            }
-        }
-
-        return center_dist;
+        return checkAffiliation(node, center, right_selection_);
     }
 
     [[nodiscard]] auto checkRightAffiliation(const graph::Node& node,
                                              const graph::Node& center) noexcept
         -> std::optional<graph::Distance>
     {
+        return checkAffiliation(node, center, left_selection_);
+    }
+
+
+    [[nodiscard]] auto checkAffiliation(const graph::Node& node,
+                                        const graph::Node& center,
+                                        const std::vector<std::pair<graph::Node, graph::Distance>>& selection) noexcept
+        -> std::optional<graph::Distance>
+    {
         auto center_dist = cached_path_finder_.findDistance(node, center);
 
-        for(auto [target, center_target_dist] : left_selection_) {
-            auto opt_dist = cached_path_finder_.findDistance(node, target);
+        auto valid = std::all_of(std::execution::unseq,
+                                 std::begin(selection),
+                                 std::end(selection),
+                                 [&](auto pair) {
+                                     auto [target, center_target_dist] = pair;
 
-            if(center_target_dist == graph::UNREACHABLE
-               or center_dist == graph::UNREACHABLE) {
-                if(opt_dist != graph::UNREACHABLE) {
-                    return std::nullopt;
-                }
-            }
+                                     auto dist = cached_path_finder_.findDistance(node, target);
 
-            if(center_dist + center_target_dist != opt_dist) {
-                return std::nullopt;
-            }
+                                     if(center_target_dist == graph::UNREACHABLE
+                                        or center_dist == graph::UNREACHABLE) {
+                                         if(dist != graph::UNREACHABLE) {
+                                             return false;
+                                         }
+                                     }
+
+                                     return center_dist + center_target_dist == dist;
+                                 });
+
+        if(!valid) {
+            return std::nullopt;
         }
 
         return center_dist;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <execution>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
 #include <pathfinding/Distance.hpp>
@@ -52,12 +53,12 @@ public:
 
             auto [first, second] = getRandomRemainingPair();
             auto selection = node_selector_.calculateFullSelection(first, second).value();
-            selection = optimizeSelection(std::move(selection));
+            optimizeSelection(selection);
             eraseNodeSelection(selection);
             calculated_selections.emplace_back(std::move(selection));
 
 
-			//update progress bar
+            //update progress bar
             auto new_done = countDoneNodes();
             auto diff = new_done - done_counter;
             bar += diff;
@@ -165,38 +166,35 @@ public:
         }
     }
 
-    auto optimizeSelection(NodeSelection&& selection) const noexcept
-        -> NodeSelection
+    auto optimizeSelection(NodeSelection& selection) noexcept
+        -> void
     {
         auto changed = true;
+        auto& left = selection.getLeftSelection();
+        auto& right = selection.getRightSelection();
         while(changed) {
-            const auto& left = selection.getLeftSelection();
-            const auto& right = selection.getRightSelection();
+            auto weight_before = selection.weight();
 
-            std::vector<graph::Node> to_delete_left;
-            std::copy_if(std::begin(left),
-                         std::end(left),
-                         std::back_inserter(to_delete_left),
-                         [&](auto n) {
-                             return areAllSettledFor(right, n);
-                         });
+            left.erase(
+                std::remove_if(std::begin(left),
+                               std::end(left),
+                               [&](auto node) {
+                                   return areAllSettledFor(right, node);
+                               }),
+                std::end(left));
 
+            right.erase(
+                std::remove_if(std::begin(right),
+                               std::end(right),
+                               [&](auto node) {
+                                   return areAllSettledFor(left, node);
+                               }),
+                std::end(right));
 
-            std::vector<graph::Node> to_delete_right;
-            std::copy_if(std::begin(right),
-                         std::end(right),
-                         std::back_inserter(to_delete_right),
-                         [&](auto n) {
-                             return areAllSettledFor(left, n);
-                         });
+            auto weight_after = selection.weight();
 
-            selection.deleteFromLeft(to_delete_left);
-            selection.deleteFromRight(to_delete_right);
-
-            changed = !to_delete_left.empty() or !to_delete_right.empty();
+            changed = weight_before != weight_after;
         }
-
-        return std::move(selection);
     }
 
     auto areAllSettledFor(const std::vector<graph::Node>& settled, graph::Node node) const noexcept
@@ -227,21 +225,8 @@ public:
                              });
     }
 
-    auto countUnDoneNodes() const noexcept
-        -> std::size_t
-    {
-        return std::count_if(std::begin(all_to_all_),
-                             std::end(all_to_all_),
-                             [](const auto& b) {
-                                 return !b.empty();
-                             });
-    }
-
-
-
 private:
     const graph::GridGraph& graph_;
-
     std::vector<std::vector<bool>> all_to_all_;
     NodeSelectionCalculator<PathFinder, CachedPathFinder> node_selector_;
 };

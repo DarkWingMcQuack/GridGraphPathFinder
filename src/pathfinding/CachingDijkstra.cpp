@@ -58,9 +58,10 @@ auto CachingDijkstra::findDistance(const graph::Node &source,
                                    const graph::Node &target) const noexcept
     -> Distance
 {
-    if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
-        return UNREACHABLE;
-    }
+    // This check is realy slow, just make sure to not query any barriers
+    // if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
+    //     return UNREACHABLE;
+    // }
 
     return queryCache(source, target);
 }

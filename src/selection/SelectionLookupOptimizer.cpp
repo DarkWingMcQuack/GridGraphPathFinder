@@ -1,3 +1,4 @@
+#include <execution>
 #include <fmt/core.h>
 #include <fmt/ostream.h>
 #include <graph/GridGraph.hpp>
@@ -60,24 +61,33 @@ auto SelectionLookupOptimizer::getLeftOptimalGreedySelection(std::size_t node_id
     -> std::size_t
 {
     const auto& node_selects = left_selections_[node_idx];
-    auto best_index = node_selects[0];
-    auto best_score = 0;
 
-    for(auto idx : node_selects) {
-        const auto& right_nodes = selections_[idx].getRightSelection();
-        auto score = std::count_if(std::begin(right_nodes),
-                                   std::end(right_nodes),
-                                   [&](auto node) {
-                                       return nodes.count(node) == 0;
-                                   });
+    return std::transform_reduce(
+               std::begin(node_selects),
+               std::end(node_selects),
+               std::pair{node_selects[0], 0l},
+               [](auto current, auto next) {
+                   auto [best_index, best_score] = current;
+                   auto [new_index, new_score] = next;
 
-        if(score > best_score) {
-            best_score = score;
-            best_index = idx;
-        }
-    }
+                   if(new_score > best_score) {
+                       return next;
+                   }
 
-    return best_index;
+                   return current;
+               },
+               [&](auto idx) {
+                   const auto& right_nodes = selections_[idx].getRightSelection();
+
+                   auto score = std::count_if(std::begin(right_nodes),
+                                              std::end(right_nodes),
+                                              [&](auto node) {
+                                                  return nodes.count(node) == 0;
+                                              });
+
+                   return std::pair{idx, score};
+               })
+        .first;
 }
 
 auto SelectionLookupOptimizer::getRightOptimalGreedySelection(std::size_t node_idx,
@@ -85,24 +95,33 @@ auto SelectionLookupOptimizer::getRightOptimalGreedySelection(std::size_t node_i
     -> std::size_t
 {
     const auto& node_selects = right_selections_[node_idx];
-    auto best_index = node_selects[0];
-    auto best_score = 0;
 
-    for(auto idx : node_selects) {
-        const auto& left_nodes = selections_[idx].getLeftSelection();
-        auto score = std::count_if(std::begin(left_nodes),
-                                   std::end(left_nodes),
-                                   [&](auto node) {
-                                       return nodes.count(node) == 0;
-                                   });
+    return std::transform_reduce(
+               std::begin(node_selects),
+               std::end(node_selects),
+               std::pair{node_selects[0], 0l},
+               [](auto current, auto next) {
+                   auto [best_index, best_score] = current;
+                   auto [new_index, new_score] = next;
 
-        if(score > best_score) {
-            best_score = score;
-            best_index = idx;
-        }
-    }
+                   if(new_score > best_score) {
+                       return next;
+                   }
 
-    return best_index;
+                   return current;
+               },
+               [&](auto idx) {
+                   const auto& left_nodes = selections_[idx].getLeftSelection();
+
+                   auto score = std::count_if(std::begin(left_nodes),
+                                              std::end(left_nodes),
+                                              [&](auto node) {
+                                                  return nodes.count(node) == 0;
+                                              });
+
+                   return std::pair{idx, score};
+               })
+        .first;
 }
 
 auto SelectionLookupOptimizer::optimizeLeft(std::size_t node_idx) noexcept
@@ -147,7 +166,6 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
 {
     const auto& right_secs = right_selections_[node_idx];
     std::unordered_set<graph::Node> all_nodes;
-
 
     for(auto idx : right_secs) {
         const auto& left_nodes = selections_[idx].getLeftSelection();
