@@ -126,9 +126,12 @@ public:
     auto eraseNodeSelection(const NodeSelection& selection) noexcept
         -> void
     {
-        for(auto first : selection.getLeftSelection()) {
-            for(auto second : selection.getRightSelection()) {
-                auto first_idx = graph_.nodeToIndex(first);
+        const auto& left = selection.getLeftSelection();
+        const auto& right = selection.getRightSelection();
+        for(auto first : left) {
+            auto first_idx = graph_.nodeToIndex(first);
+
+            for(auto second : right) {
                 auto second_idx = graph_.nodeToIndex(second);
 
                 if(!all_to_all_[first_idx].empty()) {
@@ -141,7 +144,7 @@ public:
             }
         }
 
-        for(auto n : selection.getLeftSelection()) {
+        for(auto n : left) {
             auto idx = graph_.nodeToIndex(n);
 
             auto done = std::all_of(std::begin(all_to_all_[idx]),
@@ -153,7 +156,7 @@ public:
             }
         }
 
-        for(auto n : selection.getRightSelection()) {
+        for(auto n : right) {
             auto idx = graph_.nodeToIndex(n);
 
             auto done = std::all_of(std::begin(all_to_all_[idx]),

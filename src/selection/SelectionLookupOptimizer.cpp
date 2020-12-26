@@ -61,8 +61,10 @@ auto SelectionLookupOptimizer::getLeftOptimalGreedySelection(std::size_t node_id
     -> std::size_t
 {
     const auto& node_selects = left_selections_[node_idx];
+    auto node = graph_.indexToNode(node_idx);
 
     return std::transform_reduce(
+               std::execution::par_unseq,
                std::begin(node_selects),
                std::end(node_selects),
                std::pair{node_selects[0], 0l},
@@ -81,8 +83,8 @@ auto SelectionLookupOptimizer::getLeftOptimalGreedySelection(std::size_t node_id
 
                    auto score = std::count_if(std::begin(right_nodes),
                                               std::end(right_nodes),
-                                              [&](auto node) {
-                                                  return nodes.count(node) == 0;
+                                              [&](auto n) {
+                                                  return nodes.count(n) == 0 and node != n and !graph_.areNeighbours(node, n);
                                               });
 
                    return std::pair{idx, score};
@@ -95,8 +97,10 @@ auto SelectionLookupOptimizer::getRightOptimalGreedySelection(std::size_t node_i
     -> std::size_t
 {
     const auto& node_selects = right_selections_[node_idx];
+    auto node = graph_.indexToNode(node_idx);
 
     return std::transform_reduce(
+               std::execution::par_unseq,
                std::begin(node_selects),
                std::end(node_selects),
                std::pair{node_selects[0], 0l},
@@ -115,8 +119,8 @@ auto SelectionLookupOptimizer::getRightOptimalGreedySelection(std::size_t node_i
 
                    auto score = std::count_if(std::begin(left_nodes),
                                               std::end(left_nodes),
-                                              [&](auto node) {
-                                                  return nodes.count(node) == 0;
+                                              [&](auto n) {
+                                                  return nodes.count(n) == 0 and node != n and !graph_.areNeighbours(node, n);
                                               });
 
                    return std::pair{idx, score};
@@ -134,6 +138,14 @@ auto SelectionLookupOptimizer::optimizeLeft(std::size_t node_idx) noexcept
         const auto& right_nodes = selections_[idx].getRightSelection();
         all_nodes.insert(std::begin(right_nodes),
                          std::end(right_nodes));
+    }
+
+
+    auto node = graph_.indexToNode(node_idx);
+    all_nodes.erase(node);
+    auto neigbours = graph_.getWalkableNeigbours(node);
+    for(auto n : neigbours) {
+        all_nodes.erase(n);
     }
 
     std::vector<std::size_t> new_selection_set;
@@ -154,6 +166,12 @@ auto SelectionLookupOptimizer::optimizeLeft(std::size_t node_idx) noexcept
         const auto& right_nodes = selections_[next_selection_idx].getRightSelection();
         covered_nodes.insert(std::begin(right_nodes),
                              std::end(right_nodes));
+
+        covered_nodes.erase(node);
+        for(auto n : neigbours) {
+            covered_nodes.erase(n);
+        }
+
         new_selection_set.emplace_back(next_selection_idx);
         keep_list_left_.emplace(next_selection_idx);
     }
@@ -171,6 +189,13 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
         const auto& left_nodes = selections_[idx].getLeftSelection();
         all_nodes.insert(std::begin(left_nodes),
                          std::end(left_nodes));
+    }
+
+    auto node = graph_.indexToNode(node_idx);
+    all_nodes.erase(node);
+    auto neigbours = graph_.getWalkableNeigbours(node);
+    for(auto n : neigbours) {
+        all_nodes.erase(n);
     }
 
     std::vector<std::size_t> new_selection_set;
@@ -191,6 +216,12 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
         const auto& left_nodes = selections_[next_selection_idx].getLeftSelection();
         covered_nodes.insert(std::begin(left_nodes),
                              std::end(left_nodes));
+
+        covered_nodes.erase(node);
+        for(auto n : neigbours) {
+            covered_nodes.erase(n);
+        }
+
         new_selection_set.emplace_back(next_selection_idx);
         keep_list_right_.emplace(next_selection_idx);
     }

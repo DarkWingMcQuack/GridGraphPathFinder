@@ -1,7 +1,5 @@
-
 #pragma once
 
-#include <execution>
 #include <fmt/core.h>
 #include <graph/GridGraph.hpp>
 #include <graph/Node.hpp>
@@ -137,8 +135,7 @@ public:
     {
         auto center_dist = cached_path_finder_.findDistance(node, center);
 
-        auto valid = std::all_of(std::execution::unseq,
-                                 std::begin(selection),
+        auto valid = std::all_of(std::begin(selection),
                                  std::end(selection),
                                  [&](auto pair) {
                                      auto [target, center_target_dist] = pair;
