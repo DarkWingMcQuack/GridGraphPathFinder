@@ -84,7 +84,9 @@ auto SelectionLookupOptimizer::getLeftOptimalGreedySelection(std::size_t node_id
                    auto score = std::count_if(std::begin(right_nodes),
                                               std::end(right_nodes),
                                               [&](auto n) {
-                                                  return nodes.count(n) == 0 and node != n and !graph_.areNeighbours(node, n);
+                                                  return nodes.count(n) == 0
+                                                      and node != n
+                                                      and !graph_.areNeighbours(node, n);
                                               });
 
                    return std::pair{idx, score};
@@ -120,7 +122,9 @@ auto SelectionLookupOptimizer::getRightOptimalGreedySelection(std::size_t node_i
                    auto score = std::count_if(std::begin(left_nodes),
                                               std::end(left_nodes),
                                               [&](auto n) {
-                                                  return nodes.count(n) == 0 and node != n and !graph_.areNeighbours(node, n);
+                                                  return nodes.count(n) == 0
+                                                      and node != n
+                                                      and !graph_.areNeighbours(node, n);
                                               });
 
                    return std::pair{idx, score};
@@ -148,7 +152,7 @@ auto SelectionLookupOptimizer::optimizeLeft(std::size_t node_idx) noexcept
         all_nodes.erase(n);
     }
 
-    std::vector<std::size_t> new_selection_set;
+    std::unordered_set<std::size_t> new_selection_set;
     std::unordered_set<graph::Node> covered_nodes;
     for(auto idx : left_secs) {
         if(keep_list_left_.count(idx) == 0) {
@@ -158,7 +162,7 @@ auto SelectionLookupOptimizer::optimizeLeft(std::size_t node_idx) noexcept
         const auto& right_nodes = selections_[idx].getRightSelection();
         covered_nodes.insert(std::begin(right_nodes),
                              std::end(right_nodes));
-        new_selection_set.emplace_back(idx);
+        new_selection_set.emplace(idx);
     }
 
     while(covered_nodes.size() < all_nodes.size()) {
@@ -172,11 +176,12 @@ auto SelectionLookupOptimizer::optimizeLeft(std::size_t node_idx) noexcept
             covered_nodes.erase(n);
         }
 
-        new_selection_set.emplace_back(next_selection_idx);
+        new_selection_set.emplace(next_selection_idx);
         keep_list_left_.emplace(next_selection_idx);
     }
 
-    left_selections_[node_idx] = std::move(new_selection_set);
+    left_selections_[node_idx] = std::vector(std::begin(new_selection_set),
+                                             std::end(new_selection_set));
 }
 
 auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
@@ -198,8 +203,8 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
         all_nodes.erase(n);
     }
 
-    std::vector<std::size_t> new_selection_set;
     std::unordered_set<graph::Node> covered_nodes;
+    std::unordered_set<std::size_t> new_selection_set;
     for(auto idx : right_secs) {
         if(keep_list_right_.count(idx) == 0) {
             continue;
@@ -208,7 +213,7 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
         const auto& left_nodes = selections_[idx].getLeftSelection();
         covered_nodes.insert(std::begin(left_nodes),
                              std::end(left_nodes));
-        new_selection_set.emplace_back(idx);
+        new_selection_set.emplace(idx);
     }
 
     while(covered_nodes.size() < all_nodes.size()) {
@@ -222,9 +227,11 @@ auto SelectionLookupOptimizer::optimizeRight(std::size_t node_idx) noexcept
             covered_nodes.erase(n);
         }
 
-        new_selection_set.emplace_back(next_selection_idx);
+        new_selection_set.emplace(next_selection_idx);
         keep_list_right_.emplace(next_selection_idx);
     }
 
-    right_selections_[node_idx] = std::move(new_selection_set);
+
+    right_selections_[node_idx] = std::vector(std::begin(new_selection_set),
+                                              std::end(new_selection_set));
 }
