@@ -49,7 +49,13 @@ public:
     [[nodiscard]] auto getManhattanNeigbours(Node node) const noexcept
         -> std::array<Node, 4>;
 
+    [[nodiscard]] auto getNeigboursOf(Node node) const noexcept
+        -> std::vector<std::pair<Node, Distance>>;
+
     [[nodiscard]] auto hasBarrier(const graph::GridCell& cell) const noexcept
+        -> bool;
+
+    [[nodiscard]] auto hasBarrierNeigbour(Node n) const noexcept
         -> bool;
 
     [[nodiscard]] auto nodeToIndex(const graph::Node& n) const noexcept

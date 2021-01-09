@@ -273,6 +273,21 @@ auto GridGraph::getManhattanNeigbours(Node node) const noexcept
                       Node{node.row + 1, node.column}};
 }
 
+auto GridGraph::getNeigboursOf(Node node) const noexcept
+    -> std::vector<std::pair<Node, Distance>>
+{
+    std::vector<std::pair<Node, Distance>> neigs;
+
+    auto all = getManhattanNeigbours(node);
+    for(auto n : all) {
+        if(isWalkableNode(n)) {
+            neigs.emplace_back(n, 1);
+        }
+    }
+
+    return neigs;
+}
+
 auto GridGraph::getTrivialDistance(const Node& from, const Node& to) const noexcept
     -> Distance
 {
@@ -358,6 +373,18 @@ auto GridGraph::wrapGraphInCell() const noexcept
 
     return graph::GridCell{top_left,
                            bottom_right};
+}
+
+auto GridGraph::hasBarrierNeigbour(Node n) const noexcept
+    -> bool
+{
+    auto neigs = getManhattanNeigbours(n);
+
+    return std::any_of(std::begin(neigs),
+                       std::end(neigs),
+                       [&](auto neig) {
+                           return isBarrier(neig);
+                       });
 }
 
 
