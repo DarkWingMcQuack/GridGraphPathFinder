@@ -11,8 +11,9 @@ NormalGraph::NormalGraph(std::vector<std::vector<std::pair<NodeId, Distance>>>&&
 {
     for(auto i = 0; i < adj_list.size(); i++) {
         auto neigs = std::move(adj_list[i]);
-        neigbours_ = utils::concat(std::move(neigbours_),
-                                   std::move(neigs));
+        neigbours_.insert(std::end(neigbours_),
+                          std::begin(neigs),
+                          std::end(neigs));
 
         offset_[i + 1] = neigbours_.size();
     }
