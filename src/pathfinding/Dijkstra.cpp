@@ -184,9 +184,3 @@ auto Dijkstra::setBefore(graph::Node n, graph::Node before) noexcept
     auto idx = graph_.get().nodeToIndex(n);
     before_[idx] = before;
 }
-
-auto Dijkstra::getGraph() const noexcept
-    -> const GridGraph&
-{
-    return graph_.get();
-}

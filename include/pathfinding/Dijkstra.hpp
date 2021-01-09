@@ -36,9 +36,6 @@ public:
     [[nodiscard]] auto findTrivialDistance(graph::Node source, graph::Node target) noexcept
         -> graph::Distance;
 
-    [[nodiscard]] auto getGraph() const noexcept
-        -> const graph::GridGraph&;
-
 protected:
     [[nodiscard]] auto getDistanceTo(graph::Node n) const noexcept
         -> graph::Distance;
