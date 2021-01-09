@@ -2,7 +2,7 @@
 #include <fmt/ostream.h>
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
-#include <pathfinding/Dijkstra.hpp>
+#include <pathfinding/GridGraphDijkstra.hpp>
 
 #include <gtest/gtest.h>
 

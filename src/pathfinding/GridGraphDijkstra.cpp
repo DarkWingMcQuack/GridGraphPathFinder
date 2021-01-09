@@ -2,7 +2,7 @@
 #include <graph/GridGraph.hpp>
 #include <numeric>
 #include <optional>
-#include <pathfinding/Dijkstra.hpp>
+#include <pathfinding/GridGraphDijkstra.hpp>
 #include <pathfinding/Distance.hpp>
 #include <queue>
 #include <string_view>

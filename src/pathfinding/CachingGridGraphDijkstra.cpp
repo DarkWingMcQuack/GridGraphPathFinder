@@ -3,7 +3,7 @@
 #include <graph/GridGraph.hpp>
 #include <numeric>
 #include <optional>
-#include <pathfinding/CachingDijkstra.hpp>
+#include <pathfinding/CachingGridGraphDijkstra.hpp>
 #include <pathfinding/Distance.hpp>
 #include <progresscpp/ProgressBar.hpp>
 #include <queue>

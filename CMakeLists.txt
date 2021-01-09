@@ -73,9 +73,9 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionBucketCreator.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Path.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Dijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/GridGraphDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/AStar.hpp
-  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/CachingDijkstra.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/CachingGridGraphDijkstra.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/DijkstraQueue.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/pathfinding/Distance.hpp
 
@@ -103,9 +103,9 @@ target_sources(GridGraphPathFinderSrc
   src/utils/ProgramOptions.cpp
 
   src/pathfinding/Path.cpp
-  src/pathfinding/Dijkstra.cpp
+  src/pathfinding/GridGraphDijkstra.cpp
   src/pathfinding/AStar.cpp
-  src/pathfinding/CachingDijkstra.cpp
+  src/pathfinding/CachingGridGraphDijkstra.cpp
   )
 
 # add the dependencies of the target to enforce

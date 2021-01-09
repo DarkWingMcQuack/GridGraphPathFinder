@@ -6,8 +6,8 @@
 #include <fmt/ranges.h>
 #include <graph/GridGraph.hpp>
 #include <pathfinding/AStar.hpp>
-#include <pathfinding/CachingDijkstra.hpp>
-#include <pathfinding/Dijkstra.hpp>
+#include <pathfinding/CachingGridGraphDijkstra.hpp>
+#include <pathfinding/GridGraphDijkstra.hpp>
 #include <selection/FullNodeSelectionCalculator.hpp>
 #include <selection/SelectionLookup.hpp>
 #include <separation/SeparationDistanceOracle.hpp>
