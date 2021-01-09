@@ -14,9 +14,9 @@ using graph::Distance;
 using graph::GridGraph;
 using graph::Node;
 using graph::UNREACHABLE;
-using pathfinding::CachingDijkstra;
+using pathfinding::CachingGridGraphDijkstra;
 
-CachingDijkstra::CachingDijkstra(const graph::GridGraph &graph) noexcept
+CachingGridGraphDijkstra::CachingGridGraphDijkstra(const graph::GridGraph &graph) noexcept
     : graph_(graph),
       distances_(graph.size(), UNREACHABLE),
       settled_(graph.size(), false),
@@ -54,7 +54,7 @@ CachingDijkstra::CachingDijkstra(const graph::GridGraph &graph) noexcept
     last_source_ = std::nullopt;
 }
 
-auto CachingDijkstra::findDistance(const graph::Node &source,
+auto CachingGridGraphDijkstra::findDistance(const graph::Node &source,
                                    const graph::Node &target) const noexcept
     -> Distance
 {
@@ -66,7 +66,7 @@ auto CachingDijkstra::findDistance(const graph::Node &source,
     return queryCache(source, target);
 }
 
-auto CachingDijkstra::insertCache(graph::Node first, graph::Node second,
+auto CachingGridGraphDijkstra::insertCache(graph::Node first, graph::Node second,
                                   graph::Distance dist) noexcept
     -> void
 {
@@ -79,7 +79,7 @@ auto CachingDijkstra::insertCache(graph::Node first, graph::Node second,
     distance_cache_[first_cache_idx][second_cache_idx] = dist;
 }
 
-auto CachingDijkstra::queryCache(graph::Node first, graph::Node second) const noexcept
+auto CachingGridGraphDijkstra::queryCache(graph::Node first, graph::Node second) const noexcept
     -> graph::Distance
 {
     auto first_idx = getIndex(first).value();
@@ -91,7 +91,7 @@ auto CachingDijkstra::queryCache(graph::Node first, graph::Node second) const no
     return distance_cache_[first_cache_idx][second_cache_idx];
 }
 
-auto CachingDijkstra::destroy() noexcept
+auto CachingGridGraphDijkstra::destroy() noexcept
     -> void
 {
     distances_.clear();
@@ -102,7 +102,7 @@ auto CachingDijkstra::destroy() noexcept
     distance_cache_.clear();
 }
 
-auto CachingDijkstra::findTrivialDistance(const graph::Node &source,
+auto CachingGridGraphDijkstra::findTrivialDistance(const graph::Node &source,
                                           const graph::Node &target) const noexcept
     -> graph::Distance
 {
@@ -121,7 +121,7 @@ auto CachingDijkstra::findTrivialDistance(const graph::Node &source,
            - std::min(source_column, target_column));
 }
 
-auto CachingDijkstra::getIndex(const graph::Node &n) const noexcept
+auto CachingGridGraphDijkstra::getIndex(const graph::Node &n) const noexcept
     -> std::optional<std::size_t>
 {
     auto row = n.row;
@@ -138,7 +138,7 @@ auto CachingDijkstra::getIndex(const graph::Node &n) const noexcept
     return n.row * graph_.get().getWidth() + n.column;
 }
 
-auto CachingDijkstra::getDistanceTo(const graph::Node &n) const noexcept
+auto CachingGridGraphDijkstra::getDistanceTo(const graph::Node &n) const noexcept
     -> Distance
 {
     auto index_opt = getIndex(n);
@@ -150,7 +150,7 @@ auto CachingDijkstra::getDistanceTo(const graph::Node &n) const noexcept
     return UNREACHABLE;
 }
 
-auto CachingDijkstra::setDistanceTo(const graph::Node &n,
+auto CachingGridGraphDijkstra::setDistanceTo(const graph::Node &n,
                                     Distance distance) noexcept
     -> void
 {
@@ -161,7 +161,7 @@ auto CachingDijkstra::setDistanceTo(const graph::Node &n,
     }
 }
 
-auto CachingDijkstra::reset() noexcept
+auto CachingGridGraphDijkstra::reset() noexcept
     -> void
 {
     for(auto n : touched_) {
@@ -172,7 +172,7 @@ auto CachingDijkstra::reset() noexcept
     pq_ = DijkstraQueue{DijkstraQueueComparer{}};
 }
 
-auto CachingDijkstra::unSettle(const graph::Node &n) noexcept
+auto CachingGridGraphDijkstra::unSettle(const graph::Node &n) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -182,7 +182,7 @@ auto CachingDijkstra::unSettle(const graph::Node &n) noexcept
     }
 }
 
-auto CachingDijkstra::settle(const graph::Node &n) noexcept
+auto CachingGridGraphDijkstra::settle(const graph::Node &n) noexcept
     -> void
 {
     auto index_opt = getIndex(n);
@@ -192,7 +192,7 @@ auto CachingDijkstra::settle(const graph::Node &n) noexcept
     }
 }
 
-auto CachingDijkstra::isSettled(const graph::Node &n) noexcept
+auto CachingGridGraphDijkstra::isSettled(const graph::Node &n) noexcept
     -> bool
 {
     auto index_opt = getIndex(n);
@@ -204,13 +204,13 @@ auto CachingDijkstra::isSettled(const graph::Node &n) noexcept
     return false;
 }
 
-auto CachingDijkstra::getWalkableNeigboursOf(graph::Node node) const noexcept
+auto CachingGridGraphDijkstra::getWalkableNeigboursOf(graph::Node node) const noexcept
     -> std::vector<Node>
 {
     return graph_.get().getWalkableNeigbours(node);
 }
 
-auto CachingDijkstra::computeDistance(const graph::Node &source,
+auto CachingGridGraphDijkstra::computeDistance(const graph::Node &source,
                                       const graph::Node &target) noexcept
     -> Distance
 {
@@ -262,7 +262,7 @@ auto CachingDijkstra::computeDistance(const graph::Node &source,
     return getDistanceTo(target);
 }
 
-auto CachingDijkstra::getGraph() const noexcept -> const GridGraph &
+auto CachingGridGraphDijkstra::getGraph() const noexcept -> const GridGraph &
 {
     return graph_.get();
 }

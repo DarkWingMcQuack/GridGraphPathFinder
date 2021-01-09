@@ -19,7 +19,7 @@
 
 
 using pathfinding::GridGraphDijkstra;
-using pathfinding::CachingDijkstra;
+using pathfinding::CachingGridGraphDijkstra;
 using selection::FullNodeSelectionCalculator;
 namespace fs = std::filesystem;
 
@@ -43,7 +43,7 @@ auto calculateSeparation(const graph::GridGraph& graph,
 {
     utils::Timer t;
 
-    CachingDijkstra dijkstra{graph};
+    CachingGridGraphDijkstra dijkstra{graph};
 
     auto [separations, cache] = separation::calculateSeparation(graph, dijkstra);
     const auto sepataions_before_optimization = separations.size();
@@ -143,7 +143,7 @@ auto runSelection(const graph::GridGraph& graph,
                   std::string_view result_folder)
 {
     utils::Timer t;
-    FullNodeSelectionCalculator<GridGraphDijkstra, CachingDijkstra> selection_calculator{graph};
+    FullNodeSelectionCalculator<GridGraphDijkstra, CachingGridGraphDijkstra> selection_calculator{graph};
     auto selections = selection_calculator.calculateFullNodeSelection();
 
     fmt::print("runtime: {}\n", t.elapsed());

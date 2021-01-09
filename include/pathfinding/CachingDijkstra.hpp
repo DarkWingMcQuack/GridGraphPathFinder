@@ -15,17 +15,17 @@ class GridGraph;
 
 namespace pathfinding {
 
-class CachingDijkstra
+class CachingGridGraphDijkstra
 {
 public:
     static constexpr auto is_thread_save = true;
 
-    CachingDijkstra(const graph::GridGraph &graph) noexcept;
-    CachingDijkstra() = delete;
-    CachingDijkstra(CachingDijkstra &&) = default;
-    CachingDijkstra(const CachingDijkstra &) = default;
-    auto operator=(const CachingDijkstra &) -> CachingDijkstra & = delete;
-    auto operator=(CachingDijkstra &&) -> CachingDijkstra & = delete;
+    CachingGridGraphDijkstra(const graph::GridGraph &graph) noexcept;
+    CachingGridGraphDijkstra() = delete;
+    CachingGridGraphDijkstra(CachingGridGraphDijkstra &&) = default;
+    CachingGridGraphDijkstra(const CachingGridGraphDijkstra &) = default;
+    auto operator=(const CachingGridGraphDijkstra &) -> CachingGridGraphDijkstra & = delete;
+    auto operator=(CachingGridGraphDijkstra &&) -> CachingGridGraphDijkstra & = delete;
 
     [[nodiscard]] auto findDistance(const graph::Node &source,
                                     const graph::Node &target) const noexcept
