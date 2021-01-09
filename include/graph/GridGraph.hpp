@@ -15,6 +15,8 @@ namespace graph {
 class GridGraph
 {
 public:
+    static constexpr inline auto is_directed = false;
+
     GridGraph(std::vector<std::vector<bool>> grid,
               NeigbourCalculator neigbour_calculator) noexcept;
 
