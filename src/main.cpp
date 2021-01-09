@@ -18,7 +18,7 @@
 #include <utils/Timer.hpp>
 
 
-using pathfinding::Dijkstra;
+using pathfinding::GridGraphDijkstra;
 using pathfinding::CachingDijkstra;
 using selection::FullNodeSelectionCalculator;
 namespace fs = std::filesystem;
@@ -112,7 +112,7 @@ auto runSeparation(const graph::GridGraph& graph,
     //clear to save memory
     separations.clear();
 
-    Dijkstra compare{graph};
+    GridGraphDijkstra compare{graph};
     utils::Timer t;
 
     for(std::size_t i{0}; i < 50000; i++) {
@@ -143,7 +143,7 @@ auto runSelection(const graph::GridGraph& graph,
                   std::string_view result_folder)
 {
     utils::Timer t;
-    FullNodeSelectionCalculator<Dijkstra, CachingDijkstra> selection_calculator{graph};
+    FullNodeSelectionCalculator<GridGraphDijkstra, CachingDijkstra> selection_calculator{graph};
     auto selections = selection_calculator.calculateFullNodeSelection();
 
     fmt::print("runtime: {}\n", t.elapsed());

@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 
 using graph::GridGraph;
-using pathfinding::Dijkstra;
+using pathfinding::GridGraphDijkstra;
 
 
 TEST(ManhattanDijkstraTest, DijkstraWithoutBarriersTest)
@@ -24,7 +24,7 @@ TEST(ManhattanDijkstraTest, DijkstraWithoutBarriersTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto p = d.findRoute({0, 0}, {0, 4});
     EXPECT_EQ(p.value().getLength(), 4);
@@ -44,7 +44,7 @@ TEST(ManhattanDijkstraTest, DijkstraSingleWithoutBarriersTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto path_opt = d.findRoute({0, 0}, {0, 4});
 
@@ -67,7 +67,7 @@ TEST(ManhattanDijkstraTest, DijkstraWithBarrierTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto p = d.findRoute({0, 0}, {0, 4});
 
@@ -88,7 +88,7 @@ TEST(ManhattanDijkstraTest, DijkstraSingleRouteWithBarrierTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto path_opt = d.findRoute({0, 0}, {0, 4});
 
@@ -111,7 +111,7 @@ TEST(ManhattanDijkstraTest, DijkstraWithBarrierDistanceTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto dist = d.findDistance({0, 0}, {0, 4});
     EXPECT_EQ(dist, 6);

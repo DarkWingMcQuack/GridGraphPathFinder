@@ -15,17 +15,17 @@ class GridGraph;
 
 namespace pathfinding {
 
-class Dijkstra
+class GridGraphDijkstra
 {
 public:
     static constexpr auto is_thread_save = false;
 
-    Dijkstra(const graph::GridGraph& graph) noexcept;
-    Dijkstra() = delete;
-    Dijkstra(Dijkstra&&) = default;
-    Dijkstra(const Dijkstra&) = default;
-    auto operator=(const Dijkstra&) -> Dijkstra& = delete;
-    auto operator=(Dijkstra&&) -> Dijkstra& = delete;
+    GridGraphDijkstra(const graph::GridGraph& graph) noexcept;
+    GridGraphDijkstra() = delete;
+    GridGraphDijkstra(GridGraphDijkstra&&) = default;
+    GridGraphDijkstra(const GridGraphDijkstra&) = default;
+    auto operator=(const GridGraphDijkstra&) -> GridGraphDijkstra& = delete;
+    auto operator=(GridGraphDijkstra&&) -> GridGraphDijkstra& = delete;
 
     [[nodiscard]] auto findRoute(graph::Node source, graph::Node target) noexcept
         -> std::optional<Path>;

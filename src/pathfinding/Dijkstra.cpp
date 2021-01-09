@@ -10,32 +10,32 @@
 
 using graph::Node;
 using graph::GridGraph;
-using pathfinding::Dijkstra;
+using pathfinding::GridGraphDijkstra;
 using pathfinding::Path;
 using graph::Distance;
 using graph::UNREACHABLE;
 
-Dijkstra::Dijkstra(const graph::GridGraph& graph) noexcept
+GridGraphDijkstra::GridGraphDijkstra(const graph::GridGraph& graph) noexcept
     : graph_(graph),
       distances_(graph.size(), UNREACHABLE),
       settled_(graph.size(), false),
       pq_(DijkstraQueueComparer{}),
       before_(graph.size(), graph::NOT_REACHABLE) {}
 
-auto Dijkstra::findRoute(graph::Node source, graph::Node target) noexcept
+auto GridGraphDijkstra::findRoute(graph::Node source, graph::Node target) noexcept
     -> std::optional<Path>
 {
     [[maybe_unused]] auto _ = computeDistance(source, target);
     return extractShortestPath(source, target);
 }
 
-auto Dijkstra::findDistance(graph::Node source, graph::Node target) noexcept
+auto GridGraphDijkstra::findDistance(graph::Node source, graph::Node target) noexcept
     -> Distance
 {
     return computeDistance(source, target);
 }
 
-auto Dijkstra::findTrivialDistance(graph::Node source, graph::Node target) noexcept
+auto GridGraphDijkstra::findTrivialDistance(graph::Node source, graph::Node target) noexcept
     -> graph::Distance
 {
     if(graph_.get().isBarrier(source) or graph_.get().isBarrier(target)) {
@@ -53,7 +53,7 @@ auto Dijkstra::findTrivialDistance(graph::Node source, graph::Node target) noexc
            - std::min(source_column, target_column));
 }
 
-auto Dijkstra::getDistanceTo(graph::Node n) const noexcept
+auto GridGraphDijkstra::getDistanceTo(graph::Node n) const noexcept
     -> Distance
 {
     auto index = graph_.get().nodeToIndex(n);
@@ -61,14 +61,14 @@ auto Dijkstra::getDistanceTo(graph::Node n) const noexcept
 }
 
 
-auto Dijkstra::setDistanceTo(graph::Node n, Distance distance) noexcept
+auto GridGraphDijkstra::setDistanceTo(graph::Node n, Distance distance) noexcept
     -> void
 {
     auto index = graph_.get().nodeToIndex(n);
     distances_[index] = distance;
 }
 
-auto Dijkstra::extractShortestPath(graph::Node source, graph::Node target) const noexcept
+auto GridGraphDijkstra::extractShortestPath(graph::Node source, graph::Node target) const noexcept
     -> std::optional<Path>
 {
     //check if a path exists
@@ -89,7 +89,7 @@ auto Dijkstra::extractShortestPath(graph::Node source, graph::Node target) const
 }
 
 
-auto Dijkstra::reset() noexcept
+auto GridGraphDijkstra::reset() noexcept
     -> void
 {
     for(auto n : touched_) {
@@ -102,28 +102,28 @@ auto Dijkstra::reset() noexcept
     pq_ = DijkstraQueue{DijkstraQueueComparer{}};
 }
 
-auto Dijkstra::unSettle(graph::Node n)
+auto GridGraphDijkstra::unSettle(graph::Node n)
     -> void
 {
     auto index = graph_.get().nodeToIndex(n);
     settled_[index] = false;
 }
 
-auto Dijkstra::settle(graph::Node n) noexcept
+auto GridGraphDijkstra::settle(graph::Node n) noexcept
     -> void
 {
     auto index = graph_.get().nodeToIndex(n);
     settled_[index] = true;
 }
 
-auto Dijkstra::isSettled(graph::Node n)
+auto GridGraphDijkstra::isSettled(graph::Node n)
     -> bool
 {
     auto index = graph_.get().nodeToIndex(n);
     return settled_[index];
 }
 
-auto Dijkstra::computeDistance(graph::Node source, graph::Node target) noexcept
+auto GridGraphDijkstra::computeDistance(graph::Node source, graph::Node target) noexcept
     -> Distance
 {
     using graph::UNREACHABLE;
@@ -178,7 +178,7 @@ auto Dijkstra::computeDistance(graph::Node source, graph::Node target) noexcept
     return getDistanceTo(target);
 }
 
-auto Dijkstra::setBefore(graph::Node n, graph::Node before) noexcept
+auto GridGraphDijkstra::setBefore(graph::Node n, graph::Node before) noexcept
     -> void
 {
     auto idx = graph_.get().nodeToIndex(n);

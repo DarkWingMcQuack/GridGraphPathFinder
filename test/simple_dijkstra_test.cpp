@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 
 using graph::GridGraph;
-using pathfinding::Dijkstra;
+using pathfinding::GridGraphDijkstra;
 
 
 TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
@@ -24,7 +24,7 @@ TEST(StraightDijkstraTest, DijkstraWithoutBarriersTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto p = d.findRoute({0, 0}, {0, 4});
 
@@ -45,7 +45,7 @@ TEST(StraightDijkstraTest, DijkstraWithOneBarrierTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto p = d.findRoute({0, 0}, {0, 4});
 
@@ -66,7 +66,7 @@ TEST(StraightDijkstraTest, DijkstraWithMoreBarriersTest)
     ASSERT_EQ(graph_test1.getWidth(), 5);
     ASSERT_EQ(graph_test1.getHeight(), 5);
 
-    Dijkstra d{graph_test1};
+    GridGraphDijkstra d{graph_test1};
 
     auto paths = d.findRoute({0, 0}, {0, 4});
 
