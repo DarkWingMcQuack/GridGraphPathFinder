@@ -9,6 +9,8 @@ namespace graph {
 class NormalGraph
 {
 public:
+    static constexpr inline auto is_directed = true;
+
     NormalGraph(std::vector<std::vector<std::pair<NodeId, Distance>>>&& adj_list);
 
     auto getNeigboursOf(NodeId node) const noexcept
