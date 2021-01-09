@@ -159,15 +159,12 @@ auto Dijkstra::computeDistance(graph::Node source, graph::Node target) noexcept
         //when reusing the pq
         pq_.pop();
 
-        auto neigbours = graph_.get().getManhattanNeigbours(current_node);
+        auto neigbours = graph_.get().getNeigboursOf(current_node);
 
-        for(auto neig : neigbours) {
-            if(graph_.get().isBarrier(neig)) {
-                continue;
-            }
+        for(auto [neig, distance] : neigbours) {
 
             auto neig_dist = getDistanceTo(neig);
-            auto new_dist = current_dist + 1;
+            auto new_dist = current_dist + distance;
 
             if(UNREACHABLE != current_dist and neig_dist > new_dist) {
                 touched_.emplace_back(neig);
