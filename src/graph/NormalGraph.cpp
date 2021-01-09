@@ -18,6 +18,7 @@ NormalGraph::NormalGraph(std::vector<std::vector<std::pair<NodeId, Distance>>>&&
         offset_[i + 1] = neigbours_.size();
     }
 
+    // //add dummy entry at the end
     neigbours_.emplace_back(std::numeric_limits<NodeId>::max(), UNREACHABLE);
 }
 
