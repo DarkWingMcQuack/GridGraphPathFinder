@@ -6,6 +6,7 @@
 #include <pathfinding/Distance.hpp>
 #include <queue>
 #include <selection/NodeSelection.hpp>
+#include <selection/SelectionCenterCalculator.hpp>
 #include <vector>
 
 namespace selection {
@@ -16,7 +17,7 @@ class NodeSelectionCalculator
 {
 public:
     NodeSelectionCalculator(const graph::GridGraph& graph)
-        : path_finder_(graph),
+        : center_calculator_(graph),
           cached_path_finder_(graph),
           graph_(graph),
           left_settled_(graph_.size(), false),
@@ -72,6 +73,7 @@ public:
 
                 if(auto right_dist_opt = checkRightAffiliation(current, center)) {
                     auto right_dist = right_dist_opt.value();
+
                     right_selection_.emplace_back(current, right_dist);
 
                     for(auto neig : graph_.getWalkableNeigbours(current)) {
@@ -193,34 +195,29 @@ private:
         right_settled_[index] = true;
     }
 
-    [[nodiscard]] auto isLeftSettled(const graph::Node& node) const noexcept
+    [[nodiscard]] auto isLeftSettled(graph::Node node) const noexcept
         -> bool
     {
         auto index = graph_.nodeToIndex(node);
         return left_settled_[index];
     }
 
-    [[nodiscard]] auto isRightSettled(const graph::Node& node) const noexcept
+    [[nodiscard]] auto isRightSettled(graph::Node node) const noexcept
         -> bool
     {
         auto index = graph_.nodeToIndex(node);
         return right_settled_[index];
     }
 
-    [[nodiscard]] auto calculateCenter(const graph::Node& left,
-                                       const graph::Node& right) noexcept
+    [[nodiscard]] auto calculateCenter(graph::Node left,
+                                       graph::Node right) noexcept
         -> std::optional<graph::Node>
     {
-
-        auto left_to_right_path_opt = path_finder_.findRoute(left, right);
-        if(!left_to_right_path_opt) {
-            return std::nullopt;
-        }
-        return left_to_right_path_opt.value().getMiddleNode();
+        return center_calculator_.calculateCenter(left, right);
     }
 
 private:
-    PathFinder path_finder_;
+    SelectionCenterCalculator<PathFinder> center_calculator_;
     CachedPathFinder cached_path_finder_;
     const graph::GridGraph& graph_;
 

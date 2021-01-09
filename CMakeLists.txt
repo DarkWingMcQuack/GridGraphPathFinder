@@ -63,6 +63,7 @@ target_sources(GridGraphPathFinderSrc
   ${CMAKE_CURRENT_LIST_DIR}/include/separation/SeparationDistanceOracle.hpp
 
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelection.hpp
+  ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionCenterCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/NodeSelectionCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/FullNodeSelectionCalculator.hpp
   ${CMAKE_CURRENT_LIST_DIR}/include/selection/SelectionLookup.hpp
