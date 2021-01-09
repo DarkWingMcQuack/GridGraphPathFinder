@@ -6,6 +6,8 @@
 
 namespace graph {
 
+using NodeId = std::uint_fast32_t;
+
 struct Node
 {
     std::size_t row;
